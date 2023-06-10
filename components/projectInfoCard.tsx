@@ -1,9 +1,10 @@
 import React from 'react'
+import { Proyecto } from '@/pages/types'
 
-const projectInfoCard = () => {
+const ProjectInfoCard = ({project}: {project: Proyecto}) => {
   return (
-    <div>projectInfoCard</div>
+    <div className="h-20 p-1 border-solid border-2 border-black rounded">{project.nombre}</div>
   )
 }
 
-export default projectInfoCard
+export default ProjectInfoCard

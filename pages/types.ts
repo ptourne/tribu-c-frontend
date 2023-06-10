@@ -19,3 +19,13 @@ export interface Proyecto {
   horas_consumidas: number;
   costo_proyecto: number;
 }
+
+export interface Tarea {
+  id: string
+  titulo: string
+  descripcion: string
+  tiempo_estimado_fin: number;
+  horas_acumuladas: number;
+  estado: number;
+  prioridad: number;
+}
