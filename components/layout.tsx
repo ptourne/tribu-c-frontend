@@ -1,35 +1,37 @@
-import Link from "next/link"
-import { useRouter } from "next/router"
-import SideBarItem from "./SidebarItem"
-import { ISidebarItem } from "./types"
+import Link from "next/link";
+import { useRouter } from "next/router";
+import SideBarItem from "./SidebarItem";
+import { ISidebarItem } from "./types";
+import { FaFolder, FaHome, FaUserClock } from "react-icons/fa";
+import { BsFillKanbanFill, BsFillTicketDetailedFill } from "react-icons/bs";
 
 export default function Layout({ children }: { children: any }) {
   const menuItems: ISidebarItem[] = [
     {
       href: "/",
-      title: "Homepage",
+      icon: FaHome,
     },
     /*{
       href: "/clientes",
-      title: "Clientes",
+      icon: FaUsers,
     },
     {
       href: "/usuarios",
-      title: "Usuarios",
+      icon: FaUser,
     },*/
     {
       href: "/proyectos",
-      title: "Proyectos",
+      icon: BsFillKanbanFill,
     },
     {
       href: "/soporte",
-      title: "Soporte",
+      icon: BsFillTicketDetailedFill,
     },
     {
       href: "/recursos",
-      title: "Recursos",
+      icon: FaUserClock,
     },
-  ]
+  ];
 
   return (
     <div className="min-h-screen flex flex-col bg-white">
@@ -37,11 +39,11 @@ export default function Layout({ children }: { children: any }) {
         PSA
       </header>
       <div className="flex flex-col md:flex-row flex-1">
-        <aside className="bg-gray-400 w-full md:w-40">
+        <aside className="bg-gray-400 w-full md:w-auto">
           <nav>
             <ul>
               {menuItems.map((item) => (
-                <SideBarItem {...item} key={item.title} />
+                <SideBarItem {...item} key={item.href} />
               ))}
             </ul>
           </nav>
@@ -49,5 +51,5 @@ export default function Layout({ children }: { children: any }) {
         <main className="flex-1">{children}</main>
       </div>
     </div>
-  )
+  );
 }

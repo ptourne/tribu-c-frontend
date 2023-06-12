@@ -1,27 +1,34 @@
-import Link from "next/link"
-import { useRouter } from "next/router"
-import { ISidebarItem } from "./types"
-import { useState } from "react"
+import Link from "next/link";
+import { useRouter } from "next/router";
+import { ISidebarItem } from "./types";
+import { IconType } from "react-icons";
+import { useState } from "react";
 
-const SideBarItem = ({ href, title, children }: ISidebarItem) => {
-  const router = useRouter()
-  const [open, setOpen] = useState(false)
+interface SideBarItemProps extends ISidebarItem {
+  icon?: IconType;
+}
+
+const SideBarItem = ({ href, icon: Icon, children }: SideBarItemProps) => {
+  const router = useRouter();
+  const [open, setOpen] = useState(false);
 
   if (children && children.length > 0) {
     return (
       <li className="m-2">
         <button
           type="button"
-          className="flex items-center w-full p-2 text-grey-200 transition duration-75 rounded-lg group hover:bg-amber-100 dark:text-white dark:hover:bg-amber-700"
-          aria-controls={`dropdown-${title}`}
-          data-collapse-toggle={`dropdown-${title}`}
+          className="flex items-center w-full p-3 rounded-lg bg-gray-300 dark:bg-gray-700 transition duration-75 group hover:bg-amber-100 dark:hover:bg-amber-700"
+          aria-controls={`dropdown-${href}`}
+          data-collapse-toggle={`dropdown-${href}`}
           onClick={() => setOpen(!open)}
         >
           <span
-            className={`flex-1 ml-2 text-left whitespace-nowrap ${router.asPath === href && "text-red-50"}`}
+            className={`flex-1 ml-2 text-left whitespace-nowrap ${
+              router.asPath === href && "text-red-50"
+            }`}
             sidebar-toggle-item="true"
           >
-            {title}
+            {Icon && <Icon className="mr-2" />}
           </span>
           <svg
             sidebar-toggle-item="true"
@@ -38,29 +45,40 @@ const SideBarItem = ({ href, title, children }: ISidebarItem) => {
           </svg>
         </button>
         {open && (
-          <ul id={`dropdown-${title}`} className={`${open ? "" : "hidden"} pl-4 py-2 space-y-2`}>
+          <ul
+            id={`dropdown-${href}`}
+            className={`${open ? "" : "hidden"} pl-4 py-2 space-y-2`}
+          >
             {children.map((child) => (
-              <SideBarItem {...child} href={`${href}${child.href}`} key={`${href}${child.href}`} />
+              <SideBarItem
+                {...child}
+                href={`${href}${child.href}`}
+                key={`${href}${child.href}`}
+              />
             ))}
           </ul>
         )}
       </li>
-    )
+    );
   }
 
   return (
-    <li className="m-2" key={title}>
+    <li className="m-2" key={href}>
       <Link href={href}>
         <div
-          className={`flex items-center w-full p-2 transition duration-75 rounded-lg group hover:bg-amber-100 dark:text-white dark:hover:bg-amber-700`}
+          className={`flex items-center w-full p-4 rounded-lg bg-gray-300 dark:bg-gray-700 transition duration-75 group hover:bg-amber-100 dark:hover:bg-amber-700`}
         >
-          <span className={`flex-1 ml-2 text-left whitespace-nowrap ${router.asPath === href && "font-bold"}`}>
-            {title}
+          <span
+            className={`flex-1 ml-2 text-left whitespace-nowrap ${
+              router.asPath === href && "font-bold"
+            }`}
+          >
+            {Icon && <Icon className="mr-2" color="black" />}
           </span>
         </div>
       </Link>
     </li>
-  )
-}
+  );
+};
 
-export default SideBarItem
+export default SideBarItem;
