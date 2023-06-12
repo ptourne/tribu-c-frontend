@@ -1,10 +1,30 @@
-import React from 'react'
-import { Proyecto } from '@/pages/types'
+import React from "react";
+import { Proyecto } from "@/pages/types";
 
-const ProjectInfoCard = ({project}: {project: Proyecto}) => {
-  return (
-    <div className="h-20 p-1 border-solid border-2 border-black rounded">{project.nombre}</div>
-  )
+interface Props {
+  project: Proyecto;
+  onClick: () => void;
+  selected: boolean;
 }
 
-export default ProjectInfoCard
+const ProjectInfoCard = ({ project, onClick, selected }: Props) => {
+  return (
+    <div
+      className={
+        "d-flex flex-column justify-content-start text-primary-emphasis border bg-primary-subtle rounded-3 " +
+        (selected ? "border-primary border-3" : "border-primary-subtle")
+      }
+      onClick={onClick}
+    >
+      <div className="d-flex flex-row justify-content-start align-items-center">
+        <div className="p-2 h4">{project.id}</div>
+        <div className="p-2 h4">{project.nombre}</div>
+      </div>
+      <div className="d-flex flex-row justify-content-start align-items-center">
+        <div className="p-2">Estado: {project.estado}</div>
+      </div>
+    </div>
+  );
+};
+
+export default ProjectInfoCard;
