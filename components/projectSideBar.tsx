@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ProjectSideBarDetailsPane from "./projectSideBarDetailsPane";
 import { Proyecto } from "../pages/types";
 
@@ -8,6 +8,13 @@ interface ProjectSideBarProps {
 
 function ProjectSideBar({ project }: ProjectSideBarProps) {
   const [selectedTab, setSelectedTab] = useState(0);
+  const [selectedProject, setSelectedProject] = useState<Proyecto | undefined>(
+    undefined
+  );
+
+  useEffect(() => {
+    setSelectedProject(project);
+  }, [project]);
 
   return (
     <div className="d-flex flex-column flex-fill justify-content-start border rounded-3 m-3 p-3">
@@ -19,7 +26,7 @@ function ProjectSideBar({ project }: ProjectSideBarProps) {
           }}
         >
           <a
-            className={selectedTab == 0 ? "nav-link active" : "nav-link"}
+            className={selectedTab === 0 ? "nav-link active" : "nav-link"}
             aria-current="page"
             href="#"
           >
@@ -33,7 +40,7 @@ function ProjectSideBar({ project }: ProjectSideBarProps) {
           }}
         >
           <a
-            className={selectedTab == 1 ? "nav-link active" : "nav-link"}
+            className={selectedTab === 1 ? "nav-link active" : "nav-link"}
             href="#"
           >
             Recursos
@@ -43,7 +50,7 @@ function ProjectSideBar({ project }: ProjectSideBarProps) {
       <div className="tab-content" id="myTabContent">
         <div
           className={
-            selectedTab == 0
+            selectedTab === 0
               ? "p-3 border rounded-bottom border-top-0 tab-pane fade show active"
               : "p-3 border rounded-bottom border-top-0 tab-pane fade show"
           }
@@ -51,11 +58,11 @@ function ProjectSideBar({ project }: ProjectSideBarProps) {
           role="tabpanel"
           aria-labelledby="details-tab"
         >
-          <ProjectSideBarDetailsPane project={project} />
+          <ProjectSideBarDetailsPane project={selectedProject} />
         </div>
         <div
           className={
-            selectedTab == 1
+            selectedTab === 1
               ? "border rounded-bottom border-top-0 tab-pane fade show active"
               : "border rounded-bottom border-top-0 tab-pane fade show"
           }

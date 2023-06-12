@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Proyecto } from "../pages/types";
 
 interface ProjectSideBarProps {
@@ -6,14 +6,21 @@ interface ProjectSideBarProps {
 }
 
 function ProjectSideBarDetailsPane({ project }: ProjectSideBarProps) {
-  const [name, setName] = useState(project?.nombre || "filler");
-  const [state, setState] = useState(project?.estado || "filler");
+  const [name, setName] = useState("");
+  const [state, setState] = useState("");
 
-  const handleNameChange = (event) => {
+  useEffect(() => {
+    if (project) {
+      setName(project.nombre || "");
+      setState(project.estado || "");
+    }
+  }, [project]);
+
+  const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setName(event.target.value);
   };
 
-  const handleStateChange = (event) => {
+  const handleStateChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setState(event.target.value);
   };
 
@@ -21,8 +28,8 @@ function ProjectSideBarDetailsPane({ project }: ProjectSideBarProps) {
     // Create an object with the updated values
     const updatedProject = {
       id: project?.id,
-      name: name,
-      state: state,
+      nombre: name,
+      estado: state,
     };
 
     // Make an API request to save the changes
