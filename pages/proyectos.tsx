@@ -70,10 +70,10 @@ export default function Proyectos() {
                   selected={selectedIndex === index}
                 />
               ))
-            : "No hay proyectos para mostrar"}
+            : "Aún no hay proyectos creados. Seleccione agregar para crear uno nuevo"}
         </div>
       </div>
-      <ProjectSideBar />
+      <ProjectSideBar project={projects[selectedIndex]} />
     </div>
   );
 }

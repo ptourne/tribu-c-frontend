@@ -1,6 +1,12 @@
 import React, { useState } from "react";
+import ProjectSideBarDetailsPane from "./projectSideBarDetailsPane";
+import { Proyecto } from "../pages/types";
 
-function projectSideBar() {
+interface ProjectSideBarProps {
+  project: Proyecto | undefined;
+}
+
+function ProjectSideBar({ project }: ProjectSideBarProps) {
   const [selectedTab, setSelectedTab] = useState(0);
 
   return (
@@ -38,15 +44,14 @@ function projectSideBar() {
         <div
           className={
             selectedTab == 0
-              ? "border rounded-bottom border-top-0 tab-pane fade show active"
-              : "border rounded-bottom border-top-0 tab-pane fade show"
+              ? "p-3 border rounded-bottom border-top-0 tab-pane fade show active"
+              : "p-3 border rounded-bottom border-top-0 tab-pane fade show"
           }
-          id="home-tab-pane"
+          id="details-tab-pane"
           role="tabpanel"
-          aria-labelledby="home-tab"
-          tabindex="0"
+          aria-labelledby="details-tab"
         >
-          "1"
+          <ProjectSideBarDetailsPane project={project} />
         </div>
         <div
           className={
@@ -54,10 +59,9 @@ function projectSideBar() {
               ? "border rounded-bottom border-top-0 tab-pane fade show active"
               : "border rounded-bottom border-top-0 tab-pane fade show"
           }
-          id="profile-tab-pane"
+          id="resources-tab-pane"
           role="tabpanel"
-          aria-labelledby="profile-tab"
-          tabindex="1"
+          aria-labelledby="resources-tab"
         >
           "2"
         </div>
@@ -66,4 +70,4 @@ function projectSideBar() {
   );
 }
 
-export default projectSideBar;
+export default ProjectSideBar;
