@@ -1,5 +1,6 @@
 import { Inter } from "next/font/google";
 import ProjectInfoCard from "@/components/projectInfoCard";
+import ProjectSideBar from "@/components/projectSideBar";
 import React, { Fragment, useState, useEffect } from "react";
 import { Proyecto } from "./types";
 
@@ -48,28 +49,31 @@ export default function Proyectos() {
   }, []);
 
   return (
-    <div className="flex h-full flex-col p-4 bg-white">
-      <h1 className="text-black text-4xl mb-20 font-bold">Proyectos</h1>
-      <div
-        className={
-          projects.length > 0
-            ? "flex h-full flex-col space-y-4 text-black"
-            : "text-black"
-        }
-      >
-        {projects.length > 0
-          ? projects.map((project, index) => (
-              <ProjectInfoCard
-                key={index}
-                project={project}
-                onClick={() => {
-                  setSelectedIndex(index);
-                }}
-                selected={selectedIndex === index}
-              />
-            ))
-          : "No hay proyectos para mostrar"}
+    <div className="flex flex-row h-full">
+      <div className="flex flex-fill h-full flex-col p-4 bg-white w-30">
+        <h1 className="text-black text-4xl mb-20 font-bold">Proyectos</h1>
+        <div
+          className={
+            projects.length > 0
+              ? "flex h-full flex-col space-y-4 text-black"
+              : "text-black"
+          }
+        >
+          {projects.length > 0
+            ? projects.map((project, index) => (
+                <ProjectInfoCard
+                  key={index}
+                  project={project}
+                  onClick={() => {
+                    setSelectedIndex(index);
+                  }}
+                  selected={selectedIndex === index}
+                />
+              ))
+            : "No hay proyectos para mostrar"}
+        </div>
       </div>
+      <ProjectSideBar />
     </div>
   );
 }
