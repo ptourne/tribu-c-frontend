@@ -4,13 +4,14 @@ import SideBarItem from "./SidebarItem";
 import { ISidebarItem } from "./types";
 import { FaFolder, FaHome, FaUserClock } from "react-icons/fa";
 import { BsFillKanbanFill, BsFillTicketDetailedFill } from "react-icons/bs";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function Layout({ children }: { children: any }) {
   const menuItems: ISidebarItem[] = [
     {
       href: "/",
       icon: FaHome,
-      title: 'Inicio'
     },
     /*{
       href: "/clientes",
@@ -23,17 +24,14 @@ export default function Layout({ children }: { children: any }) {
     {
       href: "/proyectos",
       icon: BsFillKanbanFill,
-      title: 'Proyectos'
     },
     {
       href: "/soporte",
       icon: BsFillTicketDetailedFill,
-      title: 'Soporte'
     },
     {
       href: "/recursos",
       icon: FaUserClock,
-      title: 'Recursos'
     },
   ];
 
@@ -54,6 +52,7 @@ export default function Layout({ children }: { children: any }) {
         </aside>
         <main className="flex-1">{children}</main>
       </div>
+      <ToastContainer position="top-right" autoClose={3000} />
     </div>
   );
 }
