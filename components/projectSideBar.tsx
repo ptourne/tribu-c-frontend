@@ -43,7 +43,7 @@ function ProjectSideBar({ project }: ProjectSideBarProps) {
             className={selectedTab === 1 ? "nav-link active" : "nav-link"}
             href="#"
           >
-            Recursos
+            Equipo
           </a>
         </li>
       </ul>
