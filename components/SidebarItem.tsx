@@ -67,7 +67,7 @@ const SideBarItem = ({ href, icon: Icon, title, children }: SideBarItemProps) =>
   return (
     <li className="m-2" key={href}>
       <Link href={href}>
-        <Tooltip title={<Typography fontSize={15}>{title}</Typography>}>
+        <Tooltip title={<Typography fontSize={15}>{title}</Typography>} placement="right">
           <div
             className={`flex items-center w-full p-4 rounded-lg bg-gray-300 dark:bg-gray-700 transition duration-75 group hover:bg-amber-100 dark:hover:bg-amber-700`}
           >
