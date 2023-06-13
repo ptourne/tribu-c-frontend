@@ -152,7 +152,7 @@ function ProjectSideBarDetailsPane({ project }: ProjectSideBarProps) {
               onChange={handleNameChange}
             />
           </div>
-          <div className="d-flex align-items-center justify-content-center flex-shrink-0 w-10 m-3">
+          <div className="d-flex align-items-center justify-content-center flex-shrink-0 w-10">
             {nameSaved || (
               <Tooltip
                 title={
