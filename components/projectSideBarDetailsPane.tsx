@@ -119,7 +119,27 @@ function ProjectSideBarDetailsPane({ project }: ProjectSideBarProps) {
   };
 
   const handleDeleteProject = () => {
+    //Llamar API
     setShowDeleteConfirmation(false);
+    if (true /*eliminado correctamente*/) {
+      toast.success("Proyecto eliminado correctamente.", {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: true,
+      });
+
+      if (project) {
+        setName(project.nombre || "");
+        setState(project.estado || "");
+        setStartDate(project.fecha_inicio || null);
+        setFinishDate(project.fecha_fin || null);
+        setNameSaved(true);
+        setStateSaved(true);
+        setStartDateSaved(true);
+        setFinishDateSaved(true);
+        setPendingChanges(false);
+      }
+    }
   };
 
   const handleDeleteConfirmationOpen = () => {
