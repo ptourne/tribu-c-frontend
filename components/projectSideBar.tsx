@@ -73,6 +73,13 @@ function ProjectSideBar({ project }: ProjectSideBarProps) {
           "2"
         </div>
       </div>
+      <button
+        type="button"
+        className="btn btn-primary mt-auto p-2"
+        /*onClick={handleSave}*/
+      >
+        Ver Tareas
+      </button>
     </div>
   );
 }

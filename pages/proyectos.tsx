@@ -58,8 +58,8 @@ export default function Proyectos() {
 
   return (
     <div className="flex flex-row h-full">
-      <div className="flex flex-fill col-md-4 h-full flex-col p-4 bg-white w-30">
-        <h1 className="text-black text-4xl mb-20 font-bold">Proyectos</h1>
+      <div className="flex flex-fill col-md-1 h-full flex-col p-4 bg-white w-30">
+        <h1 className="text-black mb-5 font-bold">Proyectos</h1>
         <div
           className={
             projects.length > 0
@@ -81,7 +81,7 @@ export default function Proyectos() {
             : "Aún no hay proyectos creados. Seleccione agregar para crear uno nuevo"}
         </div>
       </div>
-      <div className="col-md-8 flex-fill h-full ">
+      <div className="col-md-6 flex flex-col h-full">
         {selectedProject && <ProjectSideBar project={selectedProject} />}
       </div>
     </div>
