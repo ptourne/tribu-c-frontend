@@ -10,6 +10,7 @@ export default function Layout({ children }: { children: any }) {
     {
       href: "/",
       icon: FaHome,
+      title: 'Inicio'
     },
     /*{
       href: "/clientes",
@@ -22,14 +23,17 @@ export default function Layout({ children }: { children: any }) {
     {
       href: "/proyectos",
       icon: BsFillKanbanFill,
+      title: 'Proyectos'
     },
     {
       href: "/soporte",
       icon: BsFillTicketDetailedFill,
+      title: 'Soporte'
     },
     {
       href: "/recursos",
       icon: FaUserClock,
+      title: 'Recursos'
     },
   ];
 

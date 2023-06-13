@@ -3,12 +3,14 @@ import { useRouter } from "next/router";
 import { ISidebarItem } from "./types";
 import { IconType } from "react-icons";
 import { useState } from "react";
+import { Typography, Tooltip } from "@mui/material";
 
 interface SideBarItemProps extends ISidebarItem {
   icon?: IconType;
+  title?: string;
 }
 
-const SideBarItem = ({ href, icon: Icon, children }: SideBarItemProps) => {
+const SideBarItem = ({ href, icon: Icon, title, children }: SideBarItemProps) => {
   const router = useRouter();
   const [open, setOpen] = useState(false);
 
@@ -65,17 +67,19 @@ const SideBarItem = ({ href, icon: Icon, children }: SideBarItemProps) => {
   return (
     <li className="m-2" key={href}>
       <Link href={href}>
-        <div
-          className={`flex items-center w-full p-4 rounded-lg bg-gray-300 dark:bg-gray-700 transition duration-75 group hover:bg-amber-100 dark:hover:bg-amber-700`}
-        >
-          <span
-            className={`flex-1 ml-2 text-left whitespace-nowrap ${
-              router.asPath === href && "font-bold"
-            }`}
+        <Tooltip title={<Typography fontSize={15}>{title}</Typography>}>
+          <div
+            className={`flex items-center w-full p-4 rounded-lg bg-gray-300 dark:bg-gray-700 transition duration-75 group hover:bg-amber-100 dark:hover:bg-amber-700`}
           >
-            {Icon && <Icon className="mr-2" color="black" />}
-          </span>
-        </div>
+            <span
+              className={`flex-1 ml-2 text-left whitespace-nowrap ${
+                router.asPath === href && "font-bold"
+              }`}
+            >
+              {Icon && <Icon className="mr-2" color="black" />}
+            </span>
+          </div>
+        </Tooltip>
       </Link>
     </li>
   );
