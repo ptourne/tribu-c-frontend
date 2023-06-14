@@ -29,3 +29,9 @@ export interface Tarea {
   estado: number;
   prioridad: number;
 }
+
+export interface Producto {
+  id: string
+  nombre: string
+  version: number;
+}
