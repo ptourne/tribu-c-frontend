@@ -154,8 +154,8 @@ function ProjectSideBarDetailsPane({ project }: ProjectSideBarProps) {
     <>
       <div>
         <form className="d-flex flex-col">
-          <div className="d-flex justify-content-between align-items-center flex-row m-3 p-2">
-            <div className="w-10 fs-2 text-body-secondary flex-shrink-0">
+          <div className="d-flex justify-content-between align-items-center flex-row mt-1 mb-2">
+            <div className="w-10 fs-2 text-body-secondary flex-shrink-0 ml-2 mr-2">
               {project && project.id}
             </div>
             <div className="">
@@ -167,7 +167,7 @@ function ProjectSideBarDetailsPane({ project }: ProjectSideBarProps) {
                 onChange={handleNameChange}
               />
             </div>
-            <div className="d-flex align-items-center justify-content-center flex-shrink-0 w-10">
+            <div className="d-flex align-items-center justify-content-center flex-shrink-0 w-10 ml-3 mr-3">
               {nameSaved || (
                 <Tooltip
                   title={
@@ -193,102 +193,104 @@ function ProjectSideBarDetailsPane({ project }: ProjectSideBarProps) {
               <MdDelete />
             </button>
           </div>
-          <div className="d-flex justify-content-between align-items-center flex-row p-2">
-            <div className="flex-grow-1 d-flex justify-content-between align-items-center flex-row p-2">
-              <label htmlFor="state" className="col-md-3 form-label">
-                Estado
-              </label>
-              <div className="col-md-6">
-                <select
-                  className="form-select border-0 border-bottom rounded-0 p-0"
-                  id="inputGroupSelect01"
-                  value={state}
-                  onChange={handleStateChange}
-                >
-                  <option value="En curso">En curso</option>
-                  <option value="Finalizado">Finalizado</option>
-                </select>
+          <div className="d-flex justify-content-between flex-col mt-1 mb-3">
+            <div className="d-flex justify-content-between align-items-center flex-row">
+              <div className="flex-grow-1 d-flex justify-content-between align-items-center flex-row">
+                <label htmlFor="state" className="col-md-6 form-label">
+                  Estado
+                </label>
+                <div className="col-md-6">
+                  <select
+                    className="form-select border-0 border-bottom rounded-0 p-0"
+                    id="inputGroupSelect01"
+                    value={state}
+                    onChange={handleStateChange}
+                  >
+                    <option value="En curso">En curso</option>
+                    <option value="Finalizado">Finalizado</option>
+                  </select>
+                </div>
+              </div>
+              <div className="d-flex align-items-center justify-content-center flex-shrink-0 w-10">
+                {stateSaved || (
+                  <Tooltip
+                    title={
+                      <Typography fontSize={15}>Cambios sin guardar</Typography>
+                    }
+                    placement="top"
+                  >
+                    <div className="d-flex align-items-center justify-content-center text-warning">
+                      <IoIosWarning
+                        style={{ flex: "1", height: "100%", fontSize: "2rem" }}
+                      />
+                    </div>
+                  </Tooltip>
+                )}
               </div>
             </div>
-            <div className="d-flex align-items-center justify-content-center flex-shrink-0 w-10">
-              {stateSaved || (
-                <Tooltip
-                  title={
-                    <Typography fontSize={15}>Cambios sin guardar</Typography>
-                  }
-                  placement="top"
-                >
-                  <div className="d-flex align-items-center justify-content-center text-warning">
-                    <IoIosWarning
-                      style={{ flex: "1", height: "100%", fontSize: "2rem" }}
-                    />
-                  </div>
-                </Tooltip>
-              )}
-            </div>
-          </div>
-          <div className="d-flex justify-content-between align-items-center flex-row p-2">
-            <div className="flex-grow-1 d-flex justify-content-between align-items-center flex-row p-2">
-              <label htmlFor="startDate" className="col-md-3 form-label">
-                Fecha de Inicio
-              </label>
-              <div className="col-md-6">
-                <DatePicker
-                  selected={startDate}
-                  onChange={handleStartDateChange}
-                  className="form-control border-0 border-bottom rounded-0 p-0"
-                  dateFormat="dd/MM/yyyy"
-                  placeholderText="Seleccione una fecha"
-                />
+            <div className="d-flex justify-content-between align-items-center flex-row">
+              <div className="flex-grow-1 d-flex justify-content-between align-items-center flex-row">
+                <label htmlFor="startDate" className="col-md-6 form-label">
+                  Fecha de Inicio
+                </label>
+                <div className="col-md-6">
+                  <DatePicker
+                    selected={startDate}
+                    onChange={handleStartDateChange}
+                    className="form-control border-0 border-bottom rounded-0 p-0"
+                    dateFormat="dd/MM/yyyy"
+                    placeholderText="Seleccione una fecha"
+                  />
+                </div>
+              </div>
+              <div className="d-flex align-items-center justify-content-center flex-shrink-0 w-10">
+                {startDateSaved || (
+                  <Tooltip
+                    title={
+                      <Typography fontSize={15}>Cambios sin guardar</Typography>
+                    }
+                    placement="top"
+                  >
+                    <div className="d-flex align-items-center justify-content-center text-warning">
+                      <IoIosWarning
+                        style={{ flex: "1", height: "100%", fontSize: "2rem" }}
+                      />
+                    </div>
+                  </Tooltip>
+                )}
               </div>
             </div>
-            <div className="d-flex align-items-center justify-content-center flex-shrink-0 w-10">
-              {startDateSaved || (
-                <Tooltip
-                  title={
-                    <Typography fontSize={15}>Cambios sin guardar</Typography>
-                  }
-                  placement="top"
-                >
-                  <div className="d-flex align-items-center justify-content-center text-warning">
-                    <IoIosWarning
-                      style={{ flex: "1", height: "100%", fontSize: "2rem" }}
-                    />
-                  </div>
-                </Tooltip>
-              )}
-            </div>
-          </div>
-          <div className="d-flex justify-content-between align-items-center flex-row p-2">
-            <div className="flex-grow-1 d-flex justify-content-between align-items-center flex-row p-2">
-              <label htmlFor="finishDate" className="col-md-3 form-label">
-                Fecha de Finalización
-              </label>
-              <div className="col-md-6">
-                <DatePicker
-                  selected={finishDate}
-                  onChange={handleFinishDateChange}
-                  className="form-control border-0 border-bottom rounded-0 p-0"
-                  dateFormat="dd/MM/yyyy"
-                  placeholderText="Seleccione una fecha"
-                />
+            <div className="d-flex justify-content-between align-items-center flex-row">
+              <div className="flex-grow-1 d-flex justify-content-between align-items-center flex-row">
+                <label htmlFor="finishDate" className="col-md-6 form-label">
+                  Fecha de Finalización
+                </label>
+                <div className="col-md-6">
+                  <DatePicker
+                    selected={finishDate}
+                    onChange={handleFinishDateChange}
+                    className="form-control border-0 border-bottom rounded-0 p-0"
+                    dateFormat="dd/MM/yyyy"
+                    placeholderText="Seleccione una fecha"
+                  />
+                </div>
               </div>
-            </div>
-            <div className="d-flex align-items-center justify-content-center flex-shrink-0 w-10">
-              {finishDateSaved || (
-                <Tooltip
-                  title={
-                    <Typography fontSize={15}>Cambios sin guardar</Typography>
-                  }
-                  placement="top"
-                >
-                  <div className="d-flex align-items-center justify-content-center text-warning">
-                    <IoIosWarning
-                      style={{ flex: "1", height: "100%", fontSize: "2rem" }}
-                    />
-                  </div>
-                </Tooltip>
-              )}
+              <div className="d-flex align-items-center justify-content-center flex-shrink-0 w-10">
+                {finishDateSaved || (
+                  <Tooltip
+                    title={
+                      <Typography fontSize={15}>Cambios sin guardar</Typography>
+                    }
+                    placement="top"
+                  >
+                    <div className="d-flex align-items-center justify-content-center text-warning">
+                      <IoIosWarning
+                        style={{ flex: "1", height: "100%", fontSize: "2rem" }}
+                      />
+                    </div>
+                  </Tooltip>
+                )}
+              </div>
             </div>
           </div>
           <button
