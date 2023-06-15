@@ -15,7 +15,12 @@ interface ProjectSideBarProps {
   project: Proyecto | undefined;
 }
 
+const ADD = 0;
+const EDIT = 1;
+
 function ProjectSideBarDetailsPane({ project }: ProjectSideBarProps) {
+  const [mode, setMode] = useState(EDIT);
+
   const [pendingChanges, setPendingChanges] = useState(false);
   const [name, setName] = useState("");
   const [nameSaved, setNameSaved] = useState(true);
@@ -29,38 +34,18 @@ function ProjectSideBarDetailsPane({ project }: ProjectSideBarProps) {
 
   useEffect(() => {
     if (project) {
+      setMode(EDIT);
       setName(project.nombre || "");
       setState(project.estado || "");
       setStartDate(project.fecha_inicio || null);
       setFinishDate(project.fecha_fin || null);
+    } else {
+      setMode(ADD);
+      setName("Nuevo Proyecto");
+      setState("En curso");
+      setStartDate(null);
+      setFinishDate(null);
     }
-  }, [project]);
-
-  const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setName(event.target.value);
-    setNameSaved(false);
-    setPendingChanges(true);
-  };
-
-  const handleStateChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setState(event.target.value);
-    setStateSaved(false);
-    setPendingChanges(true);
-  };
-
-  const handleStartDateChange = (date: Date) => {
-    setStartDate(date);
-    setStartDateSaved(false);
-    setPendingChanges(true);
-  };
-
-  const handleFinishDateChange = (date: Date) => {
-    setFinishDate(date);
-    setFinishDateSaved(false);
-    setPendingChanges(true);
-  };
-
-  useEffect(() => {
     if (pendingChanges) {
       toast.warning(
         project
@@ -73,18 +58,36 @@ function ProjectSideBarDetailsPane({ project }: ProjectSideBarProps) {
         }
       );
     }
-    if (project) {
-      setName(project.nombre || "");
-      setState(project.estado || "");
-      setStartDate(project.fecha_inicio || null);
-      setFinishDate(project.fecha_fin || null);
-      setNameSaved(true);
-      setStateSaved(true);
-      setStartDateSaved(true);
-      setFinishDateSaved(true);
-      setPendingChanges(false);
-    }
+    setNameSaved(true);
+    setStateSaved(true);
+    setStartDateSaved(true);
+    setFinishDateSaved(true);
+    setPendingChanges(false);
   }, [project]);
+
+  const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setName(event.target.value);
+    if (mode === EDIT) setNameSaved(false);
+    setPendingChanges(true);
+  };
+
+  const handleStateChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setState(event.target.value);
+    if (mode === EDIT) setStateSaved(false);
+    setPendingChanges(true);
+  };
+
+  const handleStartDateChange = (date: Date) => {
+    setStartDate(date);
+    if (mode === EDIT) setStartDateSaved(false);
+    setPendingChanges(true);
+  };
+
+  const handleFinishDateChange = (date: Date) => {
+    setFinishDate(date);
+    if (mode === EDIT) setFinishDateSaved(false);
+    setPendingChanges(true);
+  };
 
   const handleSave = () => {
     // Create an object with the updated values
@@ -98,22 +101,21 @@ function ProjectSideBarDetailsPane({ project }: ProjectSideBarProps) {
     // ...
 
     if (true /*guardados correctamente*/) {
-      toast.success("Cambios guardados correctamente!", {
+      toast.success(mode === EDIT ? "Cambios guardados correctamente!" : "Proyecto guardado correctamente!", {
         position: "top-right",
         autoClose: 2000,
         hideProgressBar: true,
       });
-
-      if (project) {
-        setName(project.nombre || "");
-        setState(project.estado || "");
-        setStartDate(project.fecha_inicio || null);
-        setFinishDate(project.fecha_fin || null);
-        setNameSaved(true);
-        setStateSaved(true);
-        setStartDateSaved(true);
-        setFinishDateSaved(true);
-        setPendingChanges(false);
+      setNameSaved(true);
+      setStateSaved(true);
+      setStartDateSaved(true);
+      setFinishDateSaved(true);
+      setPendingChanges(false);
+      if (mode === ADD) {
+        setName("Nuevo Proyecto");
+        setState("En curso");
+        setStartDate(null);
+        setFinishDate(null);
       }
     }
   };
@@ -183,6 +185,7 @@ function ProjectSideBarDetailsPane({ project }: ProjectSideBarProps) {
                 </Tooltip>
               )}
             </div>
+            { mode === EDIT &&
             <button
               type="button"
               className="btn btn-lg btn-outline-danger d-flex align-items-center justify-content-center"
@@ -191,7 +194,7 @@ function ProjectSideBarDetailsPane({ project }: ProjectSideBarProps) {
               }}
             >
               <MdDelete />
-            </button>
+            </button>}
           </div>
           <div className="d-flex justify-content-between flex-col mt-1 mb-3">
             <div className="d-flex justify-content-between align-items-center flex-row">
@@ -296,11 +299,11 @@ function ProjectSideBarDetailsPane({ project }: ProjectSideBarProps) {
           <button
             type="button"
             className={
-              pendingChanges ? "btn btn-primary" : "btn btn-primary disabled"
+              (pendingChanges && name && state && startDate) ? "btn btn-primary" : "btn btn-primary disabled"
             }
             onClick={handleSave}
           >
-            Guardar cambios
+            { mode === EDIT ? "Guardar cambios" : "Guardar"}
           </button>
         </form>
       </div>

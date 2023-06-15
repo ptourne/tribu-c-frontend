@@ -2,6 +2,8 @@ import { Inter } from "next/font/google";
 import ProjectInfoCard from "@/components/projectInfoCard";
 import ProjectSideBar from "@/components/projectSideBar";
 import React, { Fragment, useState, useEffect } from "react";
+import { MdAdd } from "react-icons/md";
+import { Typography, Tooltip } from "@mui/material";
 import { Proyecto } from "./types";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -48,6 +50,11 @@ export default function Proyectos() {
     setProjects(projects);
   };
 
+  const addProject = () => {
+    setSelectedProject(undefined);
+    setSelectedIndex(-1);
+  }
+
   useEffect(() => {
     getProjects();
   }, []);
@@ -59,7 +66,20 @@ export default function Proyectos() {
   return (
     <div className="flex flex-row h-full">
       <div className="flex flex-fill col-md-1 h-full flex-col p-4 bg-white w-30">
-        <h1 className="text-black mb-5 font-bold">Proyectos</h1>
+        <div className="flex">
+          <h1 className="text-black mb-5 font-bold">Proyectos</h1>
+          <Tooltip title={<Typography fontSize={15}>Nuevo Proyecto</Typography>} placement="right">
+            <button
+              type="button"
+              className="btn btn-outline-primary d-flex align-items-center justify-content-center mb-5 ml-4 space-x-4"
+              onClick={() => {
+                addProject();
+              }}
+            >
+              <MdAdd />
+            </button>
+          </Tooltip> 
+        </div>
         <div
           className={
             projects.length > 0
@@ -82,7 +102,7 @@ export default function Proyectos() {
         </div>
       </div>
       <div className="col-md-6 flex flex-col h-full">
-        {selectedProject && <ProjectSideBar project={selectedProject} />}
+        {<ProjectSideBar project={selectedProject} />}
       </div>
     </div>
   );
