@@ -299,7 +299,7 @@ function ProjectSideBarDetailsPane({ project }: ProjectSideBarProps) {
           <button
             type="button"
             className={
-              pendingChanges ? "btn btn-primary" : "btn btn-primary disabled"
+              (pendingChanges && name && state && startDate) ? "btn btn-primary" : "btn btn-primary disabled"
             }
             onClick={handleSave}
           >
