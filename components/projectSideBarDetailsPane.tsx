@@ -111,6 +111,12 @@ function ProjectSideBarDetailsPane({ project }: ProjectSideBarProps) {
       setStartDateSaved(true);
       setFinishDateSaved(true);
       setPendingChanges(false);
+      if (mode === ADD) {
+        setName("Nuevo Proyecto");
+        setState("En curso");
+        setStartDate(null);
+        setFinishDate(null);
+      }
     }
   };
 

@@ -42,19 +42,21 @@ function ProjectSideBar({ project }: ProjectSideBarProps) {
             Detalles
           </a>
         </li>
-        <li
-          className="nav-item"
-          onClick={() => {
-            setSelectedTab(1);
-          }}
-        >
-          <a
-            className={selectedTab === 1 ? "nav-link active" : "nav-link"}
-            href="#"
+        { mode === EDIT &&
+          <li
+            className="nav-item"
+            onClick={() => {
+              setSelectedTab(1);
+            }}
           >
-            Equipo
-          </a>
-        </li>
+            <a
+              className={selectedTab === 1 ? "nav-link active" : "nav-link"}
+              href="#"
+            >
+              Equipo
+            </a>
+          </li>
+        }
       </ul>
       <div className="tab-content" id="myTabContent">
         <div
