@@ -89,10 +89,6 @@ function ProjectSideBarDetailsPane({ project }: ProjectSideBarProps) {
     setPendingChanges(true);
   };
 
-  useEffect(() => {
-    
-  }, [project]);
-
   const handleSave = () => {
     // Create an object with the updated values
     const updatedProject = {
@@ -105,23 +101,16 @@ function ProjectSideBarDetailsPane({ project }: ProjectSideBarProps) {
     // ...
 
     if (true /*guardados correctamente*/) {
-      toast.success("Cambios guardados correctamente!", {
+      toast.success(mode === EDIT ? "Cambios guardados correctamente!" : "Proyecto guardado correctamente!", {
         position: "top-right",
         autoClose: 2000,
         hideProgressBar: true,
       });
-
-      if (project) {
-        setName(project.nombre || "");
-        setState(project.estado || "");
-        setStartDate(project.fecha_inicio || null);
-        setFinishDate(project.fecha_fin || null);
-        setNameSaved(true);
-        setStateSaved(true);
-        setStartDateSaved(true);
-        setFinishDateSaved(true);
-        setPendingChanges(false);
-      }
+      setNameSaved(true);
+      setStateSaved(true);
+      setStartDateSaved(true);
+      setFinishDateSaved(true);
+      setPendingChanges(false);
     }
   };
 
