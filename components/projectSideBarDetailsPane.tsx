@@ -21,6 +21,7 @@ const EDIT = 1;
 function ProjectSideBarDetailsPane({ project }: ProjectSideBarProps) {
   const [mode, setMode] = useState(EDIT);
 
+  const [lastProject, setLastProject] = useState<Proyecto | undefined>(undefined);
   const [pendingChanges, setPendingChanges] = useState(false);
   const [name, setName] = useState("");
   const [nameSaved, setNameSaved] = useState(true);
@@ -39,6 +40,7 @@ function ProjectSideBarDetailsPane({ project }: ProjectSideBarProps) {
       setState(project.estado || "");
       setStartDate(project.fecha_inicio || null);
       setFinishDate(project.fecha_fin_estimada || null);
+      if (!lastProject) setLastProject(project)
     } else {
       setMode(ADD);
       setName("Nuevo Proyecto");
@@ -48,8 +50,8 @@ function ProjectSideBarDetailsPane({ project }: ProjectSideBarProps) {
     }
     if (pendingChanges) {
       toast.warning(
-        project
-          ? "Se descartaron los cambios de " + project.nombre
+        project && lastProject
+          ? "Se descartaron los cambios de " + lastProject.nombre
           : "Se descartaron los cambios",
         {
           position: "top-right",
@@ -58,6 +60,7 @@ function ProjectSideBarDetailsPane({ project }: ProjectSideBarProps) {
         }
       );
     }
+    setLastProject(project);
     setNameSaved(true);
     setStateSaved(true);
     setStartDateSaved(true);
