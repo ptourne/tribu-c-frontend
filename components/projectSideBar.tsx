@@ -6,7 +6,11 @@ interface ProjectSideBarProps {
   project: Proyecto | undefined;
 }
 
+const ADD = 0;
+const EDIT = 1;
+
 function ProjectSideBar({ project }: ProjectSideBarProps) {
+  const [mode, setMode] = useState(EDIT);
   const [selectedTab, setSelectedTab] = useState(0);
   const [selectedProject, setSelectedProject] = useState<Proyecto | undefined>(
     undefined
@@ -14,6 +18,11 @@ function ProjectSideBar({ project }: ProjectSideBarProps) {
 
   useEffect(() => {
     setSelectedProject(project);
+    if (!project) {
+      setMode(ADD);
+    } else {
+      setMode(EDIT);
+    }
   }, [project]);
 
   return (
@@ -73,13 +82,14 @@ function ProjectSideBar({ project }: ProjectSideBarProps) {
           "2"
         </div>
       </div>
+      { mode === EDIT &&
       <button
         type="button"
         className="btn btn-primary mt-auto p-2"
         /*onClick={handleSave}*/
       >
         Ver Tareas
-      </button>
+      </button>}
     </div>
   );
 }

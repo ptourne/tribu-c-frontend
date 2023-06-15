@@ -51,7 +51,8 @@ export default function Proyectos() {
   };
 
   const addProject = () => {
-
+    setSelectedProject(undefined);
+    setSelectedIndex(-1);
   }
 
   useEffect(() => {
@@ -101,7 +102,7 @@ export default function Proyectos() {
         </div>
       </div>
       <div className="col-md-6 flex flex-col h-full">
-        {selectedProject && <ProjectSideBar project={selectedProject} />}
+        {<ProjectSideBar project={selectedProject} />}
       </div>
     </div>
   );
