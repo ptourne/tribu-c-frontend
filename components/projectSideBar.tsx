@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import ProjectSideBarDetailsPane from "./projectSideBarDetailsPane";
+import { useRouter } from 'next/router'
 import { Proyecto } from "../pages/types";
 
 interface ProjectSideBarProps {
@@ -10,6 +11,7 @@ const ADD = 0;
 const EDIT = 1;
 
 function ProjectSideBar({ project }: ProjectSideBarProps) {
+  const router = useRouter();
   const [mode, setMode] = useState(EDIT);
   const [selectedTab, setSelectedTab] = useState(0);
   const [selectedProject, setSelectedProject] = useState<Proyecto | undefined>(
@@ -24,6 +26,13 @@ function ProjectSideBar({ project }: ProjectSideBarProps) {
       setMode(EDIT);
     }
   }, [project]);
+
+  const getTasks = () => {
+    router.push({
+      pathname: '/tareas',
+      query: { projectId: selectedProject?.codigo }
+    });
+  }
 
   return (
     <div className="d-flex flex-column flex-fill justify-content-start border rounded-3 m-3 p-3">
@@ -88,7 +97,7 @@ function ProjectSideBar({ project }: ProjectSideBarProps) {
       <button
         type="button"
         className="btn btn-primary mt-auto p-2"
-        /*onClick={handleSave}*/
+        onClick={getTasks}
       >
         Ver Tareas
       </button>}
