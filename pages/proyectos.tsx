@@ -6,6 +6,7 @@ import ProjectSideBar from "@/components/projectSideBar";
 import React, { Fragment, useState, useEffect } from "react";
 import { MdAdd } from "react-icons/md";
 import { Typography, Tooltip } from "@mui/material";
+import CircularProgress from '@mui/material/CircularProgress';
 import { Proyecto } from "./types";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -105,23 +106,30 @@ export default function Proyectos() {
         </div>
         <div
           className={
-            projects.length > 0
+            loading ? "flex justify-content-center align-items-center flex-column"
+            : (projects.length > 0
               ? "flex h-full flex-col space-y-4 text-black"
-              : "text-black"
+              : "text-black")
           }
         >
-          {projects.length > 0
-            ? projects.map((project, index) => (
-                <ProjectInfoCard
-                  key={index}
-                  project={project}
-                  onClick={() => {
-                    setSelectedIndex(index);
-                  }}
-                  selected={selectedIndex === index}
-                />
-              ))
-            : "Aún no hay proyectos creados. Seleccione agregar para crear uno nuevo"}
+          {loading 
+            ? <>
+                <CircularProgress></CircularProgress>
+                <p className="mt-3">Cargando Proyectos</p>
+              </>
+            : (projects.length > 0
+                ? projects.map((project, index) => (
+                    <ProjectInfoCard
+                      key={index}
+                      project={project}
+                      onClick={() => {
+                        setSelectedIndex(index);
+                      }}
+                      selected={selectedIndex === index}
+                    />
+                  ))
+                : "Aún no hay proyectos creados. Seleccione agregar para crear uno nuevo")
+          }
         </div>
       </div>
       <div className="col-md-6 flex flex-col h-full">
