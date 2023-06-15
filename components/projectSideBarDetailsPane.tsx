@@ -315,7 +315,7 @@ function ProjectSideBarDetailsPane({ project }: ProjectSideBarProps) {
           <p>
             ¿Estás seguro que quieres eliminar
             {project
-              ? 'el proyecto "' + project.nombre + '"'
+              ? ' el proyecto "' + project.nombre + '"'
               : " este proyecto"}
             ?
           </p>
