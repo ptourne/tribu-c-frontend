@@ -37,8 +37,8 @@ function ProjectSideBarDetailsPane({ project }: ProjectSideBarProps) {
       setMode(EDIT);
       setName(project.nombre || "");
       setState(project.estado || "");
-      setStartDate(project.fecha_inicio || null);
-      setFinishDate(project.fecha_fin || null);
+      //setStartDate(project.fecha_inicio || null);
+      //setFinishDate(project.fecha_fin_estimada || null);
     } else {
       setMode(ADD);
       setName("Nuevo Proyecto");
@@ -92,7 +92,7 @@ function ProjectSideBarDetailsPane({ project }: ProjectSideBarProps) {
   const handleSave = () => {
     // Create an object with the updated values
     const updatedProject = {
-      id: project?.id,
+      codigo: project?.codigo,
       nombre: name,
       estado: state,
     };
@@ -134,7 +134,7 @@ function ProjectSideBarDetailsPane({ project }: ProjectSideBarProps) {
         setName(project.nombre || "");
         setState(project.estado || "");
         setStartDate(project.fecha_inicio || null);
-        setFinishDate(project.fecha_fin || null);
+        setFinishDate(project.fecha_fin_estimada || null);
         setNameSaved(true);
         setStateSaved(true);
         setStartDateSaved(true);
@@ -158,7 +158,7 @@ function ProjectSideBarDetailsPane({ project }: ProjectSideBarProps) {
         <form className="d-flex flex-col">
           <div className="d-flex justify-content-between align-items-center flex-row mt-1 mb-2">
             <div className="w-10 fs-2 text-body-secondary flex-shrink-0 ml-2 mr-2">
-              {project && project.id}
+              {project && project.codigo}
             </div>
             <div className="">
               <input

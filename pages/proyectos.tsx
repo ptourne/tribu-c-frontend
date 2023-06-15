@@ -1,4 +1,6 @@
 import { Inter } from "next/font/google";
+import axios from 'axios'
+import { SERVER_NAME_PROYECTOS } from "../environments"
 import ProjectInfoCard from "@/components/projectInfoCard";
 import ProjectSideBar from "@/components/projectSideBar";
 import React, { Fragment, useState, useEffect } from "react";
@@ -9,7 +11,9 @@ import { Proyecto } from "./types";
 const inter = Inter({ subsets: ["latin"] });
 
 export default function Proyectos() {
+  const [loading, setLoading] = useState(true);
   const [projects, setProjects] = useState<Proyecto[]>([]);
+  const [getProjectsError, setGetProjectsError] = useState('')
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [selectedProject, setSelectedProject] = useState<Proyecto | undefined>(
     undefined
@@ -17,7 +21,7 @@ export default function Proyectos() {
 
   const getProjects = async () => {
     // Proyectos de prueba hasta que tengamos conexión con el back-end
-    const projects: Proyecto[] = [
+    /*const projects: Proyecto[] = [
       {
         id: "1",
         nombre: "Primer Proyecto",
@@ -45,9 +49,25 @@ export default function Proyectos() {
         horas_consumidas: 40,
         costo_proyecto: 150000,
       },
-    ];
+    ];*/
 
     setProjects(projects);
+    axios
+      .get(SERVER_NAME_PROYECTOS + 'projects')
+      .then((data) => {
+        if (data.data.ok) {
+          console.log(data.data);
+          setProjects(data.data.msg);
+          setLoading(false);
+        }
+      })
+      .catch((err) => {
+        if (err.response?.data?.msg) {
+          console.log(err.response.data.msg)
+        }
+        setLoading(false);
+        setGetProjectsError("Hubo un error al obtener los proyectos");
+      })
   };
 
   const addProject = () => {

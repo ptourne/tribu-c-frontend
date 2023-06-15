@@ -17,7 +17,7 @@ const ProjectInfoCard = ({ project, onClick, selected }: Props) => {
       onClick={onClick}
     >
       <div className="d-flex flex-row justify-content-start align-items-center">
-        <div className="p-2 h4">{project.id}</div>
+        <div className="p-2 h4">{project.codigo}</div>
         <div className="p-2 h4">{project.nombre}</div>
       </div>
       <div className="d-flex flex-row justify-content-start align-items-center">
