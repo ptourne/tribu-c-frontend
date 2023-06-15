@@ -37,8 +37,8 @@ function ProjectSideBarDetailsPane({ project }: ProjectSideBarProps) {
       setMode(EDIT);
       setName(project.nombre || "");
       setState(project.estado || "");
-      //setStartDate(project.fecha_inicio || null);
-      //setFinishDate(project.fecha_fin_estimada || null);
+      setStartDate(project.fecha_inicio || null);
+      setFinishDate(project.fecha_fin_estimada || null);
     } else {
       setMode(ADD);
       setName("Nuevo Proyecto");

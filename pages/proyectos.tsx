@@ -56,7 +56,10 @@ export default function Proyectos() {
       .get(SERVER_NAME_PROYECTOS + 'projects')
       .then((data) => {
         if (data.data.ok) {
-          console.log(data.data);
+          data.data.msg.forEach(project => {
+            project.fecha_inicio = new Date(project.fecha_inicio);
+            project.fecha_fin_estimada = new Date(project.fecha_fin_estimada);
+          });
           setProjects(data.data.msg);
           setLoading(false);
         }
