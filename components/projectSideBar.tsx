@@ -29,9 +29,7 @@ function ProjectSideBar({ project }: ProjectSideBarProps) {
 
   const getTasks = () => {
     router.push({
-      pathname: '/tareas',
-      query: { projectId: selectedProject?.codigo }
-    });
+      pathname: `/proyectos/${selectedProject?.codigo}/tareas`});
   }
 
   return (

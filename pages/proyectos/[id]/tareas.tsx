@@ -3,13 +3,13 @@ import { useRouter } from "next/router";
 import React, { useState, useEffect } from "react";
 import { Inter } from "next/font/google";
 import axios from "axios";
-import { SERVER_NAME_PROYECTOS } from "../environments";
+import { SERVER_NAME_PROYECTOS } from "../../../environments";
 import ProjectInfoCard from "@/components/projectInfoCard";
 import ProjectSideBar from "@/components/projectSideBar";
 import { MdAdd } from "react-icons/md";
 import { Typography, Tooltip } from "@mui/material";
 import CircularProgress from "@mui/material/CircularProgress";
-import { Proyecto } from "./types";
+import { Proyecto } from "../../types";
 import TaskInfoCard from "@/components/taskInfoCard";
 import TaskSideBar from "@/components/taskSideBar";
 
@@ -110,7 +110,7 @@ export default function Tareas() {
         <div className="flex">
           <h1 className="text-black mb-5 font-bold">Tareas</h1>
           <Tooltip
-            title={<Typography fontSize={15}>Nuevo Tarea</Typography>}
+            title={<Typography fontSize={15}>Nueva Tarea</Typography>}
             placement="right"
           >
             <button
@@ -150,7 +150,7 @@ export default function Tareas() {
               />
             ))
           ) : (
-            "Aún no hay proyectos creados. Seleccione agregar para crear uno nuevo"
+            "Aún no hay tareas creadas. Seleccione agregar para crear una nueva"
           )}
         </div>
       </div>
