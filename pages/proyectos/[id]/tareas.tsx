@@ -17,8 +17,7 @@ const inter = Inter({ subsets: ["latin"] });
 
 export default function Tareas() {
   const router = useRouter();
-  const { id } = router.query; // Access the task ID from the route parameter
-
+  const { id } = router.query;
   const [loading, setLoading] = useState(true);
   const [tasks, setTasks] = useState<Tarea[]>([]);
   const [getTasksError, setGetTasksError] = useState("");
@@ -39,6 +38,7 @@ export default function Tareas() {
 
   const getTasks = async () => {
     // Tareas de prueba hasta que tengamos conexión con el back-end
+    /*
     const tasks: Tarea[] = [
       {
         id: "1",
@@ -68,28 +68,33 @@ export default function Tareas() {
 
     setTasks(tasks);
     setLoading(false);
-    /*
+    */
+
     axios
-      .get(SERVER_NAME_PROYECTOS + "tasks")
+      .get(SERVER_NAME_PROYECTOS + "projects/" + id?.toString() + "/tasks")
       .then((data) => {
         if (data.data.ok) {
-          data.data.msg.forEach((task: Tarea) => {
-            task.fecha_inicio = new Date(task.fecha_inicio);
-            task.fecha_fin_estimada = new Date(task.fecha_fin_estimada);
-          });
+          data.data.msg.forEach((task: Tarea) => {});
           setTasks(data.data.msg);
           setLoading(false);
         }
       })
       .catch((err) => {
-        if (err.response?.data?.msg) {
-          console.log(err.response.data.msg);
+        if (id) {
+          if (err.response?.data?.msg) {
+            console.log(err.response.data.msg);
+          }
+          setLoading(false);
+          setGetTasksError("Hubo un error al obtener las tareas");
         }
-        setLoading(false);
-        setGetTasksError("Hubo un error al obtener los proyectos");
       });
-      */
   };
+
+  useEffect(() => {
+    if (id) {
+      getTasks();
+    }
+  }, [id]);
 
   const addTask = () => {
     setSelectedTask(undefined);
