@@ -38,14 +38,14 @@ const TaskInfoCard = ({ task, onClick, selected }: Props) => {
   return (
     <div
       className={
-        "d-flex flex-column justify-content-start text-primary-emphasis border bg-primary-subtle rounded-3 " +
+        "d-flex flex-column justify-content-start text-primary-emphasis border bg-primary-subtle rounded-3 my-1 " +
         (selected ? "border-primary border-3" : "border-primary-subtle")
       }
       onClick={onClick}
     >
       <div className="d-flex flex-row justify-content-between align-items-center pt-1 pb-1 pl-5 pr-1">
         <div className="col-md-1 flex-fill">{task.id}</div>
-        <div className="col-md-12 flex-fill">{task.titulo}</div>
+        <div className="col-md-12 ml-2 flex-fill">{task.titulo}</div>
         <div className="ms-3 col-md-12 flex flex-fill">
           <div className="d-flex flex-row flex-fill justify-content-between align-items-center">
             <button
@@ -59,7 +59,7 @@ const TaskInfoCard = ({ task, onClick, selected }: Props) => {
               }}
               type="button"
             >
-              No in
+              No iniciada
             </button>
             <button
               className={
