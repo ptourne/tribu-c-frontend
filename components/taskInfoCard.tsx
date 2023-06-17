@@ -33,6 +33,8 @@ const TaskInfoCard = ({ task, onClick, selected }: Props) => {
     setSelectedState(newState);
   };
 
+  const SELECTOR_STYLE = "col-md-1 flex-fill p-0 m-0 btn";
+
   return (
     <div
       className={
@@ -48,9 +50,9 @@ const TaskInfoCard = ({ task, onClick, selected }: Props) => {
           <div className="d-flex flex-row flex-fill justify-content-between align-items-center">
             <button
               className={
-                selectedState == 0
-                  ? "col-md-1 flex-fill p-0 ml-1 mr-1 btn btn-primary"
-                  : "col-md-1 flex-fill p-0 ml-1 mr-1 btn-outline-primary"
+                SELECTOR_STYLE +
+                " rounded-end-0" +
+                (selectedState == 0 ? " btn-primary" : " btn-outline-primary")
               }
               onClick={() => {
                 setSelectedState(0);
@@ -61,9 +63,9 @@ const TaskInfoCard = ({ task, onClick, selected }: Props) => {
             </button>
             <button
               className={
-                selectedState == 1
-                  ? "col-md-1 flex-fill p-0 ml-1 mr-1 btn btn-primary"
-                  : "col-md-1 flex-fill p-0 ml-1 mr-1 btn-outline-primary"
+                SELECTOR_STYLE +
+                " rounded-0 border-start-0 border-end-0" +
+                (selectedState == 1 ? " btn-primary" : " btn-outline-primary")
               }
               onClick={() => {
                 setSelectedState(1);
@@ -74,9 +76,9 @@ const TaskInfoCard = ({ task, onClick, selected }: Props) => {
             </button>
             <button
               className={
-                selectedState == 2
-                  ? "col-md-1 flex-fill p-0 ml-1 mr-1 btn btn-primary"
-                  : "col-md-1 flex-fill p-0 ml-1 mr-1 btn-outline-primary"
+                SELECTOR_STYLE +
+                " rounded-start-0" +
+                (selectedState == 2 ? " btn-primary" : " btn-outline-primary")
               }
               onClick={() => {
                 setSelectedState(2);
