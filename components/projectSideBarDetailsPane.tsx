@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import axios from 'axios'
 import { Proyecto } from "../pages/types";
 import { AiOutlineCheck, AiOutlineCheckCircle } from "react-icons/ai";
 import { IoIosWarning } from "react-icons/io";
@@ -10,6 +11,7 @@ import { Typography, Tooltip } from "@mui/material";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { Button, Modal } from "react-bootstrap";
+import { SERVER_NAME_PROYECTOS } from "@/environments";
 
 interface ProjectSideBarProps {
   project: Proyecto | undefined;
@@ -94,34 +96,65 @@ function ProjectSideBarDetailsPane({ project }: ProjectSideBarProps) {
 
   const handleSave = () => {
     // Create an object with the updated values
-    const updatedProject = {
+    const projectToSave: Proyecto = {
       codigo: project?.codigo,
       nombre: name,
       estado: state,
     };
 
     // Make an API request to save the changes
-    // ...
 
-    if (true /*guardados correctamente*/) {
-      toast.success(mode === EDIT ? "Cambios guardados correctamente!" : "Proyecto guardado correctamente!", {
-        position: "top-right",
-        autoClose: 2000,
-        hideProgressBar: true,
-      });
-      setNameSaved(true);
-      setStateSaved(true);
-      setStartDateSaved(true);
-      setFinishDateSaved(true);
-      setPendingChanges(false);
-      if (mode === ADD) {
+    if (mode === ADD) saveProject(projectToSave);
+    else updateProject(projectToSave);
+  };
+
+  const saveProject = (projectToSave: Proyecto) => {
+    axios
+      .post(SERVER_NAME_PROYECTOS + 'projects', projectToSave)
+      .then(() => {
+        toast.success("Proyecto guardado correctamente!", {
+          position: "top-right",
+          autoClose: 2000,
+          hideProgressBar: true,
+        });
+        setNameSaved(true);
+        setStateSaved(true);
+        setStartDateSaved(true);
+        setFinishDateSaved(true);
+        setPendingChanges(false);
+
         setName("Nuevo Proyecto");
         setState("En curso");
         setStartDate(null);
         setFinishDate(null);
-      }
-    }
-  };
+        
+      })
+      .catch((e) => {
+        /*if (e.response?.data?.msg) return setActionError('Error saving configuration: ' + e.response.data.msg)
+        else return setActionError('Error saving configuration')*/
+      })
+  }
+
+  const updateProject = (projectToSave: Proyecto) => {
+    axios
+      .put(SERVER_NAME_PROYECTOS + 'admin/save-price-rules', projectToSave)
+      .then(() => {
+        toast.success("Cambios guardados correctamente!", {
+          position: "top-right",
+          autoClose: 2000,
+          hideProgressBar: true,
+        });
+        setNameSaved(true);
+        setStateSaved(true);
+        setStartDateSaved(true);
+        setFinishDateSaved(true);
+        setPendingChanges(false);
+      })
+      .catch((e) => {
+        /*if (e.response?.data?.msg) return setActionError('Error saving configuration: ' + e.response.data.msg)
+        else return setActionError('Error saving configuration')*/
+      })
+  }
 
   const handleDeleteProject = () => {
     //Llamar API
