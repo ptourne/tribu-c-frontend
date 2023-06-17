@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 import { Tarea } from "@/pages/types";
-import SwitchSelector from "react-switch-selector";
+import { Button } from "react-bootstrap";
 
 interface Props {
   task: Tarea;
@@ -8,32 +8,30 @@ interface Props {
   selected: boolean;
 }
 
-const validStates = [
-  {
-    label: <span>No iniciada</span>,
-    value: 0,
-    selectedBackgroundColor: "#0097e6",
-  },
-  {
-    label: <span>Iniciada</span>,
-    value: 1,
-    selectedBackgroundColor: "#fbc531",
-  },
-  {
-    label: <span>Terminada</span>,
-    value: 2,
-    selectedBackgroundColor: "#fbc531",
-  },
-];
-
 const TaskInfoCard = ({ task, onClick, selected }: Props) => {
+  const validStates = [
+    {
+      label: <span>No iniciada</span>,
+      value: 0,
+      selectedBackgroundColor: "#0097e6",
+    },
+    {
+      label: <span>Iniciada</span>,
+      value: 1,
+      selectedBackgroundColor: "#fbc531",
+    },
+    {
+      label: <span>Terminada</span>,
+      value: 2,
+      selectedBackgroundColor: "#fbc531",
+    },
+  ];
+
+  const [selectedState, setSelectedState] = useState(task.estado);
   const onStateChange = (newState: number) => {
     console.log(newState);
+    setSelectedState(newState);
   };
-
-  const initialSelectedIndex = validStates.findIndex(
-    ({ value }) => value === task.estado
-  );
 
   return (
     <div
@@ -47,14 +45,47 @@ const TaskInfoCard = ({ task, onClick, selected }: Props) => {
         <div className="col-md-1 flex-fill">{task.id}</div>
         <div className="col-md-12 flex-fill">{task.titulo}</div>
         <div className="ms-3 col-md-12 flex flex-fill">
-          <SwitchSelector
-            onChange={onStateChange}
-            options={validStates}
-            optionBorderRadius={5}
-            wrapperBorderRadius={7}
-            selectionIndicatorMargin={1}
-            initialSelectedIndex={initialSelectedIndex}
-          />
+          <div className="d-flex flex-row flex-fill justify-content-between align-items-center">
+            <button
+              className={
+                selectedState == 0
+                  ? "col-md-1 flex-fill p-0 ml-1 mr-1 btn btn-primary"
+                  : "col-md-1 flex-fill p-0 ml-1 mr-1 btn-outline-primary"
+              }
+              onClick={() => {
+                setSelectedState(0);
+              }}
+              type="button"
+            >
+              No in
+            </button>
+            <button
+              className={
+                selectedState == 1
+                  ? "col-md-1 flex-fill p-0 ml-1 mr-1 btn btn-primary"
+                  : "col-md-1 flex-fill p-0 ml-1 mr-1 btn-outline-primary"
+              }
+              onClick={() => {
+                setSelectedState(1);
+              }}
+              type="button"
+            >
+              Iniciada
+            </button>
+            <button
+              className={
+                selectedState == 2
+                  ? "col-md-1 flex-fill p-0 ml-1 mr-1 btn btn-primary"
+                  : "col-md-1 flex-fill p-0 ml-1 mr-1 btn-outline-primary"
+              }
+              onClick={() => {
+                setSelectedState(2);
+              }}
+              type="button"
+            >
+              Terminada
+            </button>
+          </div>
         </div>
       </div>
     </div>
