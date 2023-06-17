@@ -45,7 +45,7 @@ export default function Tareas() {
         titulo: "Primer Tarea",
         descripcion: "Descripción de Primer Tarea",
         tiempo_estimado_fin: 1,
-        estado: "En curso",
+        estado: 0,
         horas_acumuladas: 10,
       },
       {
@@ -53,7 +53,7 @@ export default function Tareas() {
         titulo: "Segundo Tarea",
         descripcion: "Descripción de Segundo Tarea",
         tiempo_estimado_fin: 1,
-        estado: "En curso",
+        estado: 0,
         horas_acumuladas: 20,
       },
       {
@@ -61,7 +61,7 @@ export default function Tareas() {
         titulo: "Tercer Tarea",
         descripcion: "Descripción de Tercer Tarea",
         tiempo_estimado_fin: 1,
-        estado: "Finalizado",
+        estado: 1,
         horas_acumuladas: 30,
       },
     ];
@@ -157,13 +157,6 @@ export default function Tareas() {
       <div className="col-md-6 flex flex-col h-full">
         {<TaskSideBar task={selectedTask} />}
       </div>
-    </div>
-  );
-
-  return (
-    <div>
-      <h1>Tasks for Task {id}</h1>
-      {/* Render the tasks */}
     </div>
   );
 }

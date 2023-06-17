@@ -30,7 +30,7 @@ export interface Tarea {
   descripcion: string
   tiempo_estimado_fin: number;
   horas_acumuladas: number;
-  estado: string;
+  estado: number;
 }
 
 export interface Producto {
