@@ -74,7 +74,11 @@ export default function Tareas() {
       .get(SERVER_NAME_PROYECTOS + "projects/" + id?.toString() + "/tasks")
       .then((data) => {
         if (data.data.ok) {
+          console.log(data.data.msg);
           data.data.msg.forEach((task: Tarea) => {});
+          data.data.msg.forEach((task: Tarea) => {
+            task.estado = 1;
+          });
           setTasks(data.data.msg);
           setLoading(false);
         }
