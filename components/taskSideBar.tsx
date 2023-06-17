@@ -61,7 +61,7 @@ function TaskSideBar({ task }: TaskSideBarProps) {
               className={selectedTab === 1 ? "nav-link active" : "nav-link"}
               href="#"
             >
-              Equipo
+              Recursos
             </a>
           </li>
         )}
