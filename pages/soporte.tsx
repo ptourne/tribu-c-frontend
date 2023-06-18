@@ -2,6 +2,9 @@ import { Inter } from "next/font/google";
 import React, { useState, useEffect } from "react";
 import { Producto } from "./types";
 
+// Importamentos el paquete para el ruteo
+import { useRouter } from "next/router";
+
 const inter = Inter({ subsets: ["latin"] });
 
 interface Props {
@@ -9,14 +12,25 @@ interface Props {
 }
 
 const ProductBar = ({ product }: Props) => {
+  const router = useRouter();
+
+  const handleButtonClick = () => {
+    router.push("/ticket");
+  };
+
   return (
     <div className="flex flex-column justify-start text-primary-emphasis border bg-primary-subtle rounded-3 p-4 my-4">
       <div className="flex flex-row justify-start align-items-center">
-        <div className="flex-grow-0 p-2 text-xl font-bold">{product.nombre}</div>
+        <div className="flex-grow-0 p-2 text-xl font-bold">
+          {product.nombre}
+        </div>
         <div className="flex-grow p-2 text-xl">Version {product.version}</div>
       </div>
       <div className="flex flex-row justify-end mt-4">
-        <button className="bg-blue-500 text-white px-6 py-3 rounded-md">
+        <button
+          className="bg-blue-500 text-white px-6 py-3 rounded-md"
+          onClick={handleButtonClick}
+        >
           Entrar
         </button>
       </div>
@@ -65,7 +79,8 @@ export default function Productos() {
             ))
           ) : (
             <p>
-              Aún no hay productos creados. Seleccione agregar para crear uno nuevo.
+              Aún no hay productos creados. Seleccione agregar para crear uno
+              nuevo.
             </p>
           )}
         </div>
