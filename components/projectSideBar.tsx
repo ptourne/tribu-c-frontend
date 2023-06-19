@@ -5,12 +5,13 @@ import { Proyecto } from "../pages/types";
 
 interface ProjectSideBarProps {
   project: Proyecto | undefined;
+  getProjectsFunction: Function;
 }
 
 const ADD = 0;
 const EDIT = 1;
 
-function ProjectSideBar({ project }: ProjectSideBarProps) {
+function ProjectSideBar({ project, getProjectsFunction }: ProjectSideBarProps) {
   const router = useRouter();
   const [mode, setMode] = useState(EDIT);
   const [selectedTab, setSelectedTab] = useState(0);
@@ -76,7 +77,7 @@ function ProjectSideBar({ project }: ProjectSideBarProps) {
           role="tabpanel"
           aria-labelledby="details-tab"
         >
-          <ProjectSideBarDetailsPane project={selectedProject} />
+          <ProjectSideBarDetailsPane project={selectedProject} getProjectsFunction={getProjectsFunction}/>
         </div>
         <div
           className={

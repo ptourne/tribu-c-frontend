@@ -133,7 +133,7 @@ export default function Proyectos() {
         </div>
       </div>
       <div className="col-md-6 flex flex-col h-full">
-        {<ProjectSideBar project={selectedProject} />}
+        {<ProjectSideBar project={selectedProject} getProjectsFunction={getProjects}/>}
       </div>
     </div>
   );

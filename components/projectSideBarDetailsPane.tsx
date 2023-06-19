@@ -15,12 +15,13 @@ import { SERVER_NAME_PROYECTOS } from "@/environments";
 
 interface ProjectSideBarProps {
   project: Proyecto | undefined;
+  getProjectsFunction: Function;
 }
 
 const ADD = 0;
 const EDIT = 1;
 
-function ProjectSideBarDetailsPane({ project }: ProjectSideBarProps) {
+function ProjectSideBarDetailsPane({ project, getProjectsFunction }: ProjectSideBarProps) {
   const [mode, setMode] = useState(EDIT);
 
   const [lastProject, setLastProject] = useState<Proyecto | undefined>(undefined);
@@ -124,6 +125,7 @@ function ProjectSideBarDetailsPane({ project }: ProjectSideBarProps) {
           autoClose: 2000,
           hideProgressBar: true,
         });
+        getProjectsFunction();
         setNameSaved(true);
         setStateSaved(true);
         setStartDateSaved(true);
@@ -154,6 +156,7 @@ function ProjectSideBarDetailsPane({ project }: ProjectSideBarProps) {
           autoClose: 2000,
           hideProgressBar: true,
         });
+        getProjectsFunction();
         setNameSaved(true);
         setStateSaved(true);
         setStartDateSaved(true);
@@ -181,6 +184,7 @@ function ProjectSideBarDetailsPane({ project }: ProjectSideBarProps) {
           hideProgressBar: true,
         });
   
+        getProjectsFunction();
         setNameSaved(true);
         setStateSaved(true);
         setStartDateSaved(true);
