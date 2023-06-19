@@ -97,9 +97,16 @@ function ProjectSideBarDetailsPane({ project }: ProjectSideBarProps) {
   const handleSave = () => {
     // Create an object with the updated values
     const projectToSave: Proyecto = {
-      codigo: project?.codigo,
       nombre: name,
       estado: state,
+      costo_estimado: 5000,
+      fecha_inicio: startDate,
+      fecha_fin_estimada: finishDate,
+      customizacion: "Custom FIUBA2",
+      horas_consumidas: 5,
+      id_cliente: 100,
+      id_producto: 10,
+      version: "1.9",
     };
 
     // Make an API request to save the changes
@@ -130,14 +137,17 @@ function ProjectSideBarDetailsPane({ project }: ProjectSideBarProps) {
         
       })
       .catch((e) => {
-        /*if (e.response?.data?.msg) return setActionError('Error saving configuration: ' + e.response.data.msg)
-        else return setActionError('Error saving configuration')*/
+        toast.error(e.response?.data?.msg ? "Hubo un error al guardar el proyecto: " + e.response?.data?.msg : "Hubo un error al guardar el proyecto", {
+          position: "top-right",
+          autoClose: 2000,
+          hideProgressBar: true,
+        });
       })
   }
 
   const updateProject = (projectToSave: Proyecto) => {
     axios
-      .put(SERVER_NAME_PROYECTOS + 'admin/save-price-rules', projectToSave)
+      .put(SERVER_NAME_PROYECTOS + `projects/${project?.codigo}`, projectToSave)
       .then(() => {
         toast.success("Cambios guardados correctamente!", {
           position: "top-right",
@@ -151,33 +161,45 @@ function ProjectSideBarDetailsPane({ project }: ProjectSideBarProps) {
         setPendingChanges(false);
       })
       .catch((e) => {
-        /*if (e.response?.data?.msg) return setActionError('Error saving configuration: ' + e.response.data.msg)
-        else return setActionError('Error saving configuration')*/
+        toast.error(e.response?.data?.msg ? "Hubo un error al actualizar el proyecto: " + e.response?.data?.msg : "Hubo un error al actualizar el proyecto", {
+          position: "top-right",
+          autoClose: 2000,
+          hideProgressBar: true,
+        });
       })
   }
 
   const handleDeleteProject = () => {
     //Llamar API
-    setShowDeleteConfirmation(false);
-    if (true /*eliminado correctamente*/) {
-      toast.success("Proyecto eliminado correctamente.", {
-        position: "top-right",
-        autoClose: 2000,
-        hideProgressBar: true,
-      });
-
-      if (project) {
-        setName(project.nombre || "");
-        setState(project.estado || "");
-        setStartDate(project.fecha_inicio || null);
-        setFinishDate(project.fecha_fin_estimada || null);
+    axios
+      .delete(SERVER_NAME_PROYECTOS + `projects/${project?.codigo}`)
+      .then(() => {
+        setShowDeleteConfirmation(false);
+        toast.success("Proyecto eliminado correctamente.", {
+          position: "top-right",
+          autoClose: 2000,
+          hideProgressBar: true,
+        });
+  
         setNameSaved(true);
         setStateSaved(true);
         setStartDateSaved(true);
         setFinishDateSaved(true);
         setPendingChanges(false);
-      }
-    }
+  
+        setName("Nuevo Proyecto");
+        setState("En curso");
+        setStartDate(null);
+        setFinishDate(null);
+      })
+      .catch((e) => {
+        setShowDeleteConfirmation(false);
+        toast.error(e.response?.data?.msg ? "Hubo un error al eliminar el proyecto: " + e.response?.data?.msg : "Hubo un error al eliminar el proyecto", {
+          position: "top-right",
+          autoClose: 2000,
+          hideProgressBar: true,
+        });
+      })
   };
 
   const handleDeleteConfirmationOpen = () => {

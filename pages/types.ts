@@ -11,17 +11,17 @@ export interface Cliente {
 }
 
 export interface Proyecto {
-  codigo: number;
+  codigo?: number;
   costo_estimado: number;
-  fecha_inicio: Date;
-  fecha_fin_estimada: Date;
+  fecha_inicio: Date | null;
+  fecha_fin_estimada: Date | null;
   estado: string;
   customizacion: string;
   horas_consumidas: number;
   id_cliente: number;
   id_producto: number;
   nombre: string;
-  version: "string";
+  version: string;
 }
 
 export interface Tarea {
