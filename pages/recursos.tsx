@@ -2,7 +2,7 @@ import { Inter } from "next/font/google";
 import axios from 'axios'
 import { SERVER_NAME_PROYECTOS } from "../environments"
 import ProjectInfoCard from "@/components/projectInfoCard";
-import RecursoSideBar from "@/components/projectSideBar";
+import RecursoSideBar from "@/components/recursoSideBar";
 import React, { Fragment, useState, useEffect } from "react";
 import { MdAdd } from "react-icons/md";
 import { Typography, Tooltip } from "@mui/material";
@@ -98,6 +98,9 @@ export default function recurso() {
                 : "Aún no hay proyectos creados. Seleccione agregar para crear uno nuevo")
           }
         </div>
+      </div>
+      <div className="col-md-6 flex flex-col h-full">
+        {<RecursoSideBar recurso={selectedRecurso} />}
       </div>
       </div>
   );

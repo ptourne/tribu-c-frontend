@@ -14,12 +14,12 @@ function RecursoSideBar({ recurso }: RecursoSideBarProps) {
   const router = useRouter();
   const [mode, setMode] = useState(EDIT);
   const [selectedTab, setSelectedTab] = useState(0);
-  const [selectedProject, setSelectedProject] = useState<Recurso | undefined>(
+  const [selectedRecurso, setSelectedRecurso] = useState<Recurso | undefined>(
     undefined
   );
 
   useEffect(() => {
-    setSelectedProject(recurso);
+    setSelectedRecurso(recurso);
     if (!recurso) {
       setMode(ADD);
     } else {
@@ -29,7 +29,7 @@ function RecursoSideBar({ recurso }: RecursoSideBarProps) {
 
   const getTasks = () => {
     router.push({
-      pathname: `/proyectos/${selectedProject?.codigo}/tareas`});
+      pathname: `/recursos/${selectedRecurso?.nombre}/tareas`});
   }
 
   return (
