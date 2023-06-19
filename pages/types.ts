@@ -38,3 +38,9 @@ export interface Producto {
   nombre: string
   version: number;
 }
+
+export interface Recurso {
+  nombre: string
+  apellido: string
+  legajo: number
+}
