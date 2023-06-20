@@ -34,6 +34,8 @@ function ProjectSideBarDetailsPane({ project, getProjectsFunction }: ProjectSide
   const [startDateSaved, setStartDateSaved] = useState(true);
   const [finishDate, setFinishDate] = useState<Date | null>(null);
   const [finishDateSaved, setFinishDateSaved] = useState(true);
+  const [estimatedCost, setEstimatedCost] = useState(0);
+  const [estimatedCostSaved, setEstimatedCostSaved] = useState(true);
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
 
   useEffect(() => {
@@ -43,6 +45,7 @@ function ProjectSideBarDetailsPane({ project, getProjectsFunction }: ProjectSide
       setState(project.estado || "");
       setStartDate(project.fecha_inicio || null);
       setFinishDate(project.fecha_fin_estimada || null);
+      setEstimatedCost(project.costo_estimado);
       if (!lastProject) setLastProject(project)
     } else {
       setMode(ADD);
@@ -50,6 +53,7 @@ function ProjectSideBarDetailsPane({ project, getProjectsFunction }: ProjectSide
       setState("En curso");
       setStartDate(null);
       setFinishDate(null);
+      setEstimatedCost(0);
     }
     if (pendingChanges) {
       toast.warning(
@@ -68,6 +72,7 @@ function ProjectSideBarDetailsPane({ project, getProjectsFunction }: ProjectSide
     setStateSaved(true);
     setStartDateSaved(true);
     setFinishDateSaved(true);
+    setEstimatedCostSaved(true);
     setPendingChanges(false);
   }, [project]);
 
@@ -95,12 +100,18 @@ function ProjectSideBarDetailsPane({ project, getProjectsFunction }: ProjectSide
     setPendingChanges(true);
   };
 
+  const handleEstimatedCostChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setEstimatedCost(parseInt(event.target.value));
+    if (mode === EDIT) setEstimatedCostSaved(false);
+    setPendingChanges(true);
+  };
+
   const handleSave = () => {
     // Create an object with the updated values
     const projectToSave: Proyecto = {
       nombre: name,
       estado: state,
-      costo_estimado: 5000,
+      costo_estimado: estimatedCost,
       fecha_inicio: startDate,
       fecha_fin_estimada: finishDate,
       customizacion: "Custom FIUBA2",
@@ -130,12 +141,14 @@ function ProjectSideBarDetailsPane({ project, getProjectsFunction }: ProjectSide
         setStateSaved(true);
         setStartDateSaved(true);
         setFinishDateSaved(true);
+        setEstimatedCostSaved(true);
         setPendingChanges(false);
 
         setName("Nuevo Proyecto");
         setState("En curso");
         setStartDate(null);
         setFinishDate(null);
+        setEstimatedCost(0);
         
       })
       .catch((e) => {
@@ -161,6 +174,7 @@ function ProjectSideBarDetailsPane({ project, getProjectsFunction }: ProjectSide
         setStateSaved(true);
         setStartDateSaved(true);
         setFinishDateSaved(true);
+        setEstimatedCostSaved(true);
         setPendingChanges(false);
       })
       .catch((e) => {
@@ -189,12 +203,14 @@ function ProjectSideBarDetailsPane({ project, getProjectsFunction }: ProjectSide
         setStateSaved(true);
         setStartDateSaved(true);
         setFinishDateSaved(true);
+        setEstimatedCostSaved(true);
         setPendingChanges(false);
   
         setName("Nuevo Proyecto");
         setState("En curso");
         setStartDate(null);
         setFinishDate(null);
+        setEstimatedCost(0);
       })
       .catch((e) => {
         setShowDeleteConfirmation(false);
@@ -342,6 +358,38 @@ function ProjectSideBarDetailsPane({ project, getProjectsFunction }: ProjectSide
               </div>
               <div className="d-flex align-items-center justify-content-center flex-shrink-0 w-10">
                 {finishDateSaved || (
+                  <Tooltip
+                    title={
+                      <Typography fontSize={15}>Cambios sin guardar</Typography>
+                    }
+                    placement="top"
+                  >
+                    <div className="d-flex align-items-center justify-content-center text-warning">
+                      <IoIosWarning
+                        style={{ flex: "1", height: "100%", fontSize: "2rem" }}
+                      />
+                    </div>
+                  </Tooltip>
+                )}
+              </div>
+            </div>
+            <div className="d-flex justify-content-between align-items-center flex-row">
+              <div className="flex-grow-1 d-flex justify-content-between align-items-center flex-row">
+                <label htmlFor="estiamtedCost" className="col-md-6 form-label">
+                  Costo Estimado
+                </label>
+                <div className="col-md-6">
+                  <input
+                    type="text"
+                    className="form-control border-0 border-bottom rounded-0 p-0"
+                    id="estimatedCost"
+                    value={estimatedCost}
+                    onChange={handleEstimatedCostChange}
+                  />
+                </div>
+              </div>
+              <div className="d-flex align-items-center justify-content-center flex-shrink-0 w-10">
+                {estimatedCostSaved || (
                   <Tooltip
                     title={
                       <Typography fontSize={15}>Cambios sin guardar</Typography>
