@@ -34,7 +34,7 @@ function ProjectSideBarDetailsPane({ project, getProjectsFunction }: ProjectSide
   const [startDateSaved, setStartDateSaved] = useState(true);
   const [finishDate, setFinishDate] = useState<Date | null>(null);
   const [finishDateSaved, setFinishDateSaved] = useState(true);
-  const [estimatedCost, setEstimatedCost] = useState(0);
+  const [estimatedCost, setEstimatedCost] = useState("");
   const [estimatedCostSaved, setEstimatedCostSaved] = useState(true);
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
 
@@ -45,7 +45,7 @@ function ProjectSideBarDetailsPane({ project, getProjectsFunction }: ProjectSide
       setState(project.estado || "");
       setStartDate(project.fecha_inicio || null);
       setFinishDate(project.fecha_fin_estimada || null);
-      setEstimatedCost(project.costo_estimado);
+      setEstimatedCost(project.costo_estimado.toString());
       if (!lastProject) setLastProject(project)
     } else {
       setMode(ADD);
@@ -53,7 +53,7 @@ function ProjectSideBarDetailsPane({ project, getProjectsFunction }: ProjectSide
       setState("En curso");
       setStartDate(null);
       setFinishDate(null);
-      setEstimatedCost(0);
+      setEstimatedCost("0");
     }
     if (pendingChanges) {
       toast.warning(
@@ -101,7 +101,7 @@ function ProjectSideBarDetailsPane({ project, getProjectsFunction }: ProjectSide
   };
 
   const handleEstimatedCostChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setEstimatedCost(parseInt(event.target.value));
+    setEstimatedCost(event.target.value);
     if (mode === EDIT) setEstimatedCostSaved(false);
     setPendingChanges(true);
   };
@@ -111,7 +111,7 @@ function ProjectSideBarDetailsPane({ project, getProjectsFunction }: ProjectSide
     const projectToSave: Proyecto = {
       nombre: name,
       estado: state,
-      costo_estimado: estimatedCost,
+      costo_estimado: parseInt(estimatedCost),
       fecha_inicio: startDate,
       fecha_fin_estimada: finishDate,
       customizacion: "Custom FIUBA2",
@@ -148,7 +148,7 @@ function ProjectSideBarDetailsPane({ project, getProjectsFunction }: ProjectSide
         setState("En curso");
         setStartDate(null);
         setFinishDate(null);
-        setEstimatedCost(0);
+        setEstimatedCost("0");
         
       })
       .catch((e) => {
@@ -210,7 +210,7 @@ function ProjectSideBarDetailsPane({ project, getProjectsFunction }: ProjectSide
         setState("En curso");
         setStartDate(null);
         setFinishDate(null);
-        setEstimatedCost(0);
+        setEstimatedCost("0");
       })
       .catch((e) => {
         setShowDeleteConfirmation(false);
