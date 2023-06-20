@@ -245,6 +245,7 @@ function ProjectSideBarDetailsPane({ project, getProjectsFunction }: ProjectSide
                 id="name"
                 value={name}
                 onChange={handleNameChange}
+                maxLength={60}
               />
             </div>
             <div className="d-flex align-items-center justify-content-center flex-shrink-0 w-10 ml-3 mr-3">
@@ -321,6 +322,7 @@ function ProjectSideBarDetailsPane({ project, getProjectsFunction }: ProjectSide
                     className="form-control border-0 border-bottom rounded-0 p-0"
                     dateFormat="dd/MM/yyyy"
                     placeholderText="Seleccione una fecha"
+                    maxDate={finishDate ? finishDate : null}
                   />
                 </div>
               </div>
@@ -353,6 +355,7 @@ function ProjectSideBarDetailsPane({ project, getProjectsFunction }: ProjectSide
                     className="form-control border-0 border-bottom rounded-0 p-0"
                     dateFormat="dd/MM/yyyy"
                     placeholderText="Seleccione una fecha"
+                    minDate={startDate ? startDate : null}
                   />
                 </div>
               </div>
@@ -385,6 +388,7 @@ function ProjectSideBarDetailsPane({ project, getProjectsFunction }: ProjectSide
                     id="estimatedCost"
                     value={estimatedCost}
                     onChange={handleEstimatedCostChange}
+                    maxLength={12}
                   />
                 </div>
               </div>
@@ -409,7 +413,7 @@ function ProjectSideBarDetailsPane({ project, getProjectsFunction }: ProjectSide
           <button
             type="button"
             className={
-              (pendingChanges && name && state && startDate) ? "btn btn-primary" : "btn btn-primary disabled"
+              (pendingChanges && name && state && startDate && estimatedCost) ? "btn btn-primary" : "btn btn-primary disabled"
             }
             onClick={handleSave}
           >
