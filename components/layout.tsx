@@ -7,12 +7,13 @@ import { BsFillKanbanFill, BsFillTicketDetailedFill } from "react-icons/bs";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
+// Esto es el navabar que aparece siempre !!!! .
 export default function Layout({ children }: { children: any }) {
   const menuItems: ISidebarItem[] = [
     {
       href: "/",
       icon: FaHome,
-      title: 'Inicio'
+      title: "Inicio",
     },
     /*{
       href: "/clientes",
@@ -25,17 +26,17 @@ export default function Layout({ children }: { children: any }) {
     {
       href: "/proyectos",
       icon: BsFillKanbanFill,
-      title: 'Proyectos'
+      title: "Proyectos",
     },
     {
-      href: "/soporte",
+      href: "Soporte/soporte",
       icon: BsFillTicketDetailedFill,
-      title: 'Soporte'
+      title: "Soporte ",
     },
     {
       href: "/recursos",
       icon: FaUserClock,
-      title: 'Recursos'
+      title: "Recursos",
     },
   ];
 
