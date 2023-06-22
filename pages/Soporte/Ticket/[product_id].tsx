@@ -7,7 +7,7 @@ export default function Ticket() {
   // coincidir con los parametros de la ruta especificada (product_id.tsx)
   // EJ si tenemos http://localhost:3000/soporte/Ticket/2 entonces router.query contendra { product_id: "2" }
   // para acceder al 2 utilizamos product_id en router.query. en este caso pasamos el produc_id y los ticketsQuery
-  const { product_id, ticketsQuery } = router.query;
+  const { productVersion, productName, product_id, ticketsQuery } = router.query;
   let decodedTickets: Ticket[] = [];
   if (typeof ticketsQuery === "string") {
     decodedTickets = ticketsQuery
@@ -19,20 +19,35 @@ export default function Ticket() {
 
   return (
     <div>
-      <h1>Estoy en -{product_id}- </h1>
-      <h1> Estoy recibiendo cadena codificada {ticketsQuery} </h1>
-      <h1> Estoy decodificando la cadena</h1>
-      <ul>
+       <h1 style={{ fontSize: "2.2em", marginLeft: "30px", marginTop: "20px"}}>{productName} </h1>
+       <h1 style={{ fontSize: "1.8em", marginLeft: "30px" }}>Versión: {productVersion} </h1>
+      <ul style={{ marginTop: "30px",  width: "800px" }}>
         {decodedTickets.map((ticketDecod) => (
           <li key={ticketDecod.id} id="LiTicketForAProduct">
+            <div style={{ marginBottom: "10px"}}>
             <p>
-              Titulo: {ticketDecod.title}
-              Descripcion: {ticketDecod.description}
+              <strong>Título:</strong> {ticketDecod.title}
             </p>
-          </li>
-        ))}
-      </ul>
-    </div>
+            <p>
+              <strong>Descripción:</strong> {ticketDecod.description}
+            </p>
+            <p>
+              <strong>Estado:</strong> {ticketDecod.state}
+            </p>
+            <p>
+              <strong>Severidad:</strong> {ticketDecod.severity}
+            </p>
+            <p>
+              <strong>Prioridad:</strong> {ticketDecod.priority}
+            </p>
+            <p>
+              <strong>Fecha inicio:</strong> {ticketDecod.timeStart}
+            </p>
+          </div>
+        </li>
+      ))}
+    </ul>
+  </div>
   );
 }
 /*{decodedTickets.map((ticket) => (
