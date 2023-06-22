@@ -212,21 +212,19 @@ function TaskSideBarDetailsPane({
   };
 
   const handleDeleteTask = () => {
-    //Llamar API
-    setShowDeleteConfirmation(false);
-    if (true /*eliminado correctamente*/) {
-      toast.success("Tarea eliminado correctamente.", {
-        position: "top-right",
-        autoClose: 2000,
-        hideProgressBar: true,
-      });
+    axios
+      .delete(
+        SERVER_NAME_PROYECTOS + `projects/${project_id}/tasks/${task?.id_tarea}`
+      )
+      .then(() => {
+        setShowDeleteConfirmation(false);
+        toast.success("Tarea eliminado correctamente.", {
+          position: "top-right",
+          autoClose: 2000,
+          hideProgressBar: true,
+        });
 
-      if (task) {
-        setTitulo(task.titulo || "");
-        setState(task.estado || 0);
-        setDescription(task.descripcion || "");
-        setEstimatedDuration(task.tiempo_estimado_fin || 0);
-        setAccumulatedHours(task.horas_acumuladas || 0);
+        getTasksFunction();
         setTituloSaved(true);
         setStateSaved(true);
         setLastTask(task);
@@ -235,9 +233,27 @@ function TaskSideBarDetailsPane({
         setDescriptionSaved(true);
         setEstimatedDurationSaved(true);
         setAccumulatedHoursSaved(true);
+
+        setTitulo(task?.titulo || "");
+        setState(task?.estado || 0);
+        setDescription(task?.descripcion || "");
+        setEstimatedDuration(task?.tiempo_estimado_fin || 0);
+        setAccumulatedHours(task?.horas_acumuladas || 0);
         setPendingChanges(false);
-      }
-    }
+      })
+      .catch((e) => {
+        setShowDeleteConfirmation(false);
+        toast.error(
+          e.response?.data?.msg
+            ? "Hubo un error al eliminar la tarea: " + e.response?.data?.msg
+            : "Hubo un error al eliminar la tarea",
+          {
+            position: "top-right",
+            autoClose: 2000,
+            hideProgressBar: true,
+          }
+        );
+      });
   };
 
   const handleDeleteConfirmationOpen = () => {
@@ -268,7 +284,7 @@ function TaskSideBarDetailsPane({
               />
             </div>
 
-            <UnsavedWarningIcon isSaved={tituloSaved} />
+            <UnsavedWarningIcon isSavePending={tituloSaved} />
             {mode === EDIT && (
               <button
                 type="button"
@@ -329,7 +345,7 @@ function TaskSideBarDetailsPane({
               </div>
             </div>
 
-            <UnsavedWarningIcon isSaved={estimatedDurationSaved} />
+            <UnsavedWarningIcon isSavePending={estimatedDurationSaved} />
           </div>
 
           <div className="d-flex flex-col my-1">
@@ -337,7 +353,7 @@ function TaskSideBarDetailsPane({
               <div className="d-flex my-1 flex-fill justify-content-between align-items-center flex-row">
                 Descripción
               </div>
-              <UnsavedWarningIcon isSaved={descriptionSaved} />
+              <UnsavedWarningIcon isSavePending={descriptionSaved} />
             </div>
             <textarea
               className="form-control"
