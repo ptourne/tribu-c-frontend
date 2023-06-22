@@ -5,7 +5,7 @@ export default function Ticket() {
   const router = useRouter();
   // IMPORTANTE ACA EL NOMBRE DE LA VARIABLE! Porque ? -> en router.query los nombres de la variable deben
   // coincidir con los parametros de la ruta especificada (product_id.tsx)
-  // EJ si tenemos http://localhost:3000/Soporte/Ticket/2 entonces router.query contendra { product_id: "2" }
+  // EJ si tenemos http://localhost:3000/soporte/Ticket/2 entonces router.query contendra { product_id: "2" }
   // para acceder al 2 utilizamos product_id en router.query. en este caso pasamos el produc_id y los ticketsQuery
   const { product_id, ticketsQuery } = router.query;
   let decodedTickets: Ticket[] = [];

@@ -33,7 +33,7 @@ export const ProductBar: React.FC<ProductBarProps> = ({
     //creamos un archivo [product_id].tsx en Ticket y usamos el ${productID} para hacer el parametro id generico.
     // en este caso router.push recibe un objeto con dos propiedades pathname y query
     router.push({
-      pathname: `/Soporte/Ticket/${productId}`,
+      pathname: `/soporte/Ticket/${productId}`,
       query: { ticketsQuery: encodedTickets },
     });
   };

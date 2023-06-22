@@ -29,9 +29,9 @@ export default function Layout({ children }: { children: any }) {
       title: "Proyectos",
     },
     {
-      href: "Soporte/soporte",
+      href: "/Soporte/soporte",
       icon: BsFillTicketDetailedFill,
-      title: "Soporte ",
+      title: "Soporte",
     },
     {
       href: "/recursos",
