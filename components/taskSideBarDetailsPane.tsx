@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Tarea } from "../pages/types";
+import { Proyecto, Tarea } from "../pages/types";
 import { AiOutlineCheck, AiOutlineCheckCircle } from "react-icons/ai";
 import { IoIosWarning } from "react-icons/io";
 import { MdDelete } from "react-icons/md";
@@ -8,7 +8,6 @@ import { Turret_Road } from "next/font/google";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Typography, Tooltip } from "@mui/material";
-import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { Button, Modal } from "react-bootstrap";
 import { SERVER_NAME_PROYECTOS } from "@/environments";
@@ -17,14 +16,19 @@ import UnsavedWarningIcon from "./unsavedWarningIcon";
 
 interface TaskSideBarProps {
   task: Tarea | undefined;
+  project_id: string;
+  getTasksFunction: Function;
 }
 
 const ADD = 0;
 const EDIT = 1;
 
-function TaskSideBarDetailsPane({ task }: TaskSideBarProps) {
+function TaskSideBarDetailsPane({
+  task,
+  project_id,
+  getTasksFunction,
+}: TaskSideBarProps) {
   const [mode, setMode] = useState(EDIT);
-
   const [lastTask, setLastTask] = useState<Tarea | undefined>(undefined);
   const [pendingChanges, setPendingChanges] = useState(false);
   const [titulo, setTitulo] = useState("");
@@ -105,7 +109,7 @@ function TaskSideBarDetailsPane({ task }: TaskSideBarProps) {
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     const value = parseInt(event.target.value);
-    if (!isNaN(value)) {
+    if (!isNaN(value) && estimatedDuration != value) {
       setEstimatedDuration(value);
       if (mode === EDIT) setEstimatedDurationSaved(false);
       setEstimatedDurationSaved(false);
@@ -123,26 +127,33 @@ function TaskSideBarDetailsPane({ task }: TaskSideBarProps) {
   const handleSave = () => {
     // Create an object with the updated values
     const taskToSave: Tarea = {
-      id: task?.id,
+      id_tarea: task?.id_tarea,
       titulo: titulo,
+      descripcion: description,
+      tiempo_estimado_finalizacion: estimatedDuration,
+      horas_acumuladas: 1,
       estado: state,
+      legajo_responsable: 1,
     };
 
     // Make an API request to save the changes
-
     if (mode === ADD) saveTask(taskToSave);
     else updateTask(taskToSave);
   };
 
   const saveTask = (taskToSave: Tarea) => {
     axios
-      .post(SERVER_NAME_PROYECTOS + "tasks", taskToSave)
+      .post(
+        SERVER_NAME_PROYECTOS + "projects/" + project_id + "/tasks",
+        taskToSave
+      )
       .then(() => {
         toast.success("Tarea guardado correctamente!", {
           position: "top-right",
           autoClose: 2000,
           hideProgressBar: true,
         });
+        getTasksFunction();
         setTituloSaved(true);
         setStateSaved(true);
         setLastTask(task);
@@ -160,8 +171,17 @@ function TaskSideBarDetailsPane({ task }: TaskSideBarProps) {
         setAccumulatedHours(0);
       })
       .catch((e) => {
-        /*if (e.response?.data?.msg) return setActionError('Error saving configuration: ' + e.response.data.msg)
-        else return setActionError('Error saving configuration')*/
+        console.log(e.response);
+        toast.error(
+          e.response?.data?.msg
+            ? "Hubo un error al guardar la tarea: " + e.response?.data?.msg
+            : "Hubo un error al guardar la tarea",
+          {
+            position: "top-right",
+            autoClose: 2000,
+            hideProgressBar: true,
+          }
+        );
       });
   };
 
@@ -174,6 +194,7 @@ function TaskSideBarDetailsPane({ task }: TaskSideBarProps) {
           autoClose: 2000,
           hideProgressBar: true,
         });
+        getTasksFunction();
         setTituloSaved(true);
         setStateSaved(true);
         setLastTask(task);
@@ -235,7 +256,7 @@ function TaskSideBarDetailsPane({ task }: TaskSideBarProps) {
         <form className="d-flex flex-col">
           <div className="d-flex justify-content-between align-items-center flex-row mt-1 mb-2">
             <div className="w-10 fs-2 text-body-secondary flex-shrink-0 ml-2 mr-2">
-              {task && task.id}
+              {task && task.id_tarea}
             </div>
             <div className="">
               <input
@@ -311,21 +332,22 @@ function TaskSideBarDetailsPane({ task }: TaskSideBarProps) {
             <UnsavedWarningIcon isSaved={estimatedDurationSaved} />
           </div>
 
-          <div className="d-flex justify-content-between align-items-center flex-row">
-            <div className="d-flex my-1 flex-fill justify-content-between align-items-center flex-row">
-              Descripción
+          <div className="d-flex flex-col my-1">
+            <div className="d-flex justify-content-between align-items-center flex-row">
+              <div className="d-flex my-1 flex-fill justify-content-between align-items-center flex-row">
+                Descripción
+              </div>
+              <UnsavedWarningIcon isSaved={descriptionSaved} />
             </div>
-
-            <UnsavedWarningIcon isSaved={descriptionSaved} />
+            <textarea
+              className="form-control"
+              id="description"
+              value={description}
+              onChange={handleDescriptionChange}
+              maxLength={100}
+              rows={3}
+            ></textarea>
           </div>
-          <textarea
-            class="form-control"
-            id="description"
-            value={description}
-            onChange={handleDescriptionChange}
-            maxLength={100}
-            rows="3"
-          ></textarea>
 
           <button
             type="button"

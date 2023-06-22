@@ -37,61 +37,24 @@ export default function Tareas() {
 */
 
   const getTasks = async () => {
-    // Tareas de prueba hasta que tengamos conexión con el back-end
-    /*
-    const tasks: Tarea[] = [
-      {
-        id: "1",
-        titulo: "Primer Tarea",
-        descripcion: "Descripción de Primer Tarea",
-        tiempo_estimado_fin: 1,
-        estado: 0,
-        horas_acumuladas: 10,
-      },
-      {
-        id: "2",
-        titulo: "Segundo Tarea",
-        descripcion: "Descripción de Segundo Tarea",
-        tiempo_estimado_fin: 1,
-        estado: 0,
-        horas_acumuladas: 20,
-      },
-      {
-        id: "30",
-        titulo: "Tercer Tarea",
-        descripcion: "Descripción de Tercer Tarea",
-        tiempo_estimado_fin: 1,
-        estado: 1,
-        horas_acumuladas: 30,
-      },
-    ];
-
-    setTasks(tasks);
-    setLoading(false);
-    */
-
-    axios
-      .get(SERVER_NAME_PROYECTOS + "projects/" + id?.toString() + "/tasks")
-      .then((data) => {
-        if (data.data.ok) {
-          console.log(data.data.msg);
-          data.data.msg.forEach((task: Tarea) => {});
-          data.data.msg.forEach((task: Tarea) => {
-            task.estado = 1;
-          });
-          setTasks(data.data.msg);
-          setLoading(false);
-        }
-      })
-      .catch((err) => {
-        if (id) {
-          if (err.response?.data?.msg) {
-            console.log(err.response.data.msg);
+    if (id) {
+      axios
+        .get(SERVER_NAME_PROYECTOS + "projects/" + id.toString() + "/tasks")
+        .then((data) => {
+          if (data.data.ok) {
+            data.data.msg.forEach((task: Tarea) => {});
+            data.data.msg.forEach((task: Tarea) => {
+              task.estado = 1;
+            });
+            setTasks(data.data.msg);
+            setLoading(false);
           }
+        })
+        .catch((err) => {
           setLoading(false);
           setGetTasksError("Hubo un error al obtener las tareas");
-        }
-      });
+        });
+    }
   };
 
   useEffect(() => {
@@ -164,7 +127,13 @@ export default function Tareas() {
         </div>
       </div>
       <div className="col-md-6 flex flex-col h-full">
-        {<TaskSideBar task={selectedTask} />}
+        {
+          <TaskSideBar
+            task={selectedTask}
+            project_id={id}
+            getTasksFunction={getTasks}
+          />
+        }
       </div>
     </div>
   );
