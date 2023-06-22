@@ -272,22 +272,7 @@ function ProjectSideBarDetailsPane({
                 maxLength={60}
               />
             </div>
-            <div className="d-flex align-items-center justify-content-center flex-shrink-0 w-10 ml-3 mr-3">
-              {nameSaved || (
-                <Tooltip
-                  title={
-                    <Typography fontSize={15}>Cambios sin guardar</Typography>
-                  }
-                  placement="top"
-                >
-                  <div className="d-flex align-items-center justify-content-center text-warning">
-                    <IoIosWarning
-                      style={{ flex: "1", height: "100%", fontSize: "2rem" }}
-                    />
-                  </div>
-                </Tooltip>
-              )}
-            </div>
+            <UnsavedWarningIcon isSavePending={nameSaved!} />
             {mode === EDIT && (
               <button
                 type="button"
@@ -320,7 +305,7 @@ function ProjectSideBarDetailsPane({
                 </div>
               </div>
 
-              <UnsavedWarningIcon isSaved={stateSaved} />
+              <UnsavedWarningIcon isSavePending={stateSaved!} />
             </div>
             <div className="d-flex justify-content-between align-items-center flex-row">
               <div className="flex-grow-1 d-flex justify-content-between align-items-center flex-row">
@@ -339,7 +324,7 @@ function ProjectSideBarDetailsPane({
                 </div>
               </div>
 
-              <UnsavedWarningIcon isSaved={startDateSaved} />
+              <UnsavedWarningIcon isSavePending={startDateSaved!} />
             </div>
             <div className="d-flex justify-content-between align-items-center flex-row">
               <div className="flex-grow-1 d-flex justify-content-between align-items-center flex-row">
@@ -358,7 +343,7 @@ function ProjectSideBarDetailsPane({
                 </div>
               </div>
 
-              <UnsavedWarningIcon isSaved={finishDateSaved} />
+              <UnsavedWarningIcon isSavePending={finishDateSaved!} />
             </div>
             <div className="d-flex justify-content-between align-items-center flex-row">
               <div className="flex-grow-1 d-flex justify-content-between align-items-center flex-row">
@@ -377,7 +362,7 @@ function ProjectSideBarDetailsPane({
                 </div>
               </div>
 
-              <UnsavedWarningIcon isSaved={estimatedCostSaved} />
+              <UnsavedWarningIcon isSavePending={estimatedCostSaved!} />
             </div>
           </div>
           <button
