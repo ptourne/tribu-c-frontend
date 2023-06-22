@@ -5,12 +5,14 @@ import { Tarea } from "../pages/types";
 
 interface TaskSideBarProps {
   task: Tarea | undefined;
+  project_id: string;
+  getTasksFunction: Function;
 }
 
 const ADD = 0;
 const EDIT = 1;
 
-function TaskSideBar({ task }: TaskSideBarProps) {
+function TaskSideBar({ task, project_id, getTasksFunction }: TaskSideBarProps) {
   const router = useRouter();
   const [mode, setMode] = useState(EDIT);
   const [selectedTab, setSelectedTab] = useState(0);
@@ -29,7 +31,7 @@ function TaskSideBar({ task }: TaskSideBarProps) {
 
   const getTasks = () => {
     router.push({
-      pathname: `/proyectos/${selectedTask?.codigo}/tareas`,
+      pathname: `/proyectos/${selectedTask?.id_tarea}/tareas`,
     });
   };
 
@@ -77,7 +79,11 @@ function TaskSideBar({ task }: TaskSideBarProps) {
           role="tabpanel"
           aria-labelledby="details-tab"
         >
-          <TaskSideBarDetailsPane task={selectedTask} />
+          <TaskSideBarDetailsPane
+            task={selectedTask}
+            project_id={project_id}
+            getTasksFunction={getTasksFunction}
+          />
         </div>
         <div
           className={
