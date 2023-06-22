@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import ProjectSideBarDetailsPane from "./projectSideBarDetailsPane";
-import { useRouter } from 'next/router'
+import { useRouter } from "next/router";
 import { Proyecto } from "../pages/types";
 
 interface ProjectSideBarProps {
@@ -30,8 +30,9 @@ function ProjectSideBar({ project, getProjectsFunction }: ProjectSideBarProps) {
 
   const getTasks = () => {
     router.push({
-      pathname: `/proyectos/${selectedProject?.codigo}/tareas`});
-  }
+      pathname: `/proyectos/${selectedProject?.codigo}/tareas`,
+    });
+  };
 
   return (
     <div className="d-flex flex-column flex-fill justify-content-start border rounded-3 m-3 p-3">
@@ -50,7 +51,7 @@ function ProjectSideBar({ project, getProjectsFunction }: ProjectSideBarProps) {
             Detalles
           </a>
         </li>
-        { mode === EDIT &&
+        {mode === EDIT && (
           <li
             className="nav-item"
             onClick={() => {
@@ -64,7 +65,7 @@ function ProjectSideBar({ project, getProjectsFunction }: ProjectSideBarProps) {
               Equipo
             </a>
           </li>
-        }
+        )}
       </ul>
       <div className="tab-content" id="myTabContent">
         <div
@@ -77,7 +78,10 @@ function ProjectSideBar({ project, getProjectsFunction }: ProjectSideBarProps) {
           role="tabpanel"
           aria-labelledby="details-tab"
         >
-          <ProjectSideBarDetailsPane project={selectedProject} getProjectsFunction={getProjectsFunction}/>
+          <ProjectSideBarDetailsPane
+            project={selectedProject}
+            getProjectsFunction={getProjectsFunction}
+          />
         </div>
         <div
           className={
@@ -89,17 +93,18 @@ function ProjectSideBar({ project, getProjectsFunction }: ProjectSideBarProps) {
           role="tabpanel"
           aria-labelledby="resources-tab"
         >
-          "2"
+          Aquí se seleccionaría el equipo
         </div>
       </div>
-      { mode === EDIT &&
-      <button
-        type="button"
-        className="btn btn-primary mt-auto p-2"
-        onClick={getTasks}
-      >
-        Ver Tareas
-      </button>}
+      {mode === EDIT && (
+        <button
+          type="button"
+          className="btn btn-primary mt-auto p-2"
+          onClick={getTasks}
+        >
+          Ver Tareas
+        </button>
+      )}
     </div>
   );
 }

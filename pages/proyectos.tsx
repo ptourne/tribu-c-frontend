@@ -92,9 +92,9 @@ export default function Proyectos() {
   }, [projects, selectedIndex]);
 
   return (
-    <div className="flex flex-row h-full">
-      <div className="flex flex-fill col-md-1 h-full flex-col p-4 bg-white w-30">
-        <div className="flex">
+    <div className="d-flex flex-row">
+      <div className="d-flex flex-fill col-md-1 flex-col p-4 bg-white w-30">
+        <div className="d-flex">
           <h1 className="text-black mb-5 font-bold">Proyectos</h1>
           <Tooltip
             title={<Typography fontSize={15}>Nuevo Proyecto</Typography>}
@@ -114,9 +114,9 @@ export default function Proyectos() {
         <div
           className={
             loading
-              ? "flex justify-content-center align-items-center flex-column"
+              ? "d-flex justify-content-center align-items-center flex-column"
               : projects.length > 0
-              ? "flex h-full flex-col space-y-4 text-black"
+              ? "d-flex flex-col space-y-4 text-black overflow-y-auto"
               : "text-black"
           }
         >

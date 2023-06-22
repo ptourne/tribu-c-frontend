@@ -41,12 +41,12 @@ export default function Layout({ children }: { children: any }) {
   ];
 
   return (
-    <div className="min-h-screen flex flex-col bg-white">
+    <div className="min-vh-100 d-flex flex-col bg-white">
       <header className="bg-black sticky top-0 h-14 flex justify-center items-center font-semibold uppercase text-white">
         PSA
       </header>
-      <div className="flex flex-col md:flex-row flex-1">
-        <aside className="bg-gray-400 w-full md:w-auto">
+      <div className="flex-grow-1 d-flex overflow-auto">
+        <div className="bg-gray-400 w-auto">
           <nav>
             <ul>
               {menuItems.map((item) => (
@@ -54,8 +54,8 @@ export default function Layout({ children }: { children: any }) {
               ))}
             </ul>
           </nav>
-        </aside>
-        <main className="flex-1">{children}</main>
+        </div>
+        <main className="flex-grow-1 overflow-auto">{children}</main>
       </div>
       <ToastContainer position="top-right" autoClose={3000} />
     </div>
