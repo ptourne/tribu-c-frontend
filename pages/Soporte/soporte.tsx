@@ -1,159 +1,94 @@
 //Necesario para usar Hooks.
 import React, { useState, useEffect } from "react";
-import { Producto } from "../types";
-
-// Importamentos el paquete para el ruteo
+import { Producto, Ticket } from "../types";
 import { ProductBar } from "./Componentes/ProductBar";
 
-const INITIAL_STATE = [
+const INITIAL_STATE_PRODUCTS = [
   {
-    id: "1",
-    nombre: "FIUBA",
-    version: 1,
+    id: 1,
+    name: "FIUBA",
+    version: "1",
   },
   {
-    id: "2",
-    nombre: "FIUBA",
-    version: 2,
+    id: 2,
+    name: "FIUBA",
+    version: "2",
   },
   {
-    id: "3",
-    nombre: "FADU",
-    version: 1,
+    id: 3,
+    name: "FADU",
+    version: "1",
+  },
+];
+
+const INITIAL_STATE_TICKETS = [
+  {
+    title: "Actualizacion de calculo de prioridad 1 ",
+    description: "Se quiere actualizar el calculo",
+    severity: "LS1",
+    priority: "Alta",
+    state: "Abierto",
+    timeStart: "01-06-2023 18:40",
+    type: "Empresa grande",
+    supportTime: "24H",
+    id: 1,
+    product_id: 1,
+    client_id: 1,
+    responsible_id: 1,
+  },
+
+  {
+    title: "Actualización de cálculo de prioridad 2",
+    description: "Se requiere mejorar el algoritmo de cálculo de prioridad",
+    severity: "LS2",
+    priority: "Media",
+    state: "Abierto",
+    timeStart: "02-06-2023 09:15",
+    type: "Empresa chica",
+    supportTime: "8H",
+    id: 2,
+    product_id: 1,
+    client_id: 2,
+    responsible_id: 2,
+  },
+  {
+    title: "Actualización de interfaz de usuario",
+    description: "Se requiere mejorar la usabilidad y diseño de la interfaz",
+    severity: "LS3",
+    priority: "Baja",
+    state: "Abierto",
+    timeStart: "03-06-2023 14:30",
+    type: "Empresa grande",
+    supportTime: "16H",
+    id: 3,
+    product_id: 2,
+    client_id: 1,
+    responsible_id: 3,
   },
 ];
 
 export default function Soporte() {
   //Usado similiar al constructor inicia con INITIAL_STATE
-  const [products, setProducts] = useState<Array<Producto>>(INITIAL_STATE);
-
-  return (
-    <>
-      <ProductBar products={products} />
-    </>
-  );
-}
-
-//codigo recien
-
-/*
-import React, { useState, useEffect } from "react";
-import { Producto } from "../types";
-
-// Importamentos el paquete para el ruteo
-import { useRouter } from "next/router";
-import { ProductBar } from "./Componentes/ProductBar";
-
-const INITIAL_STATE = [
-  {
-    id: "1",
-    nombre: "FIUBA",
-    version: 1,
-  },
-  {
-    id: "2",
-    nombre: "FIUBA",
-    version: 2,
-  },
-  {
-    id: "3",
-    nombre: "FADU",
-    version: 1,
-  },
-];
-
-export default function Productos() {
-  const [products, setProducts] = useState<Array<Producto>>(INITIAL_STATE);
-
-  return (
-    <>
-      <ProductBar products={products} />
-    </>
-  );
-}
-//codigo recien
-*/
-
-/*
-
-import { Inter } from "next/font/google";
-import React, { useState, useEffect } from "react";
-import { Producto } from "../types";
-
-// Importamentos el paquete para el ruteo
-import { useRouter } from "next/router";
-
-const inter = Inter({ subsets: ["latin"] });
-
-interface Props {
-  product: Producto;
-}
-const INITIAL_STATE = [
-  {
-    id: "1",
-    nombre: "FIUBA",
-    version: 1,
-  },
-  {
-    id: "2",
-    nombre: "FIUBA",
-    version: 2,
-  },
-  {
-    id: "3",
-    nombre: "FADU",
-    version: 1,
-  },
-];
-
-const ProductBar = ({ product }: Props) => {
-  const router = useRouter();
-  //Se pasa la ruta absoluta y no la relativa !! no usar "." .
-  const handleButtonClick = () => {
-    router.push("/Soporte/Ticket/ticket");
+  //
+  const [products, setProducts] = useState<Array<Producto>>([]);
+  const fetchProductos = (): Promise<Array<Producto>> => {
+    return fetch(
+      "https://abrahamosco.github.io/prueba.github.io/prueba.html"
+    ).then((res) => res.json());
   };
 
-  return (
-    <div className="flex flex-column justify-start text-primary-emphasis border bg-primary-subtle rounded-3 p-4 my-4">
-      <div className="flex flex-row justify-start align-items-center">
-        <div className="flex-grow-0 p-2 text-xl font-bold">
-          {product.nombre}
-        </div>
-        <div className="flex-grow p-2 text-xl">{product.version}</div>
-      </div>
-      <div className="flex flex-row justify-end mt-4">
-        <button
-          className="bg-blue-500 text-white px-6 py-3 rounded-md"
-          onClick={handleButtonClick}
-        >
-          Entrar22
-        </button>
-      </div>
-    </div>
-  );
-};
+  const [tickets, setTickets] = useState<Array<Ticket>>(INITIAL_STATE_TICKETS);
 
-export default function Productos() {
-  const [products, setProducts] = useState<Array<Producto>>(INITIAL_STATE);
+  useEffect(() => {
+    fetchProductos().then((productos) => {
+      console.log(productos);
+      setProducts(productos);
+    });
+  }, []);
 
   return (
-    <div className="flex flex-row h-full">
-      <div className="flex flex-fill col-md-40 h-full w-full flex-col p-4 bg-white w-30">
-        <h1 className="text-black text-4xl mb-20 font-bold">Productos</h1>
-        <div className="text-black">
-          {products.length > 0 ? (
-            products.map((product, index) => <ProductBar product={product} />)
-          ) : (
-            <p>
-              Aún no hay productos creados. Seleccione agregar para crear uno
-              nuevo.
-            </p>
-          )}
-        </div>
-      </div>
-      <div className="col-md-782 flex-fill h-full"></div>
-    </div>
+    <>
+      <ProductBar products={products} tickets={tickets} />
+    </>
   );
 }
-
-*/

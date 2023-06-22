@@ -34,7 +34,22 @@ export interface Tarea {
 }
 
 export interface Producto {
-  id: string
-  nombre: string
+  name: string
   version: number;
+  id: number
+}
+
+export interface Ticket {
+  title: string;
+  description: string;
+  severity: string;
+  priority: string;
+  state: string;
+  timeStart: string;
+  type: string;
+  supportTime: string;
+  id: number;
+  product_id: number;
+  client_id: number;
+  responsible_id: number;
 }

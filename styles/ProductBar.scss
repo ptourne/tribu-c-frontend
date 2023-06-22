@@ -1,0 +1,24 @@
+#LiProducBar{
+    margin-top: 20px; //dejar espacio entre elemento y elemento de la lista
+    border-radius: 10px;
+    border: 1px solid rgb(221, 221, 221);
+    list-style: none;
+    margin-bottom: 10px;
+    max-width: 320px;
+    padding: 8px 32px;
+    text-align: center;
+    background-color:#cfe2ff;
+    p{
+        color: #0f2b5e;
+        font-size: 15px;
+    }
+    button{
+        border-radius: 10px;
+        background-color: #61a1fe;
+        color: azure;
+        width: 60px;
+
+    }
+
+ }
+

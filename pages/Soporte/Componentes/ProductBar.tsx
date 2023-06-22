@@ -1,31 +1,61 @@
-import { Producto } from "@/pages/types";
+import { Producto, Ticket } from "@/pages/types";
 import { useRouter } from "next/router";
 interface ProductBarProps {
   products: Array<Producto>;
+  tickets: Array<Ticket>;
 }
 
 // ProductBar es un componente funcional que recibe un argumento del tipo Props (unicamente Array de Producto ) si agregamos una propiedad mas en props
 // la debemos agregar como argumento tambien al productBar si tenemos 500 propiedades en Props debemos tener 500 argums entonces.
-
 // public JSXElement[] ProductBar(ProductBarProps arrayProductos, String unaPropiedadMas){...}
-export const ProductBar: React.FC<ProductBarProps> = ({ products }) => {
+export const ProductBar: React.FC<ProductBarProps> = ({
+  products,
+  tickets,
+}) => {
   // cuando funcione tendremos que ir y darle a cada boton su correspondiente handler depnde en cual haga click. posiblmente su objeto Ticket correspondiente.
   const router = useRouter();
   //Se pasa la ruta absoluta y no la relativa !! no usar "." .
   //ACA hacemos el ruteo .
-  const handleButtonClick = () => {
-    router.push("/Soporte/Ticket/ticket");
+  // creamos un handlerButtonClick por cada productID
+
+  const handleProductClick = (productId: number) => {
+    console.log(`Producto ID: ${productId}`);
+    //Filtramos la lista de ticket que solo coinciden con el productID
+    const filteredTickets = tickets.filter(
+      (ticket) => ticket.product_id === productId
+    );
+    // Codificamos los tickets filtrados utilizando encodeURIComponent
+    // y los convertimos en una cadena JSON con JSON.stringify.
+    const encodedTickets = encodeURIComponent(JSON.stringify(filteredTickets));
+    console.log(encodedTickets);
+    console.log(filteredTickets);
+    //Para el ruteo generico de ticket  segun el producId (evitar crear Ticket/1.tsx, /2.tsx, /3.tsx...)
+    //creamos un archivo [product_id].tsx en Ticket y usamos el ${productID} para hacer el parametro id generico.
+    // en este caso router.push recibe un objeto con dos propiedades pathname y query
+    router.push({
+      pathname: `/Soporte/Ticket/${productId}`,
+      query: { ticketsQuery: encodedTickets },
+    });
   };
 
   //public JSX.Element[] renderProductBar( ){...}
+  // en cada map agregar la key.para evitar claves repetidas.project.fecha_inicio
   const renderProductBar = (): JSX.Element[] => {
     return products.map((unProducto) => {
       return (
-        <li key="{unProducto}">
-          <h2> Mi id es :{unProducto.id} </h2>
-          <h2> Mi nombre es: {unProducto.nombre} </h2>
-          <h2> Mi version es: {unProducto.version} </h2>
-          <button onClick={handleButtonClick}> Entrar </button>
+        <li key={unProducto.id} id="LiProducBar">
+          <p>
+            {unProducto.name} <br />
+            VERSION: {unProducto.version}
+            <br />
+          </p>
+          <button
+            onClick={() => {
+              handleProductClick(unProducto.id);
+            }}
+          >
+            Entrar
+          </button>
         </li>
       );
     });
