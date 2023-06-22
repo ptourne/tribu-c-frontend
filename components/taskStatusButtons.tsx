@@ -10,7 +10,7 @@ const TaskStatusButtons = ({ selectedState, setSelectedState }: Props) => {
     "col-md-1 flex-fill p-0 m-0 btn overflow-x-hidden text-nowrap";
 
   return (
-    <div className="ms-3 d-flex flex-fill">
+    <div className="d-flex flex-fill">
       <div className="d-flex flex-row flex-fill align-items-stretch">
         <button
           className={

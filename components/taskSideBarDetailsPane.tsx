@@ -13,6 +13,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import { Button, Modal } from "react-bootstrap";
 import { SERVER_NAME_PROYECTOS } from "@/environments";
 import TaskStatusButtons from "./taskStatusButtons";
+import UnsavedWarningIcon from "./unsavedWarningIcon";
 
 interface TaskSideBarProps {
   task: Tarea | undefined;
@@ -30,8 +31,8 @@ function TaskSideBarDetailsPane({ task }: TaskSideBarProps) {
   const [tituloSaved, setTituloSaved] = useState(true);
   const [state, setState] = useState(0);
   const [stateSaved, setStateSaved] = useState(true);
-  const [description, setdescription] = useState("");
-  const [descriptionSaved, setdescriptionSaved] = useState(true);
+  const [description, setDescription] = useState("");
+  const [descriptionSaved, setDescriptionSaved] = useState(true);
   const [estimatedDuration, setEstimatedDuration] = useState(0);
   const [estimatedDurationSaved, setEstimatedDurationSaved] = useState(true);
   const [accumulatedHours, setAccumulatedHours] = useState(0);
@@ -43,7 +44,7 @@ function TaskSideBarDetailsPane({ task }: TaskSideBarProps) {
       setMode(EDIT);
       setTitulo(task.titulo || "");
       setState(task.estado || 0);
-      setdescription(task.descripcion || "");
+      setDescription(task.descripcion || "");
       setEstimatedDuration(task.tiempo_estimado_fin || 0);
       setAccumulatedHours(task.horas_acumuladas || 0);
       if (!lastTask) setLastTask(task);
@@ -51,7 +52,7 @@ function TaskSideBarDetailsPane({ task }: TaskSideBarProps) {
       setMode(ADD);
       setTitulo("Nuevo Tarea");
       setState(0);
-      setdescription("");
+      setDescription("");
       setEstimatedDuration(0);
       setAccumulatedHours(0);
     }
@@ -70,7 +71,7 @@ function TaskSideBarDetailsPane({ task }: TaskSideBarProps) {
     setLastTask(task);
     setTituloSaved(true);
     setStateSaved(true);
-    setdescriptionSaved(true);
+    setDescriptionSaved(true);
     setEstimatedDurationSaved(true);
     setAccumulatedHoursSaved(true);
     setPendingChanges(false);
@@ -79,30 +80,43 @@ function TaskSideBarDetailsPane({ task }: TaskSideBarProps) {
   const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setTitulo(event.target.value);
     if (mode === EDIT) setTituloSaved(false);
+    setTituloSaved(false);
     setPendingChanges(true);
   };
 
   const handleStateChange = (value: number) => {
     setState(value);
     if (mode === EDIT) setStateSaved(false);
+    setStateSaved(false);
     setPendingChanges(true);
   };
 
-  const handleDescriptionChange = (value: string) => {
-    setdescription(value);
-    if (mode === EDIT) setdescriptionSaved(false);
+  const handleDescriptionChange = (
+    event: React.ChangeEvent<HTMLTextAreaElement>
+  ) => {
+    const value = event.target.value;
+    setDescription(value);
+    if (mode === EDIT) setDescriptionSaved(false);
+    setDescriptionSaved(false);
     setPendingChanges(true);
   };
 
-  const handleEstimatedDurationChange = (value: number) => {
-    setEstimatedDuration(value);
-    if (mode === EDIT) setEstimatedDurationSaved(false);
-    setPendingChanges(true);
+  const handleEstimatedDurationChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const value = parseInt(event.target.value);
+    if (!isNaN(value)) {
+      setEstimatedDuration(value);
+      if (mode === EDIT) setEstimatedDurationSaved(false);
+      setEstimatedDurationSaved(false);
+      setPendingChanges(true);
+    }
   };
 
   const handleAccumulatedHoursChange = (value: number) => {
     setAccumulatedHours(value);
     if (mode === EDIT) setAccumulatedHoursSaved(false);
+    setAccumulatedHoursSaved(false);
     setPendingChanges(true);
   };
 
@@ -134,14 +148,14 @@ function TaskSideBarDetailsPane({ task }: TaskSideBarProps) {
         setLastTask(task);
         setTituloSaved(true);
         setStateSaved(true);
-        setdescriptionSaved(true);
+        setDescriptionSaved(true);
         setEstimatedDurationSaved(true);
         setAccumulatedHoursSaved(true);
         setPendingChanges(false);
 
         setTitulo("Nueva Tarea");
         setState(0);
-        setdescription("");
+        setDescription("");
         setEstimatedDuration(0);
         setAccumulatedHours(0);
       })
@@ -165,7 +179,7 @@ function TaskSideBarDetailsPane({ task }: TaskSideBarProps) {
         setLastTask(task);
         setTituloSaved(true);
         setStateSaved(true);
-        setdescriptionSaved(true);
+        setDescriptionSaved(true);
         setEstimatedDurationSaved(true);
         setAccumulatedHoursSaved(true);
         setPendingChanges(false);
@@ -189,7 +203,7 @@ function TaskSideBarDetailsPane({ task }: TaskSideBarProps) {
       if (task) {
         setTitulo(task.titulo || "");
         setState(task.estado || 0);
-        setdescription(task.descripcion || "");
+        setDescription(task.descripcion || "");
         setEstimatedDuration(task.tiempo_estimado_fin || 0);
         setAccumulatedHours(task.horas_acumuladas || 0);
         setTituloSaved(true);
@@ -197,7 +211,7 @@ function TaskSideBarDetailsPane({ task }: TaskSideBarProps) {
         setLastTask(task);
         setTituloSaved(true);
         setStateSaved(true);
-        setdescriptionSaved(true);
+        setDescriptionSaved(true);
         setEstimatedDurationSaved(true);
         setAccumulatedHoursSaved(true);
         setPendingChanges(false);
@@ -232,22 +246,8 @@ function TaskSideBarDetailsPane({ task }: TaskSideBarProps) {
                 onChange={handleNameChange}
               />
             </div>
-            <div className="d-flex align-items-center justify-content-center flex-shrink-0 w-10 ml-3 mr-3">
-              {tituloSaved || (
-                <Tooltip
-                  title={
-                    <Typography fontSize={15}>Cambios sin guardar</Typography>
-                  }
-                  placement="top"
-                >
-                  <div className="d-flex align-items-center justify-content-center text-warning">
-                    <IoIosWarning
-                      style={{ flex: "1", height: "100%", fontSize: "2rem" }}
-                    />
-                  </div>
-                </Tooltip>
-              )}
-            </div>
+
+            <UnsavedWarningIcon isSaved={tituloSaved} />
             {mode === EDIT && (
               <button
                 type="button"
@@ -262,11 +262,9 @@ function TaskSideBarDetailsPane({ task }: TaskSideBarProps) {
           </div>
           <div className="d-flex justify-content-between flex-col mt-1 mb-3">
             <div className="d-flex justify-content-between align-items-center flex-row">
-              <div className="d-flex flex-fill justify-content-between align-items-center flex-row">
-                <label htmlFor="state" className="col-md-4 form-label">
-                  Estado
-                </label>
-                <div className="col-md-8">
+              <div className="d-flex my-1 flex-fill justify-content-between align-items-center flex-row">
+                <div className="col-md-5">Estado</div>
+                <div className="col-md-7 ms-3 d-flex justify-content-between align-items-center flex-row flex-fill">
                   <TaskStatusButtons
                     selectedState={state}
                     setSelectedState={handleStateChange}
@@ -291,47 +289,48 @@ function TaskSideBarDetailsPane({ task }: TaskSideBarProps) {
               </div>
             </div>
           </div>
-          <div className="d-flex justify-content-between flex-col mt-1 mb-3">
-            <div className="d-flex justify-content-between align-items-center flex-row">
-              <div className="flex-grow-1 d-flex justify-content-between align-items-center flex-row">
-                <label htmlFor="state" className="col-md-6 form-label">
-                  Tiempo estimado de trabajo
-                </label>
+          <div className="d-flex justify-content-between align-items-center flex-row">
+            <div className="d-flex my-1 flex-fill justify-content-between align-items-center flex-row">
+              <div className="col-md-5">Tiempo estimado de trabajo</div>
 
-                <div className="mb-3 d-flex flex-row">
-                  <input
-                    type="text"
-                    className="form-form-control border-0 border-bottom rounded-0 p-0"
-                    aria-describedby="basic-addon2"
-                    onChange={handleEstimatedDurationChange}
-                  />
-                  <span className="input-group-text" id="basic-addon2">
-                    horas
-                  </span>
+              <div className="col-md-7 ms-3 d-flex justify-content-between align-items-center flex-row flex-fill">
+                <input
+                  type="text"
+                  className="form-control border-0 border-bottom rounded-0 p-0"
+                  id="estimatedDuration"
+                  value={estimatedDuration}
+                  onChange={handleEstimatedDurationChange}
+                  maxLength={12}
+                />
+                <div className="d-flex align-items-center justify-content-center flex-shrink-0 w-10">
+                  horas
                 </div>
               </div>
-              <div className="d-flex align-items-center justify-content-center flex-shrink-0 w-10">
-                {stateSaved || (
-                  <Tooltip
-                    title={
-                      <Typography fontSize={15}>Cambios sin guardar</Typography>
-                    }
-                    placement="top"
-                  >
-                    <div className="d-flex align-items-center justify-content-center text-warning">
-                      <IoIosWarning
-                        style={{ flex: "1", height: "100%", fontSize: "2rem" }}
-                      />
-                    </div>
-                  </Tooltip>
-                )}
-              </div>
             </div>
+
+            <UnsavedWarningIcon isSaved={estimatedDurationSaved} />
           </div>
+
+          <div className="d-flex justify-content-between align-items-center flex-row">
+            <div className="d-flex my-1 flex-fill justify-content-between align-items-center flex-row">
+              Descripción
+            </div>
+
+            <UnsavedWarningIcon isSaved={descriptionSaved} />
+          </div>
+          <textarea
+            class="form-control"
+            id="description"
+            value={description}
+            onChange={handleDescriptionChange}
+            maxLength={100}
+            rows="3"
+          ></textarea>
+
           <button
             type="button"
             className={
-              pendingChanges && titulo && state
+              (pendingChanges || mode == ADD) && titulo
                 ? "btn btn-primary"
                 : "btn btn-primary disabled"
             }
