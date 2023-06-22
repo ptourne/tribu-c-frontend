@@ -15,7 +15,7 @@ export interface Proyecto {
   costo_estimado: number;
   fecha_inicio: Date | null;
   fecha_fin_estimada: Date | null;
-  estado: string;
+  estado: number;
   customizacion: string;
   horas_consumidas: number;
   id_cliente: number;

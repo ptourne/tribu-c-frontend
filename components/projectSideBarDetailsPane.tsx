@@ -34,7 +34,7 @@ function ProjectSideBarDetailsPane({
   const [pendingChanges, setPendingChanges] = useState(false);
   const [name, setName] = useState("");
   const [nameSaved, setNameSaved] = useState(true);
-  const [state, setState] = useState("");
+  const [state, setState] = useState(0);
   const [stateSaved, setStateSaved] = useState(true);
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [startDateSaved, setStartDateSaved] = useState(true);
@@ -56,7 +56,7 @@ function ProjectSideBarDetailsPane({
     } else {
       setMode(ADD);
       setName("Nuevo Proyecto");
-      setState("En curso");
+      setState(0);
       setStartDate(null);
       setFinishDate(null);
       setEstimatedCost("0");
@@ -89,7 +89,7 @@ function ProjectSideBarDetailsPane({
   };
 
   const handleStateChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setState(event.target.value);
+    setState(parseInt(event.target.value));
     if (mode === EDIT) setStateSaved(false);
     setPendingChanges(true);
   };
@@ -153,7 +153,7 @@ function ProjectSideBarDetailsPane({
         setPendingChanges(false);
 
         setName("Nuevo Proyecto");
-        setState("En curso");
+        setState(0);
         setStartDate(null);
         setFinishDate(null);
         setEstimatedCost("0");
@@ -226,7 +226,7 @@ function ProjectSideBarDetailsPane({
         setPendingChanges(false);
 
         setName("Nuevo Proyecto");
-        setState("En curso");
+        setState(0);
         setStartDate(null);
         setFinishDate(null);
         setEstimatedCost("0");
@@ -313,8 +313,9 @@ function ProjectSideBarDetailsPane({
                     value={state}
                     onChange={handleStateChange}
                   >
-                    <option value="En curso">En curso</option>
-                    <option value="Finalizado">Finalizado</option>
+                    <option value={0}>No iniciado</option>
+                    <option value={1}>En curso</option>
+                    <option value={2}>Finalizado</option>
                   </select>
                 </div>
               </div>
@@ -382,7 +383,7 @@ function ProjectSideBarDetailsPane({
           <button
             type="button"
             className={
-              pendingChanges && name && state && startDate && estimatedCost
+              pendingChanges && name && startDate && estimatedCost
                 ? "btn btn-primary"
                 : "btn btn-primary disabled"
             }
