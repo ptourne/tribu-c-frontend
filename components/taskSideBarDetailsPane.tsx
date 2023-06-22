@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Tarea } from "../pages/types";
+import { Proyecto, Tarea } from "../pages/types";
 import { AiOutlineCheck, AiOutlineCheckCircle } from "react-icons/ai";
 import { IoIosWarning } from "react-icons/io";
 import { MdDelete } from "react-icons/md";
@@ -8,30 +8,35 @@ import { Turret_Road } from "next/font/google";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Typography, Tooltip } from "@mui/material";
-import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { Button, Modal } from "react-bootstrap";
 import { SERVER_NAME_PROYECTOS } from "@/environments";
 import TaskStatusButtons from "./taskStatusButtons";
+import UnsavedWarningIcon from "./unsavedWarningIcon";
 
 interface TaskSideBarProps {
   task: Tarea | undefined;
+  project_id: string;
+  getTasksFunction: Function;
 }
 
 const ADD = 0;
 const EDIT = 1;
 
-function TaskSideBarDetailsPane({ task }: TaskSideBarProps) {
+function TaskSideBarDetailsPane({
+  task,
+  project_id,
+  getTasksFunction,
+}: TaskSideBarProps) {
   const [mode, setMode] = useState(EDIT);
-
   const [lastTask, setLastTask] = useState<Tarea | undefined>(undefined);
   const [pendingChanges, setPendingChanges] = useState(false);
   const [titulo, setTitulo] = useState("");
   const [tituloSaved, setTituloSaved] = useState(true);
   const [state, setState] = useState(0);
   const [stateSaved, setStateSaved] = useState(true);
-  const [description, setdescription] = useState("");
-  const [descriptionSaved, setdescriptionSaved] = useState(true);
+  const [description, setDescription] = useState("");
+  const [descriptionSaved, setDescriptionSaved] = useState(true);
   const [estimatedDuration, setEstimatedDuration] = useState(0);
   const [estimatedDurationSaved, setEstimatedDurationSaved] = useState(true);
   const [accumulatedHours, setAccumulatedHours] = useState(0);
@@ -43,7 +48,7 @@ function TaskSideBarDetailsPane({ task }: TaskSideBarProps) {
       setMode(EDIT);
       setTitulo(task.titulo || "");
       setState(task.estado || 0);
-      setdescription(task.descripcion || "");
+      setDescription(task.descripcion || "");
       setEstimatedDuration(task.tiempo_estimado_fin || 0);
       setAccumulatedHours(task.horas_acumuladas || 0);
       if (!lastTask) setLastTask(task);
@@ -51,7 +56,7 @@ function TaskSideBarDetailsPane({ task }: TaskSideBarProps) {
       setMode(ADD);
       setTitulo("Nuevo Tarea");
       setState(0);
-      setdescription("");
+      setDescription("");
       setEstimatedDuration(0);
       setAccumulatedHours(0);
     }
@@ -70,7 +75,7 @@ function TaskSideBarDetailsPane({ task }: TaskSideBarProps) {
     setLastTask(task);
     setTituloSaved(true);
     setStateSaved(true);
-    setdescriptionSaved(true);
+    setDescriptionSaved(true);
     setEstimatedDurationSaved(true);
     setAccumulatedHoursSaved(true);
     setPendingChanges(false);
@@ -79,75 +84,104 @@ function TaskSideBarDetailsPane({ task }: TaskSideBarProps) {
   const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setTitulo(event.target.value);
     if (mode === EDIT) setTituloSaved(false);
+    setTituloSaved(false);
     setPendingChanges(true);
   };
 
   const handleStateChange = (value: number) => {
     setState(value);
     if (mode === EDIT) setStateSaved(false);
+    setStateSaved(false);
     setPendingChanges(true);
   };
 
-  const handleDescriptionChange = (value: string) => {
-    setdescription(value);
-    if (mode === EDIT) setdescriptionSaved(false);
+  const handleDescriptionChange = (
+    event: React.ChangeEvent<HTMLTextAreaElement>
+  ) => {
+    const value = event.target.value;
+    setDescription(value);
+    if (mode === EDIT) setDescriptionSaved(false);
+    setDescriptionSaved(false);
     setPendingChanges(true);
   };
 
-  const handleEstimatedDurationChange = (value: number) => {
-    setEstimatedDuration(value);
-    if (mode === EDIT) setEstimatedDurationSaved(false);
-    setPendingChanges(true);
+  const handleEstimatedDurationChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const value = parseInt(event.target.value);
+    if (!isNaN(value) && estimatedDuration != value) {
+      setEstimatedDuration(value);
+      if (mode === EDIT) setEstimatedDurationSaved(false);
+      setEstimatedDurationSaved(false);
+      setPendingChanges(true);
+    }
   };
 
   const handleAccumulatedHoursChange = (value: number) => {
     setAccumulatedHours(value);
     if (mode === EDIT) setAccumulatedHoursSaved(false);
+    setAccumulatedHoursSaved(false);
     setPendingChanges(true);
   };
 
   const handleSave = () => {
     // Create an object with the updated values
     const taskToSave: Tarea = {
-      id: task?.id,
+      id_tarea: task?.id_tarea,
       titulo: titulo,
+      descripcion: description,
+      tiempo_estimado_finalizacion: estimatedDuration,
+      horas_acumuladas: 1,
       estado: state,
+      legajo_responsable: 1,
     };
 
     // Make an API request to save the changes
-
     if (mode === ADD) saveTask(taskToSave);
     else updateTask(taskToSave);
   };
 
   const saveTask = (taskToSave: Tarea) => {
     axios
-      .post(SERVER_NAME_PROYECTOS + "tasks", taskToSave)
+      .post(
+        SERVER_NAME_PROYECTOS + "projects/" + project_id + "/tasks",
+        taskToSave
+      )
       .then(() => {
         toast.success("Tarea guardado correctamente!", {
           position: "top-right",
           autoClose: 2000,
           hideProgressBar: true,
         });
+        getTasksFunction();
         setTituloSaved(true);
         setStateSaved(true);
         setLastTask(task);
         setTituloSaved(true);
         setStateSaved(true);
-        setdescriptionSaved(true);
+        setDescriptionSaved(true);
         setEstimatedDurationSaved(true);
         setAccumulatedHoursSaved(true);
         setPendingChanges(false);
 
         setTitulo("Nueva Tarea");
         setState(0);
-        setdescription("");
+        setDescription("");
         setEstimatedDuration(0);
         setAccumulatedHours(0);
       })
       .catch((e) => {
-        /*if (e.response?.data?.msg) return setActionError('Error saving configuration: ' + e.response.data.msg)
-        else return setActionError('Error saving configuration')*/
+        console.log(e.response);
+        toast.error(
+          e.response?.data?.msg
+            ? "Hubo un error al guardar la tarea: " + e.response?.data?.msg
+            : "Hubo un error al guardar la tarea",
+          {
+            position: "top-right",
+            autoClose: 2000,
+            hideProgressBar: true,
+          }
+        );
       });
   };
 
@@ -160,12 +194,13 @@ function TaskSideBarDetailsPane({ task }: TaskSideBarProps) {
           autoClose: 2000,
           hideProgressBar: true,
         });
+        getTasksFunction();
         setTituloSaved(true);
         setStateSaved(true);
         setLastTask(task);
         setTituloSaved(true);
         setStateSaved(true);
-        setdescriptionSaved(true);
+        setDescriptionSaved(true);
         setEstimatedDurationSaved(true);
         setAccumulatedHoursSaved(true);
         setPendingChanges(false);
@@ -189,7 +224,7 @@ function TaskSideBarDetailsPane({ task }: TaskSideBarProps) {
       if (task) {
         setTitulo(task.titulo || "");
         setState(task.estado || 0);
-        setdescription(task.descripcion || "");
+        setDescription(task.descripcion || "");
         setEstimatedDuration(task.tiempo_estimado_fin || 0);
         setAccumulatedHours(task.horas_acumuladas || 0);
         setTituloSaved(true);
@@ -197,7 +232,7 @@ function TaskSideBarDetailsPane({ task }: TaskSideBarProps) {
         setLastTask(task);
         setTituloSaved(true);
         setStateSaved(true);
-        setdescriptionSaved(true);
+        setDescriptionSaved(true);
         setEstimatedDurationSaved(true);
         setAccumulatedHoursSaved(true);
         setPendingChanges(false);
@@ -221,7 +256,7 @@ function TaskSideBarDetailsPane({ task }: TaskSideBarProps) {
         <form className="d-flex flex-col">
           <div className="d-flex justify-content-between align-items-center flex-row mt-1 mb-2">
             <div className="w-10 fs-2 text-body-secondary flex-shrink-0 ml-2 mr-2">
-              {task && task.id}
+              {task && task.id_tarea}
             </div>
             <div className="">
               <input
@@ -232,22 +267,8 @@ function TaskSideBarDetailsPane({ task }: TaskSideBarProps) {
                 onChange={handleNameChange}
               />
             </div>
-            <div className="d-flex align-items-center justify-content-center flex-shrink-0 w-10 ml-3 mr-3">
-              {tituloSaved || (
-                <Tooltip
-                  title={
-                    <Typography fontSize={15}>Cambios sin guardar</Typography>
-                  }
-                  placement="top"
-                >
-                  <div className="d-flex align-items-center justify-content-center text-warning">
-                    <IoIosWarning
-                      style={{ flex: "1", height: "100%", fontSize: "2rem" }}
-                    />
-                  </div>
-                </Tooltip>
-              )}
-            </div>
+
+            <UnsavedWarningIcon isSaved={tituloSaved} />
             {mode === EDIT && (
               <button
                 type="button"
@@ -262,11 +283,9 @@ function TaskSideBarDetailsPane({ task }: TaskSideBarProps) {
           </div>
           <div className="d-flex justify-content-between flex-col mt-1 mb-3">
             <div className="d-flex justify-content-between align-items-center flex-row">
-              <div className="d-flex flex-fill justify-content-between align-items-center flex-row">
-                <label htmlFor="state" className="col-md-4 form-label">
-                  Estado
-                </label>
-                <div className="col-md-8">
+              <div className="d-flex my-1 flex-fill justify-content-between align-items-center flex-row">
+                <div className="col-md-5">Estado</div>
+                <div className="col-md-7 ms-3 d-flex justify-content-between align-items-center flex-row flex-fill">
                   <TaskStatusButtons
                     selectedState={state}
                     setSelectedState={handleStateChange}
@@ -291,47 +310,49 @@ function TaskSideBarDetailsPane({ task }: TaskSideBarProps) {
               </div>
             </div>
           </div>
-          <div className="d-flex justify-content-between flex-col mt-1 mb-3">
-            <div className="d-flex justify-content-between align-items-center flex-row">
-              <div className="flex-grow-1 d-flex justify-content-between align-items-center flex-row">
-                <label htmlFor="state" className="col-md-6 form-label">
-                  Tiempo estimado de trabajo
-                </label>
+          <div className="d-flex justify-content-between align-items-center flex-row">
+            <div className="d-flex my-1 flex-fill justify-content-between align-items-center flex-row">
+              <div className="col-md-5">Tiempo estimado de trabajo</div>
 
-                <div className="mb-3 d-flex flex-row">
-                  <input
-                    type="text"
-                    className="form-form-control border-0 border-bottom rounded-0 p-0"
-                    aria-describedby="basic-addon2"
-                    onChange={handleEstimatedDurationChange}
-                  />
-                  <span className="input-group-text" id="basic-addon2">
-                    horas
-                  </span>
+              <div className="col-md-7 ms-3 d-flex justify-content-between align-items-center flex-row flex-fill">
+                <input
+                  type="text"
+                  className="form-control border-0 border-bottom rounded-0 p-0"
+                  id="estimatedDuration"
+                  value={estimatedDuration}
+                  onChange={handleEstimatedDurationChange}
+                  maxLength={12}
+                />
+                <div className="d-flex align-items-center justify-content-center flex-shrink-0 w-10">
+                  horas
                 </div>
               </div>
-              <div className="d-flex align-items-center justify-content-center flex-shrink-0 w-10">
-                {stateSaved || (
-                  <Tooltip
-                    title={
-                      <Typography fontSize={15}>Cambios sin guardar</Typography>
-                    }
-                    placement="top"
-                  >
-                    <div className="d-flex align-items-center justify-content-center text-warning">
-                      <IoIosWarning
-                        style={{ flex: "1", height: "100%", fontSize: "2rem" }}
-                      />
-                    </div>
-                  </Tooltip>
-                )}
-              </div>
             </div>
+
+            <UnsavedWarningIcon isSaved={estimatedDurationSaved} />
           </div>
+
+          <div className="d-flex flex-col my-1">
+            <div className="d-flex justify-content-between align-items-center flex-row">
+              <div className="d-flex my-1 flex-fill justify-content-between align-items-center flex-row">
+                Descripción
+              </div>
+              <UnsavedWarningIcon isSaved={descriptionSaved} />
+            </div>
+            <textarea
+              className="form-control"
+              id="description"
+              value={description}
+              onChange={handleDescriptionChange}
+              maxLength={100}
+              rows={3}
+            ></textarea>
+          </div>
+
           <button
             type="button"
             className={
-              pendingChanges && titulo && state
+              (pendingChanges || mode == ADD) && titulo
                 ? "btn btn-primary"
                 : "btn btn-primary disabled"
             }

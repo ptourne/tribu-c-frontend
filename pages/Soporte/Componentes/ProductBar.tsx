@@ -20,7 +20,11 @@ export const ProductBar: React.FC<ProductBarProps> = ({ products }) => {
     //creamos un archivo [product_id].tsx en Ticket y usamos el ${productID} para hacer el parametro id generico.
     router.push({
       pathname: `/Soporte/Ticket/${productId}`,
+
       query: {
+        productName: products.find((product) => product.id === productId)?.name,
+        productVersion: products.find((product) => product.id === productId)
+          ?.version,
         productId,
       },
     });

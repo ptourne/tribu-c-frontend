@@ -52,25 +52,46 @@ export default function Ticket() {
   const router = useRouter();
   // IMPORTANTE ACA EL NOMBRE DE LA VARIABLE! Porque ? -> en router.query los nombres de la variable deben
   // coincidir con los parametros de la ruta especificada (product_id.tsx)
-  // EJ si tenemos http://localhost:3000/Soporte/Ticket/2 entonces router.query contendra { product_id: "2" }
+  // EJ si tenemos http://localhost:3000/soporte/Ticket/2 entonces router.query contendra { product_id: "2" }
   // para acceder al 2 utilizamos product_id en router.query. en este caso pasamos el produc_id y los ticketsQuery
-  const { product_id } = router.query;
+
   const listaProductos = INITIAL_STATE_TICKETS; // EJMEPLO solo de juguete debe ser cambiado por un fetch.
+
+  const { productVersion, productName, product_id } = router.query;
+
+  console.log(product_id);
 
   return (
     <div>
-      <h1>Estoy en -{product_id}- </h1>
-      <ul>
+      <h1 style={{ fontSize: "2.2em", marginLeft: "30px", marginTop: "20px" }}>
+        {productName}{" "}
+      </h1>
+      <h1 style={{ fontSize: "1.8em", marginLeft: "30px" }}>
+        Versión: {productVersion}{" "}
+      </h1>
+      <ul style={{ marginTop: "30px", width: "800px" }}>
         {listaProductos.map((ticketDecod) => (
           <li key={ticketDecod.id} id="LiTicketForAProduct">
-            <p>
-              Titulo: {ticketDecod.title}
-              Descripcion: {ticketDecod.description}
-              Severidad: {ticketDecod.severity}
-              Prioridad: {ticketDecod.priority}
-              Estado: {ticketDecod.state}
-              Tiempo de inicio: {ticketDecod.timeStart}
-            </p>
+            <div style={{ marginBottom: "10px" }}>
+              <p>
+                <strong>Título:</strong> {ticketDecod.title}
+              </p>
+              <p>
+                <strong>Descripción:</strong> {ticketDecod.description}
+              </p>
+              <p>
+                <strong>Estado:</strong> {ticketDecod.state}
+              </p>
+              <p>
+                <strong>Severidad:</strong> {ticketDecod.severity}
+              </p>
+              <p>
+                <strong>Prioridad:</strong> {ticketDecod.priority}
+              </p>
+              <p>
+                <strong>Fecha inicio:</strong> {ticketDecod.timeStart}
+              </p>
+            </div>
           </li>
         ))}
       </ul>

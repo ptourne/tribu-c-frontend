@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from 'axios'
+import axios from "axios";
 import { Proyecto } from "../pages/types";
 import { AiOutlineCheck, AiOutlineCheckCircle } from "react-icons/ai";
 import { IoIosWarning } from "react-icons/io";
@@ -12,6 +12,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { Button, Modal } from "react-bootstrap";
 import { SERVER_NAME_PROYECTOS } from "@/environments";
+import UnsavedWarningIcon from "./unsavedWarningIcon";
 
 interface ProjectSideBarProps {
   project: Proyecto | undefined;
@@ -21,10 +22,15 @@ interface ProjectSideBarProps {
 const ADD = 0;
 const EDIT = 1;
 
-function ProjectSideBarDetailsPane({ project, getProjectsFunction }: ProjectSideBarProps) {
+function ProjectSideBarDetailsPane({
+  project,
+  getProjectsFunction,
+}: ProjectSideBarProps) {
   const [mode, setMode] = useState(EDIT);
 
-  const [lastProject, setLastProject] = useState<Proyecto | undefined>(undefined);
+  const [lastProject, setLastProject] = useState<Proyecto | undefined>(
+    undefined
+  );
   const [pendingChanges, setPendingChanges] = useState(false);
   const [name, setName] = useState("");
   const [nameSaved, setNameSaved] = useState(true);
@@ -46,7 +52,7 @@ function ProjectSideBarDetailsPane({ project, getProjectsFunction }: ProjectSide
       setStartDate(project.fecha_inicio || null);
       setFinishDate(project.fecha_fin_estimada || null);
       setEstimatedCost(project.costo_estimado.toString());
-      if (!lastProject) setLastProject(project)
+      if (!lastProject) setLastProject(project);
     } else {
       setMode(ADD);
       setName("Nuevo Proyecto");
@@ -100,7 +106,9 @@ function ProjectSideBarDetailsPane({ project, getProjectsFunction }: ProjectSide
     setPendingChanges(true);
   };
 
-  const handleEstimatedCostChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleEstimatedCostChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     setEstimatedCost(event.target.value);
     if (mode === EDIT) setEstimatedCostSaved(false);
     setPendingChanges(true);
@@ -129,7 +137,7 @@ function ProjectSideBarDetailsPane({ project, getProjectsFunction }: ProjectSide
 
   const saveProject = (projectToSave: Proyecto) => {
     axios
-      .post(SERVER_NAME_PROYECTOS + 'projects', projectToSave)
+      .post(SERVER_NAME_PROYECTOS + "projects", projectToSave)
       .then(() => {
         toast.success("Proyecto guardado correctamente!", {
           position: "top-right",
@@ -149,16 +157,20 @@ function ProjectSideBarDetailsPane({ project, getProjectsFunction }: ProjectSide
         setStartDate(null);
         setFinishDate(null);
         setEstimatedCost("0");
-        
       })
       .catch((e) => {
-        toast.error(e.response?.data?.msg ? "Hubo un error al guardar el proyecto: " + e.response?.data?.msg : "Hubo un error al guardar el proyecto", {
-          position: "top-right",
-          autoClose: 2000,
-          hideProgressBar: true,
-        });
-      })
-  }
+        toast.error(
+          e.response?.data?.msg
+            ? "Hubo un error al guardar el proyecto: " + e.response?.data?.msg
+            : "Hubo un error al guardar el proyecto",
+          {
+            position: "top-right",
+            autoClose: 2000,
+            hideProgressBar: true,
+          }
+        );
+      });
+  };
 
   const updateProject = (projectToSave: Proyecto) => {
     axios
@@ -178,13 +190,20 @@ function ProjectSideBarDetailsPane({ project, getProjectsFunction }: ProjectSide
         setPendingChanges(false);
       })
       .catch((e) => {
-        toast.error(e.response?.data?.msg ? "Hubo un error al actualizar el proyecto: " + e.response?.data?.msg : "Hubo un error al actualizar el proyecto", {
-          position: "top-right",
-          autoClose: 2000,
-          hideProgressBar: true,
-        });
-      })
-  }
+        console.log(e.response);
+        toast.error(
+          e.response?.data?.msg
+            ? "Hubo un error al actualizar el proyecto: " +
+                e.response?.data?.msg
+            : "Hubo un error al actualizar el proyecto",
+          {
+            position: "top-right",
+            autoClose: 2000,
+            hideProgressBar: true,
+          }
+        );
+      });
+  };
 
   const handleDeleteProject = () => {
     //Llamar API
@@ -197,7 +216,7 @@ function ProjectSideBarDetailsPane({ project, getProjectsFunction }: ProjectSide
           autoClose: 2000,
           hideProgressBar: true,
         });
-  
+
         getProjectsFunction();
         setNameSaved(true);
         setStateSaved(true);
@@ -205,7 +224,7 @@ function ProjectSideBarDetailsPane({ project, getProjectsFunction }: ProjectSide
         setFinishDateSaved(true);
         setEstimatedCostSaved(true);
         setPendingChanges(false);
-  
+
         setName("Nuevo Proyecto");
         setState("En curso");
         setStartDate(null);
@@ -214,12 +233,17 @@ function ProjectSideBarDetailsPane({ project, getProjectsFunction }: ProjectSide
       })
       .catch((e) => {
         setShowDeleteConfirmation(false);
-        toast.error(e.response?.data?.msg ? "Hubo un error al eliminar el proyecto: " + e.response?.data?.msg : "Hubo un error al eliminar el proyecto", {
-          position: "top-right",
-          autoClose: 2000,
-          hideProgressBar: true,
-        });
-      })
+        toast.error(
+          e.response?.data?.msg
+            ? "Hubo un error al eliminar el proyecto: " + e.response?.data?.msg
+            : "Hubo un error al eliminar el proyecto",
+          {
+            position: "top-right",
+            autoClose: 2000,
+            hideProgressBar: true,
+          }
+        );
+      });
   };
 
   const handleDeleteConfirmationOpen = () => {
@@ -264,16 +288,17 @@ function ProjectSideBarDetailsPane({ project, getProjectsFunction }: ProjectSide
                 </Tooltip>
               )}
             </div>
-            { mode === EDIT &&
-            <button
-              type="button"
-              className="btn btn-lg btn-outline-danger d-flex align-items-center justify-content-center"
-              onClick={() => {
-                setShowDeleteConfirmation(true);
-              }}
-            >
-              <MdDelete />
-            </button>}
+            {mode === EDIT && (
+              <button
+                type="button"
+                className="btn btn-lg btn-outline-danger d-flex align-items-center justify-content-center"
+                onClick={() => {
+                  setShowDeleteConfirmation(true);
+                }}
+              >
+                <MdDelete />
+              </button>
+            )}
           </div>
           <div className="d-flex justify-content-between flex-col mt-1 mb-3">
             <div className="d-flex justify-content-between align-items-center flex-row">
@@ -293,22 +318,8 @@ function ProjectSideBarDetailsPane({ project, getProjectsFunction }: ProjectSide
                   </select>
                 </div>
               </div>
-              <div className="d-flex align-items-center justify-content-center flex-shrink-0 w-10">
-                {stateSaved || (
-                  <Tooltip
-                    title={
-                      <Typography fontSize={15}>Cambios sin guardar</Typography>
-                    }
-                    placement="top"
-                  >
-                    <div className="d-flex align-items-center justify-content-center text-warning">
-                      <IoIosWarning
-                        style={{ flex: "1", height: "100%", fontSize: "2rem" }}
-                      />
-                    </div>
-                  </Tooltip>
-                )}
-              </div>
+
+              <UnsavedWarningIcon isSaved={stateSaved} />
             </div>
             <div className="d-flex justify-content-between align-items-center flex-row">
               <div className="flex-grow-1 d-flex justify-content-between align-items-center flex-row">
@@ -326,22 +337,8 @@ function ProjectSideBarDetailsPane({ project, getProjectsFunction }: ProjectSide
                   />
                 </div>
               </div>
-              <div className="d-flex align-items-center justify-content-center flex-shrink-0 w-10">
-                {startDateSaved || (
-                  <Tooltip
-                    title={
-                      <Typography fontSize={15}>Cambios sin guardar</Typography>
-                    }
-                    placement="top"
-                  >
-                    <div className="d-flex align-items-center justify-content-center text-warning">
-                      <IoIosWarning
-                        style={{ flex: "1", height: "100%", fontSize: "2rem" }}
-                      />
-                    </div>
-                  </Tooltip>
-                )}
-              </div>
+
+              <UnsavedWarningIcon isSaved={startDateSaved} />
             </div>
             <div className="d-flex justify-content-between align-items-center flex-row">
               <div className="flex-grow-1 d-flex justify-content-between align-items-center flex-row">
@@ -359,22 +356,8 @@ function ProjectSideBarDetailsPane({ project, getProjectsFunction }: ProjectSide
                   />
                 </div>
               </div>
-              <div className="d-flex align-items-center justify-content-center flex-shrink-0 w-10">
-                {finishDateSaved || (
-                  <Tooltip
-                    title={
-                      <Typography fontSize={15}>Cambios sin guardar</Typography>
-                    }
-                    placement="top"
-                  >
-                    <div className="d-flex align-items-center justify-content-center text-warning">
-                      <IoIosWarning
-                        style={{ flex: "1", height: "100%", fontSize: "2rem" }}
-                      />
-                    </div>
-                  </Tooltip>
-                )}
-              </div>
+
+              <UnsavedWarningIcon isSaved={finishDateSaved} />
             </div>
             <div className="d-flex justify-content-between align-items-center flex-row">
               <div className="flex-grow-1 d-flex justify-content-between align-items-center flex-row">
@@ -392,32 +375,20 @@ function ProjectSideBarDetailsPane({ project, getProjectsFunction }: ProjectSide
                   />
                 </div>
               </div>
-              <div className="d-flex align-items-center justify-content-center flex-shrink-0 w-10">
-                {estimatedCostSaved || (
-                  <Tooltip
-                    title={
-                      <Typography fontSize={15}>Cambios sin guardar</Typography>
-                    }
-                    placement="top"
-                  >
-                    <div className="d-flex align-items-center justify-content-center text-warning">
-                      <IoIosWarning
-                        style={{ flex: "1", height: "100%", fontSize: "2rem" }}
-                      />
-                    </div>
-                  </Tooltip>
-                )}
-              </div>
+
+              <UnsavedWarningIcon isSaved={estimatedCostSaved} />
             </div>
           </div>
           <button
             type="button"
             className={
-              (pendingChanges && name && state && startDate && estimatedCost) ? "btn btn-primary" : "btn btn-primary disabled"
+              pendingChanges && name && state && startDate && estimatedCost
+                ? "btn btn-primary"
+                : "btn btn-primary disabled"
             }
             onClick={handleSave}
           >
-            { mode === EDIT ? "Guardar cambios" : "Guardar"}
+            {mode === EDIT ? "Guardar cambios" : "Guardar"}
           </button>
         </form>
       </div>

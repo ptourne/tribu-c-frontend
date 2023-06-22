@@ -25,12 +25,15 @@ export interface Proyecto {
 }
 
 export interface Tarea {
-  id: string
-  titulo: string
-  descripcion: string
+  id_tarea: string;
+  id_project: string;
+  titulo: string;
+  descripcion: string;
   tiempo_estimado_fin: number;
   horas_acumuladas: number;
   estado: number;
+  responsable: string;
+
 }
 
 export interface Producto {
