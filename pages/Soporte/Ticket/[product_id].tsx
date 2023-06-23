@@ -77,7 +77,7 @@ export default function Ticket() {
     console.log(`producID :-${productID}- `);
     router.push({
       pathname: `/Soporte/Ticket/AgregarTicket/${productID}`,
-      query: { clientId, responsibleId, idTicket },
+      query: { productID },
     });
   };
 

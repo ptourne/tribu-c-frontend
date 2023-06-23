@@ -14,8 +14,8 @@ export default function Soporte() {
   };
 
   useEffect(() => {
-    fetchProductos().then((productos) => {
-      setProducts(productos);
+    fetchProductos().then((productosFetch) => {
+      setProducts(productosFetch);
     });
   }, []);
 

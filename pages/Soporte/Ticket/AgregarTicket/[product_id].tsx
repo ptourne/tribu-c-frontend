@@ -4,14 +4,17 @@ import { FormTicket } from "../../Componentes/FormTicket";
 
 export default function AgregarTicket() {
   const router = useRouter();
-  const { clientId, responsibleId, idTicket } = router.query;
+  const { productID } = router.query;
+  let productIDNumerico = 0;
+  if (typeof productID === "string") {
+    productIDNumerico = parseInt(productID);
+  } else productIDNumerico = -1;
 
   return (
     <>
       <h1>Agregar Ticket</h1>
-      Calendario jejeje <RiCalendar2Fill size={44} /> {clientId} {responsibleId}{" "}
-      {idTicket}
-      <FormTicket />
+      Calendario jejeje <RiCalendar2Fill size={44} />
+      <FormTicket productIdNumerico={productIDNumerico} />
     </>
   );
 }
