@@ -26,6 +26,9 @@ function ProjectSideBarDetailsPane({
   project,
   getProjectsFunction,
 }: ProjectSideBarProps) {
+  const [clients, setClients] = useState([]);
+  const [products, setProducts] = useState([]);
+
   const [mode, setMode] = useState(EDIT);
 
   const [lastProject, setLastProject] = useState<Proyecto | undefined>(
@@ -34,6 +37,10 @@ function ProjectSideBarDetailsPane({
   const [pendingChanges, setPendingChanges] = useState(false);
   const [name, setName] = useState("");
   const [nameSaved, setNameSaved] = useState(true);
+  const [client, setClient] = useState<number | null>(null);
+  const [product, setProduct] = useState<number | null>(null);
+  const [version, setVersion] = useState("");
+  const [customization, setCustomization] = useState("");
   const [state, setState] = useState(0);
   const [stateSaved, setStateSaved] = useState(true);
   const [startDate, setStartDate] = useState<Date | null>(null);
@@ -48,7 +55,11 @@ function ProjectSideBarDetailsPane({
     if (project) {
       setMode(EDIT);
       setName(project.nombre || "");
-      setState(project.estado || "");
+      setState(project.estado);
+      setClient(project.id_cliente);
+      setProduct(project.id_producto);
+      setVersion(project.version);
+      setCustomization(project.customizacion);
       setStartDate(project.fecha_inicio || null);
       setFinishDate(project.fecha_fin_estimada || null);
       setEstimatedCost(project.costo_estimado.toString());
@@ -57,6 +68,10 @@ function ProjectSideBarDetailsPane({
       setMode(ADD);
       setName("Nuevo Proyecto");
       setState(0);
+      setClient(null);
+      setProduct(null);
+      setVersion("");
+      setCustomization("");
       setStartDate(null);
       setFinishDate(null);
       setEstimatedCost("0");
@@ -85,6 +100,30 @@ function ProjectSideBarDetailsPane({
   const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setName(event.target.value);
     if (mode === EDIT) setNameSaved(false);
+    setPendingChanges(true);
+  };
+
+  const handleClientChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setClient(parseInt(event.target.value));
+    setPendingChanges(true);
+  };
+
+  const handleProductChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setProduct(parseInt(event.target.value));
+    setPendingChanges(true);
+  };
+
+  const handleVersionChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setVersion(event.target.value);
+    setPendingChanges(true);
+  };
+
+  const handleCustomizationChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setCustomization(event.target.value);
     setPendingChanges(true);
   };
 
@@ -122,11 +161,11 @@ function ProjectSideBarDetailsPane({
       costo_estimado: parseInt(estimatedCost),
       fecha_inicio: startDate,
       fecha_fin_estimada: finishDate,
-      customizacion: "Custom FIUBA2",
-      horas_consumidas: 5,
-      id_cliente: 100,
-      id_producto: 10,
-      version: "1.9",
+      customizacion: customization,
+      horas_consumidas: 0,
+      id_cliente: client,
+      id_producto: product,
+      version: version,
     };
 
     // Make an API request to save the changes
@@ -147,6 +186,10 @@ function ProjectSideBarDetailsPane({
         getProjectsFunction();
         setNameSaved(true);
         setStateSaved(true);
+        setClient(null);
+        setProduct(null);
+        setVersion("");
+        setCustomization("");
         setStartDateSaved(true);
         setFinishDateSaved(true);
         setEstimatedCostSaved(true);
@@ -227,6 +270,10 @@ function ProjectSideBarDetailsPane({
 
         setName("Nuevo Proyecto");
         setState(0);
+        setClient(null);
+        setProduct(null);
+        setVersion("");
+        setCustomization("");
         setStartDate(null);
         setFinishDate(null);
         setEstimatedCost("0");
@@ -284,6 +331,44 @@ function ProjectSideBarDetailsPane({
                 <MdDelete />
               </button>
             )}
+          </div>
+          <div className="d-flex justify-content-between align-items-center flex-row">
+              <div className="flex-grow-1 d-flex justify-content-between align-items-center flex-row">
+                <label htmlFor="estiamtedCost" className="col-md-6 form-label">
+                  Versi&oacute;n
+                </label>
+                <div className="col-md-6">
+                  <input
+                    type="text"
+                    className="form-control border-0 border-bottom rounded-0 p-0"
+                    id="version"
+                    value={version}
+                    onChange={handleVersionChange}
+                    maxLength={10}
+                    disabled={mode===EDIT}
+                  />
+                </div>
+              </div>
+              <UnsavedWarningIcon isSavePending={true} />
+          </div>
+          <div className="d-flex justify-content-between align-items-center flex-row">
+              <div className="flex-grow-1 d-flex justify-content-between align-items-center flex-row">
+                <label htmlFor="estiamtedCost" className="col-md-6 form-label">
+                  Customizaci&oacute;n
+                </label>
+                <div className="col-md-6">
+                  <input
+                    type="text"
+                    className="form-control border-0 border-bottom rounded-0 p-0"
+                    id="customization"
+                    value={customization}
+                    onChange={handleCustomizationChange}
+                    maxLength={60}
+                    disabled={mode===EDIT}
+                  />
+                </div>
+              </div>
+              <UnsavedWarningIcon isSavePending={true} />
           </div>
           <div className="d-flex justify-content-between flex-col mt-1 mb-3">
             <div className="d-flex justify-content-between align-items-center flex-row">
@@ -368,7 +453,7 @@ function ProjectSideBarDetailsPane({
           <button
             type="button"
             className={
-              pendingChanges && name && startDate && estimatedCost
+              pendingChanges && name && version && customization && startDate && estimatedCost
                 ? "btn btn-primary"
                 : "btn btn-primary disabled"
             }
