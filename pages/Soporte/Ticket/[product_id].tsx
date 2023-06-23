@@ -58,43 +58,82 @@ export default function Ticket() {
   const listaProductos = INITIAL_STATE_TICKETS; // EJMEPLO solo de juguete debe ser cambiado por un fetch.
 
   const { productVersion, productName, product_id } = router.query;
+  const CLIENTE_ID = 1;
+  const RESPONSIBLE_ID = 1;
 
   console.log(product_id);
+  let productID: string = "INICIADO";
+  if (typeof product_id === "string") {
+    productID = product_id;
+  }
+
+  const handleClickAgregarTicket = (
+    productID: string,
+    clientId: number,
+    responsibleId: number,
+    idTicket: number
+  ) => {
+    console.log("El tamanio de la lista es " + idTicket);
+    console.log(`producID :-${productID}- `);
+    router.push({
+      pathname: `/Soporte/Ticket/AgregarTicket/${productID}`,
+      query: { clientId, responsibleId, idTicket },
+    });
+  };
 
   return (
-    <div>
-      <h1 style={{ fontSize: "2.2em", marginLeft: "30px", marginTop: "20px" }}>
-        {productName}{" "}
-      </h1>
-      <h1 style={{ fontSize: "1.8em", marginLeft: "30px" }}>
-        Versión: {productVersion}{" "}
-      </h1>
-      <ul style={{ marginTop: "30px", width: "800px" }}>
-        {listaProductos.map((ticketDecod) => (
-          <li key={ticketDecod.id} id="LiTicketForAProduct">
-            <div style={{ marginBottom: "10px" }}>
-              <p>
-                <strong>Título:</strong> {ticketDecod.title}
-              </p>
-              <p>
-                <strong>Descripción:</strong> {ticketDecod.description}
-              </p>
-              <p>
-                <strong>Estado:</strong> {ticketDecod.state}
-              </p>
-              <p>
-                <strong>Severidad:</strong> {ticketDecod.severity}
-              </p>
-              <p>
-                <strong>Prioridad:</strong> {ticketDecod.priority}
-              </p>
-              <p>
-                <strong>Fecha inicio:</strong> {ticketDecod.timeStart}
-              </p>
-            </div>
-          </li>
-        ))}
-      </ul>
-    </div>
+    <>
+      <div></div>
+      <div>
+        <h1
+          style={{ fontSize: "2.2em", marginLeft: "30px", marginTop: "20px" }}
+        >
+          {productName}{" "}
+        </h1>
+        <h1 style={{ fontSize: "1.8em", marginLeft: "30px" }}>
+          Versión: {productVersion}{" "}
+          <button
+            type="button"
+            onClick={() => {
+              handleClickAgregarTicket(
+                productID,
+                CLIENTE_ID,
+                RESPONSIBLE_ID,
+                listaProductos.length + 1
+              );
+            }}
+            id="buttonAgregarTicket"
+          >
+            +
+          </button>
+        </h1>
+        <ul style={{ marginTop: "30px", width: "800px" }}>
+          {listaProductos.map((ticketDecod) => (
+            <li key={ticketDecod.id} id="LiTicketForAProduct">
+              <div style={{ marginBottom: "10px" }}>
+                <p>
+                  <strong>Título:</strong> {ticketDecod.title}
+                </p>
+                <p>
+                  <strong>Descripción:</strong> {ticketDecod.description}
+                </p>
+                <p>
+                  <strong>Estado:</strong> {ticketDecod.state}
+                </p>
+                <p>
+                  <strong>Severidad:</strong> {ticketDecod.severity}
+                </p>
+                <p>
+                  <strong>Prioridad:</strong> {ticketDecod.priority}
+                </p>
+                <p>
+                  <strong>Fecha inicio:</strong> {ticketDecod.timeStart}
+                </p>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </>
   );
 }

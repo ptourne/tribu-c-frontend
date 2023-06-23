@@ -1,0 +1,76 @@
+#FormTicket{
+    display: flex;
+    flex-direction: column;
+    padding: 10px 10px 10px 10px;
+    margin-right: 1500px;
+    background-color: rgb(255, 255, 255);
+    margin-left: 100px;
+    #divPrincipal{
+        background-color: rgb(255, 255, 255);
+    }
+
+    #divTitulo{
+        margin-bottom: 20px;
+        span{
+            margin-right: 20px
+        }
+        input{
+            border: 4px solid rgb(255, 255, 255);
+            background-color: rgb(255, 255, 255);
+            font-size: 35px;
+            border-bottom: 2px solid #ccc; //poner la linea  debajo del titulo            
+        }
+
+    }
+    #GuardarCambios{
+        border-radius: 9px;
+        background-color: #0c6efc;
+        color: white;
+        padding: 1px 300px 1px 300px; //agrandamos el boton con esto
+    }
+
+    #divBotones{
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px; // alejar abajo  el elemento proximo de divBotones 
+        button{
+            border-radius: 5px;          //en radius no tiene sentido pasarle color o tipo borde
+            padding: 1px 10px 1px 10px;
+            border: 3px solid #0c6efc; //solo aca le pasamos tipo borden y color 
+            background-color: #ffffff;
+            color: #0c6efc;
+        }
+        button.selected{
+            background-color: blue;
+            color: white;
+        }
+        span{
+            margin-right: 150px //separar el texto span de los botones
+        }
+    }
+    #divDescripcion{
+        span{
+            margin-bottom: 5px;
+            padding-bottom: 40px;
+        }
+        textarea{
+            width: 100%; // con esto lo agradas con 100% pasa abajo del span.
+            padding: 10px;
+            resize: vertical;
+            border: 2px solid #e8e9ea;
+        }
+    }
+    #divHorasSoporte{
+        margin-bottom: 50px;
+        span{
+            margin-right: 40px;
+        }
+        input{
+            border-bottom: 2px solid #ccc;
+        }
+    }
+   
+    
+    
+}
+
