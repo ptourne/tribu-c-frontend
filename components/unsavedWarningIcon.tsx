@@ -2,10 +2,10 @@ import React from "react";
 import { Typography, Tooltip } from "@mui/material";
 import { IoIosWarning } from "react-icons/io";
 
-const UnsavedWarningIcon = ({ isSaved }) => {
+const UnsavedWarningIcon = ({ isSavePending }) => {
   return (
     <div className="d-flex align-items-center justify-content-center flex-shrink-0 w-10">
-      {isSaved || (
+      {isSavePending || (
         <Tooltip
           title={<Typography fontSize={15}>Cambios sin guardar</Typography>}
           placement="top"

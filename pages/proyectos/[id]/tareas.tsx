@@ -12,6 +12,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import { Proyecto } from "../../types";
 import TaskInfoCard from "@/components/taskInfoCard";
 import TaskSideBar from "@/components/taskSideBar";
+import { BsArrowLeftShort } from "react-icons/bs";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -26,15 +27,11 @@ export default function Tareas() {
     undefined
   );
 
-  /*
-  id
-  titulo
-  descripcion
-  tiempo_estimado_fin
-  horas_acumuladas
-  estado
-  prioridad
-*/
+  const returnToProjects = () => {
+    router.push({
+      pathname: `/proyectos`,
+    });
+  };
 
   const getTasks = async () => {
     if (id) {
@@ -80,6 +77,24 @@ export default function Tareas() {
     <div className="flex flex-row h-full">
       <div className="flex flex-fill col-md-1 h-full flex-col p-4 bg-white w-30">
         <div className="flex">
+          <Tooltip
+            title={
+              <Typography fontSize={15}>
+                Volver al panel de proyectos
+              </Typography>
+            }
+            placement="bottom"
+          >
+            <button
+              type="button"
+              className="btn d-flex align-items-center justify-content-center mb-5 mr-4"
+              onClick={() => {
+                returnToProjects();
+              }}
+            >
+              <BsArrowLeftShort />
+            </button>
+          </Tooltip>
           <h1 className="text-black mb-5 font-bold">Tareas</h1>
           <Tooltip
             title={<Typography fontSize={15}>Nueva Tarea</Typography>}
@@ -87,7 +102,7 @@ export default function Tareas() {
           >
             <button
               type="button"
-              className="btn btn-outline-primary d-flex align-items-center justify-content-center mb-5 ml-4 space-x-4"
+              className="btn btn-outline-primary d-flex align-items-center justify-content-center mb-5 ml-4"
               onClick={() => {
                 addTask();
               }}
