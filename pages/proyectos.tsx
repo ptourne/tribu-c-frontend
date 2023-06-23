@@ -21,37 +21,6 @@ export default function Proyectos() {
   );
 
   const getProjects = async () => {
-    // Proyectos de prueba hasta que tengamos conexión con el back-end
-    /*const projects: Proyecto[] = [
-      {
-        id: "1",
-        nombre: "Primer Proyecto",
-        fecha_inicio: new Date(2023, 2, 1), // March 1, 2023
-        fecha_fin: new Date(2023, 2, 15), // March 15, 2023
-        estado: "En curso",
-        horas_consumidas: 15,
-        costo_proyecto: 50000,
-      },
-      {
-        id: "2",
-        nombre: "Segundo Proyecto",
-        fecha_inicio: new Date(2023, 2, 10), // March 10, 2023
-        fecha_fin: new Date(2024, 1, 28), // February 28, 2024
-        estado: "En curso",
-        horas_consumidas: 8,
-        costo_proyecto: 70000,
-      },
-      {
-        id: "30",
-        nombre: "Tercer Proyecto",
-        fecha_inicio: new Date(2023, 3, 1), // April 1, 2023
-        fecha_fin: new Date(2024, 1, 15), // February 15, 2024
-        estado: "Finalizado",
-        horas_consumidas: 40,
-        costo_proyecto: 150000,
-      },
-    ];*/
-
     setProjects(projects);
     axios
       .get(SERVER_NAME_PROYECTOS + "projects")
