@@ -85,7 +85,7 @@ export default function Proyectos() {
             loading
               ? "d-flex justify-content-center align-items-center flex-column"
               : projects.length > 0
-              ? "d-flex flex-col space-y-4 text-black overflow-y-auto"
+              ? "d-flex flex-col space-y-4 text-black overflow-y-auto h-75"
               : "text-black"
           }
         >
