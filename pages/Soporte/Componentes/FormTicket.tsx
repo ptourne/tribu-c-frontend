@@ -1,6 +1,7 @@
 import { Ticket } from "@/pages/types";
+import { headers } from "next/dist/client/components/headers";
 import { useEffect, useState } from "react";
-
+import { NotificacionExitosa } from "./NotificacionExitosa";
 interface formTicketState {
   inputValuesTicket: Ticket;
 }
@@ -94,13 +95,50 @@ const TICKETS_SACARMAX = [
 export const FormTicket: React.FC<{ productIdNumerico: number }> = ({
   productIdNumerico,
 }) => {
-  const [tickets, setTickets] = useState<Array<Ticket>>([]);
+  //esto lo usamos para sacar el id maximo de todos los tickets.
+  const [tickets, setTickets] = useState<Array<Ticket>>(TICKETS_SACARMAX);
+  const [notificacion, setNotificacion] = useState<boolean>(false);
+
+  const formatDateTime = (dateTime: Date): string => {
+    const year = String(dateTime.getFullYear());
+    const month = String(dateTime.getMonth() + 1).padStart(2, "0"); // Los meses comienzan desde 0, por eso se suma 1
+    const day = String(dateTime.getDate()).padStart(2, "0");
+    const hours = String(dateTime.getHours()).padStart(2, "0");
+    const minutes = String(dateTime.getMinutes()).padStart(2, "0");
+    const seconds = String(dateTime.getSeconds()).padStart(2, "0");
+    return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
+  };
+
   const fetchTickets = (): Promise<Array<Ticket>> => {
-    //1) Llamanda al backend hacemos un GET de productos.
+    //2) Llamanda al backend Necesitamos obtener todos los tickets.
     return fetch("https://psa-soporte.eeoo.ar/tickets").then((res) =>
       res.json()
     );
   };
+  const fetchPOSTTicket = () => {
+    const URLParaPOST = `https://psa-soporte.eeoo.ar/ticket/product/${inputTicketValues.product_id}/client/${inputTicketValues.client_id}/responsible/${inputTicketValues.responsible_id}`;
+    console.log(URLParaPOST);
+    setInputTicketValues(INITIAL_STATE);
+    const cuerpoMensaje = JSON.stringify(inputTicketValues);
+    console.log("cuerpoMensaje");
+    console.log(cuerpoMensaje);
+    fetch(URLParaPOST, {
+      method: "POST",
+      headers: {
+        "Content-type": "application/json",
+      },
+      body: cuerpoMensaje,
+    })
+      .then((response) => {
+        if (response.ok) {
+          console.log("Solicitud POST exitosa");
+        } else console.log("Error en la solicitud POST");
+      })
+      .catch((error) => {
+        console.log("Error en la solicitud POST", error);
+      });
+  };
+
   const obtenerMaximoId = (tickets: Array<Ticket>) => {
     const maxId = tickets.reduce((max, ticket) => {
       return ticket.id > max ? ticket.id : max;
@@ -152,7 +190,7 @@ export const FormTicket: React.FC<{ productIdNumerico: number }> = ({
     if (typeof clienteCoincideRazon === "undefined") {
       clientId = -1;
     } else clientId = clienteCoincideRazon?.id;
-
+    console.log("aca se actualizas?");
     setInputTicketValues((estadoPrevio) => ({
       ...estadoPrevio,
       client_id: clientId,
@@ -179,15 +217,7 @@ export const FormTicket: React.FC<{ productIdNumerico: number }> = ({
       product_id: productIdNumerico,
     }));
   };
-
-  //Es hacer una peticion de post.
-  //debe tener todos los chequeos.
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    console.log(inputTicketValues);
-    setInputTicketValues(INITIAL_STATE);
-  };
-
+  //actualizar y que aparezca en la pantalla las letras que tecleamos en el teclado por ejemplo.
   const handleChange = (
     event: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
@@ -199,16 +229,41 @@ export const FormTicket: React.FC<{ productIdNumerico: number }> = ({
     });
   };
 
+  //Es hacer una peticion de post.
+  //debe tener todos los chequeos.
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setInputTicketValues({
+      ...inputTicketValues,
+      timeStart: formatDateTime(new Date()).toString(),
+    });
+    //Si queremos que las 4 lineas anteriores se ejecuten en el proximo renderezado
+    // debemos usar useEffect con el ward en inputTicketValues y ojo filtramos lo que queremos
+    // con un if por ej dentro del userEffect el if debemos ver si cambio por ej timeStart !=="" o id !==0
+  };
+
+  //UserEffect para obtener el maxId de ticket
+  // le sumamos 1 , lo neceistamos para hacer un post del nuevo ticket.
   useEffect(() => {
     fetchTickets().then((ticketsFetch) => {
       setTickets(ticketsFetch);
     });
-    setInputTicketValues((estadoPrevio) => ({
-      ...estadoPrevio,
+
+    setInputTicketValues({
+      ...inputTicketValues,
       id: obtenerMaximoId(tickets) + 1,
-    }));
-  }, [tickets]);
-  // cada vez que cambie ticket va a ejecutar el fetch y el setInput del id.
+    });
+  }, []);
+
+  //userEffect para poder asignarle el timeStart cuando hace click en el boton submit
+  useEffect(() => {
+    if (inputTicketValues.timeStart !== "") {
+      console.log(inputTicketValues);
+      fetchPOSTTicket();
+      setNotificacion(true);
+      console.log(" VACIO");
+    }
+  }, [inputTicketValues]);
 
   return (
     <>
@@ -224,7 +279,6 @@ export const FormTicket: React.FC<{ productIdNumerico: number }> = ({
               placeholder="Titulo"
             />
           </div>
-          {/* Div titulo listo */}
 
           <div id="divBotones">
             <span> Prioridad {"\t"}</span>
@@ -250,7 +304,6 @@ export const FormTicket: React.FC<{ productIdNumerico: number }> = ({
               Baja
             </button>
           </div>
-          {/* Div prioridad listo */}
 
           <div id="divBotones">
             <span> Severidad {"\t"}</span>
@@ -283,7 +336,6 @@ export const FormTicket: React.FC<{ productIdNumerico: number }> = ({
               LS4{" "}
             </button>
           </div>
-          {/* Div severidad listo */}
 
           <div id="divBotones">
             <span> Tipo de Ticket </span>
@@ -302,7 +354,6 @@ export const FormTicket: React.FC<{ productIdNumerico: number }> = ({
               Bug
             </button>
           </div>
-          {/* Div tipo ticket listo */}
 
           <div id="divListBox">
             <label htmlFor="listbox">Seleccione el cliente:</label>
@@ -317,7 +368,6 @@ export const FormTicket: React.FC<{ productIdNumerico: number }> = ({
               ))}
             </select>
           </div>
-          {/* Div tipo de cliente falta */}
 
           <div id="divListBox">
             <label htmlFor="listbox">Seleccione un recurso :</label>
@@ -355,53 +405,16 @@ export const FormTicket: React.FC<{ productIdNumerico: number }> = ({
           <button type="submit" id="GuardarCambios">
             Guardar Cambios
           </button>
+          {notificacion && (
+            <NotificacionExitosa
+              onClose={() => {
+                setNotificacion(false);
+              }}
+            />
+          )}
         </div>
       </form>
+      {notificacion && <div className="notification">{notificacion}</div>}
     </>
   );
 };
-/*
- <p>
-            <strong>Descripcion: </strong>
-            <textarea
-              onChange={handleChange}
-              value={inputValues.description}
-              name="description"
-              placeholder="Descripcion"
-            />
-          </p>
-
-          <div>
-          <p>
-            <strong>Titulo: </strong>
-            <input
-              onChange={handleChange}
-              value={inputValues.title}
-              type="text"
-              name="title"
-              placeholder="Titulo"
-            />
-          </p>
-          <p>
-            <strong>Prioridad: </strong>
-            <input
-              onChange={handleChange}
-              value={inputValues.priority}
-              type="text"
-              name="priority"
-              placeholder="Prioridad"
-            />
-          </p>
-        </div>
-        <div>
-          <p>
-            <strong>Descripcion: </strong>
-            <textarea
-              onChange={handleChange}
-              value={inputValues.description}
-              name="description"
-              placeholder="Descripcion"
-            />
-          </p>
-        </div>
-*/

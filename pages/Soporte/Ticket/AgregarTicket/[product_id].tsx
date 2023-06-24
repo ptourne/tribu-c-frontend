@@ -12,8 +12,6 @@ export default function AgregarTicket() {
 
   return (
     <>
-      <h1>Agregar Ticket</h1>
-      Calendario jejeje <RiCalendar2Fill size={44} />
       <FormTicket productIdNumerico={productIDNumerico} />
     </>
   );
