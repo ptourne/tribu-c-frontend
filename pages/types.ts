@@ -39,7 +39,6 @@ export interface Tarea {
 export interface Producto {
   name: string
   version: number;
-  id: number
 }
 
 export interface Ticket {
@@ -55,4 +54,10 @@ export interface Ticket {
   product_id: number;
   client_id: number;
   responsible_id: number;
+}
+
+export interface Recurso {
+  nombre: string
+  apellido: string
+  legajo: number
 }
