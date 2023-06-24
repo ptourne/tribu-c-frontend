@@ -26,8 +26,10 @@ function ProjectSideBarDetailsPane({
   project,
   getProjectsFunction,
 }: ProjectSideBarProps) {
-  const [clients, setClients] = useState([]);
-  const [products, setProducts] = useState([]);
+  const [clients, setClients] = useState([{id: 100, razon_social: "Cliente 1"},{id: 200, razon_social: "Cliente 2"}]);
+  const [products, setProducts] = useState([{id: 10, name: "Producto 1", versions: ["1.8","1.9"]}, {id: 20, name: "Producto 2", versions: ["1.4","1.5"]}]);
+  const [versions, setVersions] = useState([]);
+  const [versionsDict, setVersionsDict] = useState({});
 
   const [mode, setMode] = useState(EDIT);
 
@@ -37,8 +39,8 @@ function ProjectSideBarDetailsPane({
   const [pendingChanges, setPendingChanges] = useState(false);
   const [name, setName] = useState("");
   const [nameSaved, setNameSaved] = useState(true);
-  const [client, setClient] = useState<number | null>(null);
-  const [product, setProduct] = useState<number | null>(null);
+  const [client, setClient] = useState<number | undefined>(undefined);
+  const [product, setProduct] = useState<number | undefined>(undefined);
   const [version, setVersion] = useState("");
   const [customization, setCustomization] = useState("");
   const [state, setState] = useState(0);
@@ -68,8 +70,8 @@ function ProjectSideBarDetailsPane({
       setMode(ADD);
       setName("Nuevo Proyecto");
       setState(0);
-      setClient(null);
-      setProduct(null);
+      setClient(undefined);
+      setProduct(undefined);
       setVersion("");
       setCustomization("");
       setStartDate(null);
@@ -97,6 +99,24 @@ function ProjectSideBarDetailsPane({
     setPendingChanges(false);
   }, [project]);
 
+  const getClients = async () => {
+
+  }
+
+  const getProducts = async () => {
+    for (let producto of products) {
+      versionsDict[producto.id] = producto.versions;
+    }
+    if (project) {
+      setVersions(versionsDict[project.id_producto]);
+    }
+  }
+
+  useEffect(() => {
+    getClients();
+    getProducts();
+  }, []);
+
   const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setName(event.target.value);
     if (mode === EDIT) setNameSaved(false);
@@ -110,12 +130,11 @@ function ProjectSideBarDetailsPane({
 
   const handleProductChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setProduct(parseInt(event.target.value));
+    setVersions(versionsDict[parseInt(event.target.value)]);
     setPendingChanges(true);
   };
 
-  const handleVersionChange = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const handleVersionChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setVersion(event.target.value);
     setPendingChanges(true);
   };
@@ -186,8 +205,8 @@ function ProjectSideBarDetailsPane({
         getProjectsFunction();
         setNameSaved(true);
         setStateSaved(true);
-        setClient(null);
-        setProduct(null);
+        setClient(undefined);
+        setProduct(undefined);
         setVersion("");
         setCustomization("");
         setStartDateSaved(true);
@@ -270,8 +289,8 @@ function ProjectSideBarDetailsPane({
 
         setName("Nuevo Proyecto");
         setState(0);
-        setClient(null);
-        setProduct(null);
+        setClient(undefined);
+        setProduct(undefined);
         setVersion("");
         setCustomization("");
         setStartDate(null);
@@ -331,50 +350,94 @@ function ProjectSideBarDetailsPane({
                 <MdDelete />
               </button>
             )}
-          </div>
-          <div className="d-flex justify-content-between align-items-center flex-row">
-              <div className="flex-grow-1 d-flex justify-content-between align-items-center flex-row">
-                <label htmlFor="estiamtedCost" className="col-md-6 form-label">
-                  Versi&oacute;n
-                </label>
-                <div className="col-md-6">
-                  <input
-                    type="text"
-                    className="form-control border-0 border-bottom rounded-0 p-0"
-                    id="version"
-                    value={version}
-                    onChange={handleVersionChange}
-                    maxLength={10}
-                    disabled={mode===EDIT}
-                  />
-                </div>
-              </div>
-              <UnsavedWarningIcon isSavePending={true} />
-          </div>
-          <div className="d-flex justify-content-between align-items-center flex-row">
-              <div className="flex-grow-1 d-flex justify-content-between align-items-center flex-row">
-                <label htmlFor="estiamtedCost" className="col-md-6 form-label">
-                  Customizaci&oacute;n
-                </label>
-                <div className="col-md-6">
-                  <input
-                    type="text"
-                    className="form-control border-0 border-bottom rounded-0 p-0"
-                    id="customization"
-                    value={customization}
-                    onChange={handleCustomizationChange}
-                    maxLength={60}
-                    disabled={mode===EDIT}
-                  />
-                </div>
-              </div>
-              <UnsavedWarningIcon isSavePending={true} />
-          </div>
+          </div>          
           <div className="d-flex justify-content-between flex-col mt-1 mb-3">
             <div className="d-flex justify-content-between align-items-center flex-row">
               <div className="flex-grow-1 d-flex justify-content-between align-items-center flex-row">
                 <label htmlFor="state" className="col-md-6 form-label">
-                  Estado
+                  Cliente *
+                </label>
+                <div className="col-md-6">
+                  <select
+                    className="form-select border-0 border-bottom rounded-0 p-0"
+                    id="inputGroupSelect01"
+                    value={client}
+                    onChange={handleClientChange}
+                    disabled={mode === EDIT}
+                  >
+                    {clients.map((client) => 
+                      <option key={client.id} value={client.id}>{client.razon_social}</option>
+                    )}
+                  </select>
+                </div>
+              </div>
+              <UnsavedWarningIcon isSavePending={true} />
+            </div>
+            <div className="d-flex justify-content-between align-items-center flex-row">
+              <div className="flex-grow-1 d-flex justify-content-between align-items-center flex-row">
+                <label htmlFor="state" className="col-md-6 form-label">
+                  Producto *
+                </label>
+                <div className="col-md-6">
+                  <select
+                    className="form-select border-0 border-bottom rounded-0 p-0"
+                    id="inputGroupSelect01"
+                    value={product}
+                    onChange={handleProductChange}
+                    disabled={mode === EDIT}
+                  >
+                    {products.map((product) => 
+                      <option key={product.id} value={product.id}>{product.name}</option>
+                    )}
+                  </select>
+                </div>
+              </div>
+              <UnsavedWarningIcon isSavePending={true} />
+            </div>
+            <div className="d-flex justify-content-between align-items-center flex-row">
+                <div className="flex-grow-1 d-flex justify-content-between align-items-center flex-row">
+                  <label htmlFor="version" className="col-md-6 form-label">
+                    Versi&oacute;n *
+                  </label>
+                  <div className="col-md-6">
+                    <select
+                      className="form-select border-0 border-bottom rounded-0 p-0"
+                      id="inputGroupSelect01"
+                      value={version}
+                      onChange={handleVersionChange}
+                      disabled={mode === EDIT || !product}
+                    >
+                      {versions.map((version) => 
+                        <option key={version} value={version}>{version}</option>
+                      )}
+                    </select>
+                  </div>
+                </div>
+                <UnsavedWarningIcon isSavePending={true} />
+            </div>
+            <div className="d-flex justify-content-between align-items-center flex-row">
+                <div className="flex-grow-1 d-flex justify-content-between align-items-center flex-row">
+                  <label htmlFor="customization" className="col-md-6 form-label">
+                    Customizaci&oacute;n *
+                  </label>
+                  <div className="col-md-6">
+                    <input
+                      type="text"
+                      className="form-control border-0 border-bottom rounded-0 p-0"
+                      id="customization"
+                      value={customization}
+                      onChange={handleCustomizationChange}
+                      maxLength={60}
+                      disabled={mode===EDIT}
+                    />
+                  </div>
+                </div>
+                <UnsavedWarningIcon isSavePending={true} />
+            </div>
+            <div className="d-flex justify-content-between align-items-center flex-row">
+              <div className="flex-grow-1 d-flex justify-content-between align-items-center flex-row">
+                <label htmlFor="state" className="col-md-6 form-label">
+                  Estado *
                 </label>
                 <div className="col-md-6">
                   <select
@@ -392,10 +455,11 @@ function ProjectSideBarDetailsPane({
 
               <UnsavedWarningIcon isSavePending={stateSaved!} />
             </div>
+            
             <div className="d-flex justify-content-between align-items-center flex-row">
               <div className="flex-grow-1 d-flex justify-content-between align-items-center flex-row">
                 <label htmlFor="startDate" className="col-md-6 form-label">
-                  Fecha de Inicio
+                  Fecha de Inicio *
                 </label>
                 <div className="col-md-6">
                   <DatePicker
@@ -432,8 +496,8 @@ function ProjectSideBarDetailsPane({
             </div>
             <div className="d-flex justify-content-between align-items-center flex-row">
               <div className="flex-grow-1 d-flex justify-content-between align-items-center flex-row">
-                <label htmlFor="estiamtedCost" className="col-md-6 form-label">
-                  Costo Estimado
+                <label htmlFor="estimatedCost" className="col-md-6 form-label">
+                  Costo Estimado * 
                 </label>
                 <div className="col-md-6">
                   <input
@@ -453,7 +517,7 @@ function ProjectSideBarDetailsPane({
           <button
             type="button"
             className={
-              pendingChanges && name && version && customization && startDate && estimatedCost
+              pendingChanges && name && client && product && version && customization && startDate && estimatedCost
                 ? "btn btn-primary"
                 : "btn btn-primary disabled"
             }
