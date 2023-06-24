@@ -381,7 +381,7 @@ function ProjectSideBarDetailsPane({
                 <div className="col-md-6">
                   <select
                     className="form-select border-0 border-bottom rounded-0 p-0"
-                    id="inputGroupSelect01"
+                    id="inputGroupSelect02"
                     value={product}
                     onChange={handleProductChange}
                     disabled={mode === EDIT}
@@ -402,7 +402,7 @@ function ProjectSideBarDetailsPane({
                   <div className="col-md-6">
                     <select
                       className="form-select border-0 border-bottom rounded-0 p-0"
-                      id="inputGroupSelect01"
+                      id="inputGroupSelect03"
                       value={version}
                       onChange={handleVersionChange}
                       disabled={mode === EDIT || !product}
@@ -442,7 +442,7 @@ function ProjectSideBarDetailsPane({
                 <div className="col-md-6">
                   <select
                     className="form-select border-0 border-bottom rounded-0 p-0"
-                    id="inputGroupSelect01"
+                    id="inputGroupSelect04"
                     value={state}
                     onChange={handleStateChange}
                   >
