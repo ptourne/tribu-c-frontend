@@ -5,6 +5,7 @@ import "@/styles/ProductBar.scss";
 import "@/styles/LiTicketForAProduct.scss";
 import "@/styles/buttonAgregarTicket.scss";
 import "@/styles/FormTicket.scss";
+import "@/styles/NotificacionCrearTicket.scss";
 
 import type { AppProps } from "next/app";
 import "bootstrap/dist/css/bootstrap.css";

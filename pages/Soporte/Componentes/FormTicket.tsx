@@ -2,6 +2,7 @@ import { Ticket } from "@/pages/types";
 import { headers } from "next/dist/client/components/headers";
 import { useEffect, useState } from "react";
 import { NotificacionExitosa } from "./NotificacionExitosa";
+import { NotificacionCrearTicket } from "./NotificacionCrearTicket";
 interface formTicketState {
   inputValuesTicket: Ticket;
 }
@@ -91,7 +92,7 @@ const TICKETS_SACARMAX = [
     responsible_id: 2,
   },
 ];
-// Esto hay que refactorizar no puede ser tan complejo para pasar un simple number
+
 export const FormTicket: React.FC<{ productIdNumerico: number }> = ({
   productIdNumerico,
 }) => {
@@ -108,7 +109,31 @@ export const FormTicket: React.FC<{ productIdNumerico: number }> = ({
     const seconds = String(dateTime.getSeconds()).padStart(2, "0");
     return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
   };
+  const [notificacionOk, setNotificacionOk] = useState(false);
+  const [notificacionError, setnotificacionError] = useState(false);
 
+  const funcionEnviarDatos = () => {
+    if (
+      inputTicketValues.title !== "Nuevo Titulo" &&
+      inputTicketValues.description !== "Nueva Descripcion" &&
+      inputTicketValues.severity !== "" &&
+      inputTicketValues.priority !== "" &&
+      inputTicketValues.timeStart !== "" &&
+      inputTicketValues.type !== "" &&
+      inputTicketValues.supportTime !== "" &&
+      inputTicketValues.client_id !== 0 &&
+      inputTicketValues.responsible_id !== 0
+    ) {
+      setNotificacionOk(true);
+      return true;
+    } else {
+      setnotificacionError(true);
+    }
+    return false;
+  };
+
+  const [inputTicketValues, setInputTicketValues] =
+    useState<formTicketState["inputValuesTicket"]>(INITIAL_STATE);
   const fetchTickets = (): Promise<Array<Ticket>> => {
     //2) Llamanda al backend Necesitamos obtener todos los tickets.
     return fetch("https://psa-soporte.eeoo.ar/tickets").then((res) =>
@@ -118,7 +143,14 @@ export const FormTicket: React.FC<{ productIdNumerico: number }> = ({
   const fetchPOSTTicket = () => {
     const URLParaPOST = `https://psa-soporte.eeoo.ar/ticket/product/${inputTicketValues.product_id}/client/${inputTicketValues.client_id}/responsible/${inputTicketValues.responsible_id}`;
     console.log(URLParaPOST);
+    //asi reseteamos todo tanto inputText, como botones!!
     setInputTicketValues(INITIAL_STATE);
+    setSelectedClientOption("");
+    setSelectedPrioridad("");
+    setSelectedSeveridad("");
+    setselectRecursoOption("");
+    setselectTipoTicket("");
+
     const cuerpoMensaje = JSON.stringify(inputTicketValues);
     console.log("cuerpoMensaje");
     console.log(cuerpoMensaje);
@@ -145,9 +177,6 @@ export const FormTicket: React.FC<{ productIdNumerico: number }> = ({
     }, 0);
     return maxId;
   };
-
-  const [inputTicketValues, setInputTicketValues] =
-    useState<formTicketState["inputValuesTicket"]>(INITIAL_STATE);
 
   const [selectedPrioridad, setSelectedPrioridad] = useState("");
   const handlePrioridadClick = (prioridad: string) => {
@@ -210,11 +239,10 @@ export const FormTicket: React.FC<{ productIdNumerico: number }> = ({
     if (typeof recursoCoincideNombre === "undefined") {
       responsibleId = -1;
     } else responsibleId = recursoCoincideNombre?.legajo;
-
+    console.log("Porque no entra aca???");
     setInputTicketValues((estadoPrevio) => ({
       ...estadoPrevio,
       responsible_id: responsibleId,
-      product_id: productIdNumerico,
     }));
   };
   //actualizar y que aparezca en la pantalla las letras que tecleamos en el teclado por ejemplo.
@@ -252,6 +280,7 @@ export const FormTicket: React.FC<{ productIdNumerico: number }> = ({
     setInputTicketValues({
       ...inputTicketValues,
       id: obtenerMaximoId(tickets) + 1,
+      product_id: productIdNumerico,
     });
   }, []);
 
@@ -259,8 +288,12 @@ export const FormTicket: React.FC<{ productIdNumerico: number }> = ({
   useEffect(() => {
     if (inputTicketValues.timeStart !== "") {
       console.log(inputTicketValues);
-      fetchPOSTTicket();
-      setNotificacion(true);
+      console.log("ENtre aca adentro del if del timeStart");
+      if (funcionEnviarDatos()) {
+        fetchPOSTTicket();
+      } else {
+        setInputTicketValues({ ...inputTicketValues, timeStart: "" });
+      }
       console.log(" VACIO");
     }
   }, [inputTicketValues]);
@@ -405,14 +438,19 @@ export const FormTicket: React.FC<{ productIdNumerico: number }> = ({
           <button type="submit" id="GuardarCambios">
             Guardar Cambios
           </button>
-          {notificacion && (
-            <NotificacionExitosa
-              onClose={() => {
-                setNotificacion(false);
-              }}
-            />
-          )}
         </div>
+        {notificacionOk && (
+          <NotificacionCrearTicket
+            onClose={() => setNotificacionOk(false)}
+            tipo="OK"
+          />
+        )}
+        {notificacionError && (
+          <NotificacionCrearTicket
+            onClose={() => setnotificacionError(false)}
+            tipo="ERROR"
+          />
+        )}
       </form>
       {notificacion && <div className="notification">{notificacion}</div>}
     </>

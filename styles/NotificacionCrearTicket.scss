@@ -1,0 +1,22 @@
+#NotificacionCrearTicket{
+    background-color: #025be08d;
+    font-size: 35px;
+    //width: 400px; //jugamos con esto el ancho de la notificacion 
+    //height: 330px; // con esto jugamos el ancho
+    margin: 0px 300px 1px 10px;
+    border-radius: 10px;
+    color: rgb(255, 255, 255);
+    background-color: #4992fd;
+    text-align: center;
+    span{
+        margin-bottom: 0px;
+        color: rgb(255, 255, 255);
+    }
+    button{
+        border: 3px solid #ffffff;
+        background-color: #4992fd;
+        color: #ffffff;
+        margin-bottom: 10px;
+    }   
+
+}
