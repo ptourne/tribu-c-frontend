@@ -1,6 +1,11 @@
 import { Ticket } from "@/pages/types";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
+import { useState } from "react";
+import TicketActions, { TicketActionsProps } from "@/pages/Soporte/Componentes/TicketActions";
+import { FormTicket } from "../Componentes/FormTicket";
+
+
 
 const INITIAL_STATE_TICKETS = [
   {
@@ -50,6 +55,8 @@ const INITIAL_STATE_TICKETS = [
 
 export default function Ticket() {
   const router = useRouter();
+  
+  const [decodedTickets, setDecodedTickets] = useState<Ticket[]>(INITIAL_STATE_TICKETS); // Agrega el estado para decodedTickets
   // IMPORTANTE ACA EL NOMBRE DE LA VARIABLE! Porque ? -> en router.query los nombres de la variable deben
   // coincidir con los parametros de la ruta especificada (product_id.tsx)
   // EJ si tenemos http://localhost:3000/soporte/Ticket/2 entonces router.query contendra { product_id: "2" }
@@ -61,55 +68,109 @@ export default function Ticket() {
   const CLIENTE_ID = 1;
   const RESPONSIBLE_ID = 1;
 
+
+
+
   console.log(product_id);
   let productID: string = "INICIADO";
   if (typeof product_id === "string") {
     productID = product_id;
   }
 
-  const handleClickAgregarTicket = (
-    productID: string,
-    clientId: number,
-    responsibleId: number,
-    idTicket: number
-  ) => {
-    console.log("El tamanio de la lista es " + idTicket);
-    console.log(`producID :-${productID}- `);
-    router.push({
-      pathname: `/Soporte/Ticket/AgregarTicket/${productID}`,
-      query: { productID },
-    });
+  const handleOpenFormTicket = () => {
+    setShowFormTicket(true); // Muestra el formulario al hacer clic en el botón
   };
 
+  const handleCloseFormTicket = () => {
+    setShowFormTicket(false); // Oculta el formulario al cerrarlo
+  };
+
+  const [selectedTicketId, setSelectedTicketId] = useState<number | null>(null);
+  const [showFormTicket, setShowFormTicket] = useState(false); // Nuevo estado para controlar la visibilidad del formulario
+  
+  
+    const handleUpdateTitle = (ticketId: number, newTitle: string) => {
+      const updatedTickets = decodedTickets.map((ticket) =>
+        ticket.id === ticketId ? { ...ticket, title: newTitle } : ticket
+      );
+      setDecodedTickets(updatedTickets); // Actualiza el estado de decodedTickets
+      console.log("Ticket title updated:", ticketId, newTitle);
+    };
+  
+    const handleUpdateDescription = (ticketId: number, newDescription: string) => {
+      const updatedTickets = decodedTickets.map((ticket) =>
+        ticket.id === ticketId ? { ...ticket, description: newDescription } : ticket
+      );
+      setDecodedTickets(updatedTickets); // Actualiza el estado de decodedTickets
+      console.log("Ticket description updated:", ticketId, newDescription);
+    };
+  
+    const handleDeleteTicket = (ticketId: number) => {
+      const updatedTickets = decodedTickets.filter((ticket) => ticket.id !== ticketId);
+      setDecodedTickets(updatedTickets); // Actualiza el estado de decodedTickets
+      console.log("Ticket deleted:", ticketId);
+    };
+  
+    const handleResolveTicket = (ticketId: number) => {
+      const updatedTickets = decodedTickets.map((ticket) =>
+        ticket.id === ticketId ? { ...ticket, state: "resolved" } : ticket
+      );
+      setDecodedTickets(updatedTickets); // Actualiza el estado de decodedTickets
+      console.log("Ticket resolved:", ticketId);
+    };
+  
+    const handleDelegateTicket = (ticketId: number, assignedTo: string) => {
+      const updatedTickets = decodedTickets.map((ticket) =>
+        ticket.id === ticketId ? { ...ticket, assignedTo: assignedTo } : ticket
+      );
+      setDecodedTickets(updatedTickets); // Actualiza el estado de decodedTickets
+      console.log("Ticket delegated:", ticketId, assignedTo);
+    };
+
+  const ticketActionsProps: TicketActionsProps = {
+    onUpdateTitle: handleUpdateTitle,
+    onUpdateDescription: handleUpdateDescription,
+    onDeleteTicket: handleDeleteTicket,
+    onResolveTicket: handleResolveTicket,
+    onDelegateTicket: handleDelegateTicket,
+    ticket: selectedTicketId ? decodedTickets.find((ticket) => ticket.id === selectedTicketId) ?? null : null,
+  };
+
+  
   return (
     <>
       <div></div>
       <div>
-        <h1
-          style={{ fontSize: "2.2em", marginLeft: "30px", marginTop: "20px" }}
-        >
-          {productName}{" "}
+        <h1 style={{ fontSize: "2.2em", marginLeft: "30px", marginTop: "10px" }}>
+          {productName}
         </h1>
-        <h1 style={{ fontSize: "1.8em", marginLeft: "30px" }}>
-          Versión: {productVersion}{" "}
+        <h1 style={{ fontSize: "1.8em", marginLeft: "30px", marginTop: "-20px" }}>
+          Versión: {productVersion}
           <button
             type="button"
-            onClick={() => {
-              handleClickAgregarTicket(
-                productID,
-                CLIENTE_ID,
-                RESPONSIBLE_ID,
-                listaProductos.length + 1
-              );
-            }}
+            onClick={handleOpenFormTicket}
             id="buttonAgregarTicket"
           >
             +
           </button>
         </h1>
+        <div style={{ position: "absolute", left: "800px" }}>
+        {showFormTicket && (
+          <FormTicket
+            productIdNumerico={parseInt(productID)}
+          />
+        )}
+        </div>
         <ul style={{ marginTop: "30px", width: "800px" }}>
           {listaProductos.map((ticketDecod) => (
-            <li key={ticketDecod.id} id="LiTicketForAProduct">
+            <li
+              key={ticketDecod.id}
+              id="LiTicketForAProduct"
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+              }}
+            >
               <div style={{ marginBottom: "10px" }}>
                 <p>
                   <strong>Título:</strong> {ticketDecod.title}
@@ -130,10 +191,14 @@ export default function Ticket() {
                   <strong>Fecha inicio:</strong> {ticketDecod.timeStart}
                 </p>
               </div>
+              <div
+                style={{ position: "absolute", marginLeft: "300px", marginTop: "0px" }}
+              >
+                <TicketActions {...ticketActionsProps} />
+              </div>
             </li>
           ))}
         </ul>
       </div>
     </>
-  );
-}
+  );}
