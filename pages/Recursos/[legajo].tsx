@@ -13,91 +13,79 @@ import ColumnaDia from "./Components/columnaDia";
 const inter = Inter({ subsets: ["latin"] });
 
 const estilos = {
-  diasSemana: {
-    backgroundColor: "white",
-  },
-
   calendario: {
     width: "100%"
   },
 
   mainGrid: {
     gap: "2%",
-    height: "500px",
-    width: "100%",
+    width: "98%",
+    marginLeft: "1%",
   },
-
-  columnas: {
-    width: "100%",
-  },
-
   mes: {
     width: "50%",
+    margin: "1%",
     marginBottom: "1%",
   },
-  filas: {
-    margin: "10px"
-  }
-
 };
 export default function Calendario() {
+    const date = new Date();
     const router = useRouter();
     const { nombreRecurso, apellidoRecurso, legajo } = router.query;
 
   return (
     <><div style={estilos.calendario} className="calendario">
       <div style={estilos.mes} className="mes flex justify-content-between">
-
         <div className="display-6">
           {nombreRecurso}
         </div>
         <div className="display-6">
-          Julio
+          {numeroAMes(date.getMonth())}
         </div>
       </div>
-      {/* {<div style={estilos.diasSemana} className="diasSemana flex justify-content-evenly">
-        <div className="diasSemana-contenido">
-          Lunes 19
-        </div>
-        <div className="diasSemana-contenido">
-          Martes 20
-        </div>
-        <div className="diasSemana-contenido">
-          Miercoles 21
-        </div>
-        <div className="diasSemana-contenido">
-          Jueves 22
-        </div>
-        <div className="diasSemana-contenido">
-          Viernes 23
-        </div>
-      </div>} */}
       <div style={estilos.mainGrid} className="diasSemana flex">
-        <ColumnaDia nombreDia="Lunes" numeroDia="30"/>
-        <ColumnaDia nombreDia="Martes" numeroDia="20"/>
-        <ColumnaDia nombreDia="Miercoles" numeroDia="21"/>
-        <ColumnaDia nombreDia="Jueves" numeroDia="22"/>
-        <ColumnaDia nombreDia="Viernes" numeroDia="23"/>
-        {/* {<div className="diasSemana-contenido border-2 border-dark rounded-2" style={estilos.columnas}>
-          Martes 20
-        </div>
-        <div className="diasSemana-contenido border-2 border-dark rounded-2" style={estilos.columnas}>
-          Miercoles 21
-        </div>
-        <div className="diasSemana-contenido border-2 border-dark rounded-2" style={estilos.columnas}>
-          Jueves 22
-        </div>
-        <div className="diasSemana-contenido  border-2 border-dark rounded-2" style={estilos.columnas}>
-          Viernes 23
-        </div>} */}
+        <ColumnaDia nombreDia="Lunes" numeroDia= {diaCorrespondiente(date, 1)}/>
+        <ColumnaDia nombreDia="Martes" numeroDia={diaCorrespondiente(date, 2)}/>
+        <ColumnaDia nombreDia="Miercoles" numeroDia={diaCorrespondiente(date, 3)}/>
+        <ColumnaDia nombreDia="Jueves" numeroDia={diaCorrespondiente(date, 4)}/>
+        <ColumnaDia nombreDia="Viernes" numeroDia={diaCorrespondiente(date, 5)}/>
       </div>
-
     </div>
-
-
-
-
     </>
-
   );
+}
+
+function diaCorrespondiente(fecha: Date, diaSemana: number) {
+  var diaActual = new Date(fecha);
+  diaActual.setDate(fecha.getDate() + (diaSemana - fecha.getDay()));
+  return diaActual.getDate()
+}
+
+function numeroAMes(numero: number) {
+    switch (numero) {
+      case 0:
+        return "Enero";
+      case 1:
+        return "Febrero";
+      case 2:
+        return "Marzo";
+      case 3:
+        return "Abril";
+      case 4:
+        return "Mayo";
+      case 5:
+        return "Junio";
+      case 6:
+        return "Julio";
+      case 7:
+        return "Agosto";
+      case 8:
+        return "Septiembre";
+      case 9:
+        return "Octubre";
+      case 10:
+        return "Noviembre";
+      case 11:
+        return "Diciembre";
+    } 
 }

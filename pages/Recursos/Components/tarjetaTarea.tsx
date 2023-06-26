@@ -9,32 +9,8 @@ export default function TarjetaTarea({nombreTarea}) {
 }
 
 const estilos = {
-  diasSemana: {
-
-    backgroundColor: "white",
-
-
-  },
-
-  calendario: {
-    width: "100%"
-  },
-
-  mainGrid: {
-    gap: "2%",
-    height: "500px"
-  },
-
-  columnas: {
-    width: "100%"
-  },
-
-  mes: {
-    width: "50%"
-  },
   filas: {
     margin: "10px"
   }
-
 };
   
