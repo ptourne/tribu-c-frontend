@@ -18,11 +18,18 @@ interface Ticket {
   responsible_id: number;
 }
 
+interface Product {
+  name: string;
+  version: string;
+  id: number;
+}
+
 function TicketPage() {
   const router = useRouter();
   const { ticket_id } = router.query;
 
   const [ticket, setTicket] = useState<Ticket | null>(null);
+  const [product, setProduct] = useState<Product | null>(null);
 
   useEffect(() => {
     const fetchTicket = async () => {
@@ -37,12 +44,31 @@ function TicketPage() {
       }
     };
 
-    fetchTicket();
-  }, []);
+    if (ticket_id) {
+      fetchTicket();
+    }
+  }, [ticket_id]);
+
+  useEffect(() => {
+    const fetchProduct = async () => {
+      try {
+        const response = await fetch(
+          `https://psa-soporte.eeoo.ar/product/${ticket?.product_id}`
+        );
+        const dataProduct = await response.json();
+        setProduct(dataProduct);
+      } catch (error) {
+        console.error("Error fetching product:", error);
+      }
+    };
+
+    if (ticket?.product_id) {
+      fetchProduct();
+    }
+  }, [ticket]);
 
   return (
     <div className="flex px-8 py-8">
-
       <div className="card w-1/2 mr-2 bg-base-100 shadow-xl">
         <div className="card-body">
           {ticket ? (
@@ -73,14 +99,16 @@ function TicketPage() {
 
               <h1 className="card-title">{ticket.title}</h1>
 
+              <p className="mb-2">Producto: {product?.name}</p>
               <p className="mb-2">Descripcion: {ticket.description}</p>
-              <p className="mb-2">Severity: {ticket.severity}</p>
-              <p className="mb-2">Priority: {ticket.priority}</p>
-              <p className="mb-2">State: {ticket.state}</p>
-              <p className="mb-2">Time Start: {ticket.timeStart}</p>
-              <p className="mb-2">Type: {ticket.type}</p>
-              <p className="mb-2">Support Time: {ticket.supportTime}</p>
-              <p className="mb-2">Product ID: {ticket.product_id}</p>
+              <p className="mb-2">Severidad: {ticket.severity}</p>
+              <p className="mb-2">Prioridad: {ticket.priority}</p>
+              <p className="mb-2">Estado: {ticket.state}</p>
+              <p className="mb-2">Inicio: {ticket.timeStart}</p>
+              <p className="mb-2">Tipo: {ticket.type}</p>
+              <p className="mb-2">
+                Tiempo para Resolucion: {ticket.supportTime}
+              </p>
               <p className="mb-2">Client ID: {ticket.client_id}</p>
               <p className="mb-2">Responsible ID: {ticket.responsible_id}</p>
             </div>
@@ -96,7 +124,6 @@ function TicketPage() {
           <p>Aca van las tareas asociadas al ticket</p>
         </div>
       </div>
-
     </div>
   );
 }
