@@ -1,4 +1,4 @@
-import { Ticket } from "@/pages/types";
+import { Producto, Ticket } from "@/pages/types";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { useState } from "react";
@@ -9,6 +9,8 @@ import { FormTicket } from "../Componentes/FormTicket";
 
 export default function Ticket() {
   const [tickets, setTickets] = useState<Ticket[]>([]);
+  const [productVersion, setProductVersion] = useState<Number>(0);
+  const [productName, setProductName] = useState<String>("productName");
   const fetchTickets = (): Promise<Array<Ticket>> => {
     //2) Llamanda al backend Necesitamos obtener todos los tickets.
     return fetch("https://psa-soporte.eeoo.ar/tickets").then((res) =>
@@ -22,17 +24,28 @@ export default function Ticket() {
   // coincidir con los parametros de la ruta especificada (product_id.tsx)
   // EJ si tenemos http://localhost:3000/soporte/Ticket/2 entonces router.query contendra { product_id: "2" }
   // para acceder al 2 utilizamos product_id en router.query. en este caso pasamos el produc_id y los ticketsQuery
-  const { productVersion, productName, product_id } = router.query;
-  const CLIENTE_ID = 1;
-  const RESPONSIBLE_ID = 1;
+  const { product_id } = router.query;
+
+  //const productVersion, productName,
 
   console.log(`product_id: ${product_id}`);
   let productID: string = "INICIADO";
   if (typeof product_id === "string") {
     productID = product_id;
   }
+  const fetchGetProductosById = (): Promise<Producto> => {
+    //1) Llamanda al backend hacemos un GET de productos los id van en number recuerda !
+    return fetch(`https://psa-soporte.eeoo.ar/product/${parseInt(productID)}`, {
+      method: "GET",
+      headers: {},
+    }).then((res) => res.json());
+  };
 
   useEffect(() => {
+    fetchGetProductosById().then((unProducto) => {
+      setProductName(unProducto.name);
+      setProductVersion(unProducto.version);
+    });
     fetchTickets().then((ticketsFetch) => {
       const ticketsFiltradoById = ticketsFetch.filter(
         (ticket) => ticket.product_id == parseInt(productID)
@@ -41,17 +54,22 @@ export default function Ticket() {
     });
   }, []);
 
+  const [showFormTicket, setShowFormTicket] = useState(false); // Nuevo estado para controlar la visibilidad del formulario
+
   const handleOpenFormTicket = () => {
-    setShowFormTicket(true); // Muestra el formulario al hacer clic en el botón
+    if (showFormTicket === false) {
+      setShowFormTicket(true); // Muestra el formulario al hacer clic en el botón
+    } else {
+      setShowFormTicket(false);
+    }
   };
 
+  //codigo theo  eliminar---------------------------------
   const handleCloseFormTicket = () => {
     setShowFormTicket(false); // Oculta el formulario al cerrarlo
   };
 
   const [selectedTicketId, setSelectedTicketId] = useState<number | null>(null);
-  const [showFormTicket, setShowFormTicket] = useState(false); // Nuevo estado para controlar la visibilidad del formulario
-
   const handleUpdateTitle = (ticketId: number, newTitle: string) => {
     const updatedTickets = tickets.map((ticket) =>
       ticket.id === ticketId ? { ...ticket, title: newTitle } : ticket
@@ -59,7 +77,6 @@ export default function Ticket() {
     setTickets(updatedTickets); // Actualiza el estado de decodedTickets
     console.log("Ticket title updated:", ticketId, newTitle);
   };
-
   const handleUpdateDescription = (
     ticketId: number,
     newDescription: string
@@ -72,13 +89,11 @@ export default function Ticket() {
     setTickets(updatedTickets); // Actualiza el estado de decodedTickets
     console.log("Ticket description updated:", ticketId, newDescription);
   };
-
   const handleDeleteTicket = (ticketId: number) => {
     const updatedTickets = tickets.filter((ticket) => ticket.id !== ticketId);
     setTickets(updatedTickets); // Actualiza el estado de decodedTickets
     console.log("Ticket deleted:", ticketId);
   };
-
   const handleResolveTicket = (ticketId: number) => {
     const updatedTickets = tickets.map((ticket) =>
       ticket.id === ticketId ? { ...ticket, state: "resolved" } : ticket
@@ -86,7 +101,6 @@ export default function Ticket() {
     setTickets(updatedTickets); // Actualiza el estado de decodedTickets
     console.log("Ticket resolved:", ticketId);
   };
-
   const handleDelegateTicket = (ticketId: number, assignedTo: string) => {
     const updatedTickets = tickets.map((ticket) =>
       ticket.id === ticketId ? { ...ticket, assignedTo: assignedTo } : ticket
@@ -94,7 +108,6 @@ export default function Ticket() {
     setTickets(updatedTickets); // Actualiza el estado de decodedTickets
     console.log("Ticket delegated:", ticketId, assignedTo);
   };
-
   const ticketActionsProps: TicketActionsProps = {
     onUpdateTitle: handleUpdateTitle,
     onUpdateDescription: handleUpdateDescription,
@@ -105,10 +118,10 @@ export default function Ticket() {
       ? tickets.find((ticket) => ticket.id === selectedTicketId) ?? null
       : null,
   };
+  //codigo theo  eliminar--------------------
 
   return (
     <>
-      <div></div>
       <div>
         <h1
           style={{ fontSize: "2.2em", marginLeft: "30px", marginTop: "10px" }}
@@ -118,7 +131,7 @@ export default function Ticket() {
         <h1
           style={{ fontSize: "1.8em", marginLeft: "30px", marginTop: "-20px" }}
         >
-          Versión: {productVersion}
+          Versión: {productVersion.toString()}
           <button
             type="button"
             onClick={handleOpenFormTicket}
