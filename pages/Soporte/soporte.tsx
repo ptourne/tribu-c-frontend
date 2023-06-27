@@ -21,6 +21,7 @@ export default function Soporte() {
 
   return (
     <>
+      <h1 id="tituloH1"> Productos </h1>
       <ProductBar products={products} />
     </>
   );

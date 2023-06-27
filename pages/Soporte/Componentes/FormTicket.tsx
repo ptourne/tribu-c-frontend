@@ -181,7 +181,6 @@ export const FormTicket: React.FC<{ productIdNumerico: number }> = ({
   const [selectedPrioridad, setSelectedPrioridad] = useState("");
   const handlePrioridadClick = (prioridad: string) => {
     setSelectedPrioridad(prioridad);
-    //asi con el setDeInputTicket solo cambio una propiedad de la interfaz el resto lo mantengo igual .
     setInputTicketValues((estadoPrevio) => ({
       ...estadoPrevio,
       priority: prioridad,
@@ -206,7 +205,6 @@ export const FormTicket: React.FC<{ productIdNumerico: number }> = ({
     }));
   };
 
-  //para la boxList de clientes
   const [selectedClientOption, setSelectedClientOption] = useState("");
   const handleClientOptionChange = (
     event: React.ChangeEvent<HTMLSelectElement>
@@ -219,7 +217,6 @@ export const FormTicket: React.FC<{ productIdNumerico: number }> = ({
     if (typeof clienteCoincideRazon === "undefined") {
       clientId = -1;
     } else clientId = clienteCoincideRazon?.id;
-    console.log("aca se actualizas?");
     setInputTicketValues((estadoPrevio) => ({
       ...estadoPrevio,
       client_id: clientId,
@@ -239,7 +236,6 @@ export const FormTicket: React.FC<{ productIdNumerico: number }> = ({
     if (typeof recursoCoincideNombre === "undefined") {
       responsibleId = -1;
     } else responsibleId = recursoCoincideNombre?.legajo;
-    console.log("Porque no entra aca???");
     setInputTicketValues((estadoPrevio) => ({
       ...estadoPrevio,
       responsible_id: responsibleId,
@@ -274,7 +270,7 @@ export const FormTicket: React.FC<{ productIdNumerico: number }> = ({
   // le sumamos 1 , lo neceistamos para hacer un post del nuevo ticket.
   useEffect(() => {
     fetchTickets().then((ticketsFetch) => {
-      setTickets(ticketsFetch);
+      setTickets(ticketsFetch); //Aca estamos pisando los tickets con los ticket que obtenemos al hacer fetch GET.
     });
 
     setInputTicketValues({
@@ -306,6 +302,7 @@ export const FormTicket: React.FC<{ productIdNumerico: number }> = ({
     <>
       <form onSubmit={handleSubmit} id="FormTicket">
         <div id="divPrincipal">
+          <h1>Creación de ticket</h1> <hr />
           <div id="divTitulo">
             <span> Titulo </span>
             <input
@@ -316,12 +313,11 @@ export const FormTicket: React.FC<{ productIdNumerico: number }> = ({
               placeholder="Titulo"
             />
           </div>
-
           <div id="divBotones">
             <span> Prioridad {"\t"}</span>
             <button
               type="button"
-              className={selectedPrioridad === "Alta" ? "selected" : ""} //cuando haga click cambia el className a alta si no le hace click sige siendo ""
+              className={selectedPrioridad === "Alta" ? "selected" : ""}
               onClick={() => handlePrioridadClick("Alta")}
             >
               Alta
@@ -341,7 +337,6 @@ export const FormTicket: React.FC<{ productIdNumerico: number }> = ({
               Baja
             </button>
           </div>
-
           <div id="divBotones">
             <span> Severidad {"\t"}</span>
             <button
@@ -373,7 +368,6 @@ export const FormTicket: React.FC<{ productIdNumerico: number }> = ({
               LS4{" "}
             </button>
           </div>
-
           <div id="divBotones">
             <span> Tipo de Ticket </span>
             <button
@@ -391,7 +385,6 @@ export const FormTicket: React.FC<{ productIdNumerico: number }> = ({
               Bug
             </button>
           </div>
-
           <div id="divListBox">
             <label htmlFor="listbox">Seleccione el cliente:</label>
             <select
@@ -405,7 +398,6 @@ export const FormTicket: React.FC<{ productIdNumerico: number }> = ({
               ))}
             </select>
           </div>
-
           <div id="divListBox">
             <label htmlFor="listbox">Seleccione un recurso :</label>
             <select
