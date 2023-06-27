@@ -2,6 +2,7 @@ import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { FaEllipsisV } from "react-icons/fa";
 import Modal from "../../Componentes/Modal";
+import handler from "@/pages/api/hello";
 
 interface Ticket {
   title: string;
@@ -67,6 +68,17 @@ function TicketPage() {
     }
   }, [ticket]);
 
+  const handleDelete = async () => {
+    try {
+      await fetch(`https://psa-soporte.eeoo.ar/tickets/${ticket?.id}`, {
+        method: "DELETE",
+      });
+      router.push("/Soporte/soporte")
+    } catch (error) {
+      console.error("Error deleting ticket:", error);
+    }
+  };
+
   return (
     <div className="flex px-8 py-8">
       <div className="card w-1/2 mr-2 bg-base-100 shadow-xl">
@@ -84,7 +96,7 @@ function TicketPage() {
                     <li>
                       <a>Modificar</a>
                     </li>
-                    <li>
+                    <li onClick={handleDelete}>
                       <a>Eliminar</a>
                     </li>
                     <li>
