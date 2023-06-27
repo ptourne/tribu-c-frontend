@@ -129,7 +129,7 @@ export default function Ticket() {
         <h1
           style={{ fontSize: "1.8em", marginLeft: "30px", marginTop: "-20px" }}
         >
-          Versión: {productoSelect?.version.toString()}
+          Versión: {productoSelect?.version}
           <button
             type="button"
             onClick={handleOpenFormTicket}
