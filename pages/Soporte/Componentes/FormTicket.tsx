@@ -110,7 +110,7 @@ export const FormTicket: React.FC<{ productIdNumerico: number }> = ({
     return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
   };
   const [notificacionOk, setNotificacionOk] = useState(false);
-  const [notificacionError, setnotificacionError] = useState(false);
+  var [notificacionError, setnotificacionError] = useState(false);
 
   const funcionEnviarDatos = () => {
     if (
@@ -286,6 +286,10 @@ export const FormTicket: React.FC<{ productIdNumerico: number }> = ({
 
   //userEffect para poder asignarle el timeStart cuando hace click en el boton submit
   useEffect(() => {
+    if (parseInt(inputTicketValues.supportTime) <= 0) {
+      console.log("Cantidad de horas invalidas.");
+      setnotificacionError(true);
+    }
     if (inputTicketValues.timeStart !== "") {
       console.log(inputTicketValues);
       console.log("ENtre aca adentro del if del timeStart");
