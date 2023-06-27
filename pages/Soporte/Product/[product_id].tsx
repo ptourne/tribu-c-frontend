@@ -7,9 +7,11 @@ import TicketActions, {
 } from "@/pages/Soporte/Componentes/TicketActions";
 import { FormTicket } from "../Componentes/FormTicket";
 
+//Pagina donde se muestran todos los ticket_id y esta el boton [+] para crear el nuevo ticket.
 export default function Ticket() {
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const [productoSelect, setProductoSelect] = useState<Producto>();
+
   const fetchTickets = (): Promise<Array<Ticket>> => {
     //2) Llamanda al backend Necesitamos obtener todos los tickets.
     return fetch("https://psa-soporte.eeoo.ar/tickets").then((res) =>
@@ -17,17 +19,11 @@ export default function Ticket() {
     );
   };
 
-  const router = useRouter();
-  // Agrega el estado para decodedTickets
-  // IMPORTANTE ACA EL NOMBRE DE LA VARIABLE! Porque ? -> en router.query los nombres de la variable deben
-  // coincidir con los parametros de la ruta especificada (product_id.tsx)
   // EJ si tenemos http://localhost:3000/soporte/Ticket/2 entonces router.query contendra { product_id: "2" }
   // para acceder al 2 utilizamos product_id en router.query. en este caso pasamos el produc_id y los ticketsQuery
+  const router = useRouter();
   const { product_id } = router.query;
 
-  //const productVersion, productName,
-
-  console.log(`product_id: ${product_id}`);
   let productID: string = "INICIADO";
   if (typeof product_id === "string") {
     productID = product_id;
@@ -53,7 +49,6 @@ export default function Ticket() {
   }, []);
 
   const [showFormTicket, setShowFormTicket] = useState(false); // Nuevo estado para controlar la visibilidad del formulario
-
   const handleOpenFormTicket = () => {
     if (showFormTicket === false) {
       setShowFormTicket(true); // Muestra el formulario al hacer clic en el botón
@@ -62,6 +57,8 @@ export default function Ticket() {
     }
   };
 
+  //CODIGO theo
+  /*
   //codigo theo  eliminar---------------------------------
   const handleCloseFormTicket = () => {
     setShowFormTicket(false); // Oculta el formulario al cerrarlo
@@ -117,7 +114,8 @@ export default function Ticket() {
       : null,
   };
   //codigo theo  eliminar--------------------
-
+*/
+  //Cuando creamos el ticket vamos a pasar idTicket = -1.
   return (
     <>
       <div>
@@ -129,7 +127,7 @@ export default function Ticket() {
         <h1
           style={{ fontSize: "1.8em", marginLeft: "30px", marginTop: "-20px" }}
         >
-          Versión: {productoSelect?.version.toString()}
+          Versión: {productoSelect?.version}
           <button
             type="button"
             onClick={handleOpenFormTicket}
@@ -140,7 +138,10 @@ export default function Ticket() {
         </h1>
         <div style={{ position: "absolute", left: "800px" }}>
           {showFormTicket && (
-            <FormTicket productIdNumerico={parseInt(productID)} />
+            <FormTicket
+              productIdNumerico={parseInt(productID)}
+              idTicketRecv={-1}
+            />
           )}
         </div>
         <ul style={{ marginTop: "30px", width: "800px" }}>

@@ -1,8 +1,8 @@
 import { Ticket } from "@/pages/types";
 import { headers } from "next/dist/client/components/headers";
 import { useEffect, useState } from "react";
-import { NotificacionExitosa } from "./NotificacionExitosa";
-import { NotificacionCrearTicket } from "./NotificacionCrearTicket";
+import { NotificacionesDelTicket } from "./NotificacionCrearTicket";
+
 interface formTicketState {
   inputValuesTicket: Ticket;
 }
@@ -34,70 +34,40 @@ const ARRAY_RECURSOS = [
   { legajo: 3, Nombre: "Patricia", Apellido: "Gaona" },
 ];
 
-const TICKETS_SACARMAX = [
-  {
-    title: "Nueva solicitud de soporte",
-    description: "Se requiere asistencia para resolver un problema técnico",
-    severity: "LS3",
-    priority: "Media",
-    state: "Abierto",
-    timeStart: "02-06-2023 10:30",
-    type: "Bug",
-    supportTime: "8H",
-    id: 5,
-    product_id: 2,
-    client_id: 3,
-    responsible_id: 3,
-  },
-  {
-    title: "Problema de rendimiento del servidor",
-    description: "El servidor está experimentando tiempos de respuesta lentos",
-    severity: "LS1",
-    priority: "Alta",
-    state: "Abierto",
-    timeStart: "05-06-2023 16:45",
-    type: "Bug",
-    supportTime: "24H",
-    id: 6,
-    product_id: 2,
-    client_id: 4,
-    responsible_id: 4,
-  },
-  {
-    title: "Actualizacion de calculo de prioridad 1",
-    description: "Se quiere actualizar el calculo",
-    severity: "LS1",
-    priority: "Alta",
-    state: "Abierto",
-    timeStart: "01-06-2023 18:40",
-    type: "Bug",
-    supportTime: "24H",
-    id: 3,
-    product_id: 1,
-    client_id: 1,
-    responsible_id: 1,
-  },
-  {
-    title: "Nueva solicitud de soporte",
-    description: "Se requiere asistencia para resolver un problema técnico",
-    severity: "LS3",
-    priority: "Media",
-    state: "Abierto",
-    timeStart: "02-06-2023 10:30",
-    type: "Bug",
-    supportTime: "8H",
-    id: 4,
-    product_id: 1,
-    client_id: 2,
-    responsible_id: 2,
-  },
-];
+export const FormTicket: React.FC<{
+  productIdNumerico: number;
+  idTicketRecv: number;
+}> = ({ productIdNumerico, idTicketRecv }) => {
+  let tituloForm = "Edición de ticket";
+  if (idTicketRecv === -1) {
+    tituloForm = "Creación de ticket";
+  }
+  const mensajeToShow: string =
+    idTicketRecv === -1
+      ? "Ticket creado con éxito"
+      : "Ticket actualizado con éxito";
 
-export const FormTicket: React.FC<{ productIdNumerico: number }> = ({
-  productIdNumerico,
-}) => {
-  //esto lo usamos para sacar el id maximo de todos los tickets.
-  const [tickets, setTickets] = useState<Array<Ticket>>(TICKETS_SACARMAX);
+  const [clickSubmit, setClickSubmit] = useState<Boolean>(false);
+  const [tickets, setTickets] = useState<Array<Ticket>>([]);
+  const fetchTickets = (): Promise<Array<Ticket>> => {
+    //2) Llamanda al backend Necesitamos obtener todos los tickets.
+    return fetch("https://psa-soporte.eeoo.ar/tickets").then((res) =>
+      res.json()
+    );
+  };
+  const getMaxIdTicket = (tickets: Array<Ticket>) => {
+    const maxId = tickets.reduce((max, ticket) => {
+      return ticket.id > max ? ticket.id : max;
+    }, 0);
+    return maxId;
+  };
+
+  const getTimeStartByTicketID = (): Promise<string> => {
+    return fetch(`https://psa-soporte.eeoo.ar/ticket/${idTicketRecv}`)
+      .then((res) => res.json())
+      .then((unTicket: Ticket) => unTicket.timeStart);
+  };
+
   const [notificacion, setNotificacion] = useState<boolean>(false);
 
   const formatDateTime = (dateTime: Date): string => {
@@ -112,8 +82,8 @@ export const FormTicket: React.FC<{ productIdNumerico: number }> = ({
   const [notificacionOk, setNotificacionOk] = useState(false);
   const [notificacionError, setnotificacionError] = useState(false);
 
-  const funcionEnviarDatos = () => {
-    if (
+  const validInputs = (): boolean => {
+    return (
       inputTicketValues.title !== "Nuevo Titulo" &&
       inputTicketValues.description !== "Nueva Descripcion" &&
       inputTicketValues.severity !== "" &&
@@ -123,7 +93,19 @@ export const FormTicket: React.FC<{ productIdNumerico: number }> = ({
       inputTicketValues.supportTime !== "" &&
       inputTicketValues.client_id !== 0 &&
       inputTicketValues.responsible_id !== 0
-    ) {
+    );
+  };
+  const limpiezaDeCamposDelForm = () => {
+    setInputTicketValues(INITIAL_STATE);
+    setSelectedClientOption("");
+    setSelectedPrioridad("");
+    setSelectedSeveridad("");
+    setselectRecursoOption("");
+    setselectTipoTicket("");
+  };
+
+  const mostrarResultadoSend = () => {
+    if (validInputs()) {
       setNotificacionOk(true);
       return true;
     } else {
@@ -134,25 +116,14 @@ export const FormTicket: React.FC<{ productIdNumerico: number }> = ({
 
   const [inputTicketValues, setInputTicketValues] =
     useState<formTicketState["inputValuesTicket"]>(INITIAL_STATE);
-  const fetchTickets = (): Promise<Array<Ticket>> => {
-    //2) Llamanda al backend Necesitamos obtener todos los tickets.
-    return fetch("https://psa-soporte.eeoo.ar/tickets").then((res) =>
-      res.json()
-    );
-  };
+
+  //Funcion para crear un ticket
   const fetchPOSTTicket = () => {
     const URLParaPOST = `https://psa-soporte.eeoo.ar/ticket/product/${inputTicketValues.product_id}/client/${inputTicketValues.client_id}/responsible/${inputTicketValues.responsible_id}`;
     console.log(URLParaPOST);
-    //asi reseteamos todo tanto inputText, como botones!!
-    setInputTicketValues(INITIAL_STATE);
-    setSelectedClientOption("");
-    setSelectedPrioridad("");
-    setSelectedSeveridad("");
-    setselectRecursoOption("");
-    setselectTipoTicket("");
 
     const cuerpoMensaje = JSON.stringify(inputTicketValues);
-    console.log("cuerpoMensaje");
+    console.log("cuerpoMensaje-POST");
     console.log(cuerpoMensaje);
     fetch(URLParaPOST, {
       method: "POST",
@@ -169,13 +140,42 @@ export const FormTicket: React.FC<{ productIdNumerico: number }> = ({
       .catch((error) => {
         console.log("Error en la solicitud POST", error);
       });
+
+    //asi reseteamos todo tanto inputText, como botones!!
+    limpiezaDeCamposDelForm();
   };
 
-  const obtenerMaximoId = (tickets: Array<Ticket>) => {
-    const maxId = tickets.reduce((max, ticket) => {
-      return ticket.id > max ? ticket.id : max;
-    }, 0);
-    return maxId;
+  const fetchPUTTicket = () => {
+    const URLParaPUT = `https://psa-soporte.eeoo.ar/tickets/${idTicketRecv}`;
+    const objetoAEnviar = {
+      title: inputTicketValues.title,
+      description: inputTicketValues.description,
+      severity: inputTicketValues.severity,
+      priority: inputTicketValues.priority,
+      state: inputTicketValues.state,
+      timeStart: inputTicketValues.timeStart,
+      type: inputTicketValues.type,
+      supportTime: inputTicketValues.supportTime,
+    };
+    const cuerpoMensaje = JSON.stringify(objetoAEnviar);
+    console.log("cuerpoMensaje-PUT");
+    console.log(cuerpoMensaje);
+    fetch(URLParaPUT, {
+      method: "PUT",
+      headers: {
+        "Content-type": "application/json",
+      },
+      body: cuerpoMensaje,
+    })
+      .then((response) => {
+        if (response.ok) {
+          console.log("Solicitud PUT exitosa");
+        } else console.log("Error en la solicitud PUT");
+      })
+      .catch((error) => {
+        console.log("Error en la solicitud PUT", error);
+      });
+    limpiezaDeCamposDelForm();
   };
 
   const [selectedPrioridad, setSelectedPrioridad] = useState("");
@@ -256,49 +256,75 @@ export const FormTicket: React.FC<{ productIdNumerico: number }> = ({
   //Es hacer una peticion de post.
   //debe tener todos los chequeos.
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    setClickSubmit(true);
     event.preventDefault();
-    setInputTicketValues({
-      ...inputTicketValues,
-      timeStart: formatDateTime(new Date()).toString(),
-    });
-    //Si queremos que las 4 lineas anteriores se ejecuten en el proximo renderezado
-    // debemos usar useEffect con el ward en inputTicketValues y ojo filtramos lo que queremos
+    if (idTicketRecv == -1) {
+      setInputTicketValues({
+        ...inputTicketValues,
+        timeStart: formatDateTime(new Date()).toString(),
+      });
+    }
+
+    //Aca estamos modificando el inputTicketValues asi que inmediatamente ira al UseEffect [inputTicketValues].
+    //Si queremos que las 4 lineas anteriores se ejecuten en el proximo renderezado usar el UE con el ward en inputTicketValues y ojo filtramos lo que queremos
     // con un if por ej dentro del userEffect el if debemos ver si cambio por ej timeStart !=="" o id !==0
   };
 
-  //UserEffect para obtener el maxId de ticket
-  // le sumamos 1 , lo neceistamos para hacer un post del nuevo ticket.
+  //UserEffect para obtener el maxId de ticket le sumamos 1 , lo neceistamos para hacer un post del nuevo ticket.
   useEffect(() => {
-    fetchTickets().then((ticketsFetch) => {
-      setTickets(ticketsFetch); //Aca estamos pisando los tickets con los ticket que obtenemos al hacer fetch GET.
-    });
-
-    setInputTicketValues({
-      ...inputTicketValues,
-      id: obtenerMaximoId(tickets) + 1,
-      product_id: productIdNumerico,
-    });
+    //Caso de crear Ticket necesitamos un id y el productID
+    if (idTicketRecv === -1) {
+      fetchTickets().then((ticketsFetch) => {
+        setTickets(ticketsFetch);
+      });
+      setInputTicketValues({
+        ...inputTicketValues,
+        id: getMaxIdTicket(tickets) + 1,
+        product_id: productIdNumerico,
+      });
+    } else {
+      //caso edicion ya recibimos el id como argumento lo usamos recopilamos el id
+      //aca debemos hacer el fetch de tiket por el id que recibimos
+      console.log("Entramos al else estamos en el EDITAR !!------");
+      getTimeStartByTicketID().then((unTimeStart) => {
+        console.log(`unTimeStart ->>>: -${unTimeStart}-`);
+        setInputTicketValues({
+          ...inputTicketValues,
+          timeStart: unTimeStart,
+          product_id: productIdNumerico,
+          id: idTicketRecv,
+        });
+      });
+    }
   }, []);
 
   //userEffect para poder asignarle el timeStart cuando hace click en el boton submit
   useEffect(() => {
-    if (inputTicketValues.timeStart !== "") {
+    console.log("inputTicketValues");
+    console.log(inputTicketValues);
+    if (validInputs() && clickSubmit) {
       console.log(inputTicketValues);
-      console.log("ENtre aca adentro del if del timeStart");
-      if (funcionEnviarDatos()) {
+      console.log("dentro del useEffect [inputTicketValues]-> POST ");
+      if (idTicketRecv === -1) {
         fetchPOSTTicket();
       } else {
-        setInputTicketValues({ ...inputTicketValues, timeStart: "" });
+        console.log(inputTicketValues);
+        console.log("dentro del useEffect [inputTicketValues]-> PUT ");
+        fetchPUTTicket();
       }
-      console.log(" VACIO");
+      setNotificacionOk(true);
     }
-  }, [inputTicketValues]);
+    if (!validInputs() && clickSubmit) {
+      setnotificacionError(true);
+    }
+    setClickSubmit(false);
+  }, [inputTicketValues, clickSubmit]);
 
   return (
     <>
       <form onSubmit={handleSubmit} id="FormTicket">
         <div id="divPrincipal">
-          <h1>Creación de ticket</h1> <hr />
+          <h1>{tituloForm}</h1> <hr />
           <div id="divTitulo">
             <span> Titulo </span>
             <input
@@ -432,15 +458,17 @@ export const FormTicket: React.FC<{ productIdNumerico: number }> = ({
           </button>
         </div>
         {notificacionOk && (
-          <NotificacionCrearTicket
+          <NotificacionesDelTicket
             onClose={() => setNotificacionOk(false)}
             tipo="OK"
+            mensaje={mensajeToShow}
           />
         )}
         {notificacionError && (
-          <NotificacionCrearTicket
+          <NotificacionesDelTicket
             onClose={() => setnotificacionError(false)}
             tipo="ERROR"
+            mensaje="ERROR ! Falta ingresar datos por favor ingreselos"
           />
         )}
       </form>

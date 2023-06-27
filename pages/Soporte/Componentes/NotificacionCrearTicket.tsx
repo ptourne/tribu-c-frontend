@@ -5,14 +5,19 @@ import { RiCheckboxCircleLine, RiCloseCircleLine } from "react-icons/ri";
 interface Props {
   onClose: () => void; //funcion que devuelve void
   tipo: string;
+  mensaje: string;
 }
 //Si del otro ponene mas etiquetas html por ej span
 // es mas completo por lo tanto usamos ReactNode en lugar del stringDDDD
-export const NotificacionCrearTicket: React.FC<Props> = ({ onClose, tipo }) => {
+export const NotificacionesDelTicket: React.FC<Props> = ({
+  onClose,
+  tipo,
+  mensaje,
+}) => {
   if (tipo === "OK") {
     return (
       <div id="NotificacionCrearTicket">
-        <span> Ticket creado de forma correcta </span>
+        <span> {mensaje} </span>
         <p>
           <RiCheckboxCircleLine size={140} />
         </p>
@@ -24,7 +29,7 @@ export const NotificacionCrearTicket: React.FC<Props> = ({ onClose, tipo }) => {
   } else {
     return (
       <div id="NotificacionCrearTicket">
-        <span> ERROR ! Falta ingresar datos por favor ingreselos </span>
+        <span> {mensaje} </span>
         <p>
           <RiCloseCircleLine size={140} />
         </p>

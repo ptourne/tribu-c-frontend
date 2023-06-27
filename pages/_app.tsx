@@ -7,6 +7,7 @@ import "@/styles/buttonAgregarTicket.scss";
 import "@/styles/FormTicket.scss";
 import "@/styles/NotificacionCrearTicket.scss";
 import "@/styles/TituloH1.scss";
+import "@/styles/DivEnTicket.scss";
 
 import type { AppProps } from "next/app";
 import "bootstrap/dist/css/bootstrap.css";
