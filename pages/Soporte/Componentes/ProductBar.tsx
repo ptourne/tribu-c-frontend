@@ -18,15 +18,7 @@ export const ProductBar: React.FC<ProductBarProps> = ({ products }) => {
 
     //Para el ruteo generico de ticket  segun el producId (evitar crear Ticket/1.tsx, /2.tsx, /3.tsx...)
     //creamos un archivo [product_id].tsx en Ticket y usamos el ${productID} para hacer el parametro id generico.
-    router.push({
-      pathname: `/Soporte/Product/${productId}`,
-      query: {
-        productName: products.find((product) => product.id === productId)?.name,
-        productVersion: products.find((product) => product.id === productId)
-          ?.version,
-        productId,
-      },
-    });
+    router.push(`/Soporte/Product/${productId}`);
   };
 
   //public JSX.Element[] renderProductBar( ){...} en cada map agregar la key.para evitar claves repetidas.project.fecha_inicio

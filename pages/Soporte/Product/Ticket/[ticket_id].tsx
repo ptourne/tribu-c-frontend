@@ -73,7 +73,7 @@ function TicketPage() {
       await fetch(`https://psa-soporte.eeoo.ar/tickets/${ticket?.id}`, {
         method: "DELETE",
       });
-      router.push("/Soporte/soporte")
+      router.push(`/Soporte/Product/${ticket?.product_id}`)
     } catch (error) {
       console.error("Error deleting ticket:", error);
     }
