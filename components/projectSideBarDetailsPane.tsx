@@ -22,13 +22,45 @@ interface ProjectSideBarProps {
 const ADD = 0;
 const EDIT = 1;
 
+const productList = [
+    {
+      id: 10, 
+      name: "Producto 1", 
+      versions: [
+        {
+          name: "1.8", 
+          customizations: ["Custom FIUBA1"]
+        },
+        {
+          name: "1.9", 
+          customizations: ["Custom FIUBA2"]
+        }
+      ]
+    }, 
+    {
+      id: 20, 
+      name: "Producto 2", 
+      versions: [
+        {
+          name: "1.4", 
+          customizations: ["Custom FIUBA3"]
+        },
+        {
+          name: "1.5", 
+          customizations: ["Custom FIUBA4"]
+        }
+      ]
+    }
+  ]
+
 function ProjectSideBarDetailsPane({
   project,
   getProjectsFunction,
 }: ProjectSideBarProps) {
   const [clients, setClients] = useState([{id: 100, razon_social: "Cliente 1"},{id: 200, razon_social: "Cliente 2"}]);
-  const [products, setProducts] = useState([{id: 10, name: "Producto 1", versions: ["1.8","1.9"]}, {id: 20, name: "Producto 2", versions: ["1.4","1.5"]}]);
+  const [products, setProducts] = useState(productList);
   const [versions, setVersions] = useState([]);
+  const [customizations, setCustomizations] = useState([]);
   const [versionsDict, setVersionsDict] = useState({});
 
   const [mode, setMode] = useState(EDIT);
@@ -39,8 +71,8 @@ function ProjectSideBarDetailsPane({
   const [pendingChanges, setPendingChanges] = useState(false);
   const [name, setName] = useState("");
   const [nameSaved, setNameSaved] = useState(true);
-  const [client, setClient] = useState<number | undefined>(undefined);
-  const [product, setProduct] = useState<number | undefined>(undefined);
+  const [client, setClient] = useState<number | string>("");
+  const [product, setProduct] = useState<number | string>("");
   const [version, setVersion] = useState("");
   const [customization, setCustomization] = useState("");
   const [state, setState] = useState(0);
@@ -65,13 +97,17 @@ function ProjectSideBarDetailsPane({
       setStartDate(project.fecha_inicio || null);
       setFinishDate(project.fecha_fin_estimada || null);
       setEstimatedCost(project.costo_estimado.toString());
+      if (versionsDict[project.id_producto]) {
+        setVersions(versionsDict[project.id_producto].versions);
+        if (versionsDict[project.id_producto].customizations[project.version]) setCustomizations(versionsDict[project.id_producto].customizations[project.version]);
+      }
       if (!lastProject) setLastProject(project);
     } else {
       setMode(ADD);
       setName("Nuevo Proyecto");
       setState(0);
-      setClient(undefined);
-      setProduct(undefined);
+      setClient("");
+      setProduct("");
       setVersion("");
       setCustomization("");
       setStartDate(null);
@@ -105,10 +141,17 @@ function ProjectSideBarDetailsPane({
 
   const getProducts = async () => {
     for (let producto of products) {
-      versionsDict[producto.id] = producto.versions;
+      let customizationsDict = {};
+      for (let version of producto.versions) {
+        customizationsDict[version.name] = version.customizations;
+      }
+      versionsDict[producto.id] = {versions: producto.versions, customizations: customizationsDict};
+      console.log(versionsDict);
+      setVersionsDict(versionsDict);
     }
     if (project) {
-      setVersions(versionsDict[project.id_producto]);
+      setVersions(versionsDict[project.id_producto].versions);
+      if (versionsDict[project.id_producto].customizations[project.version]) setCustomizations(versionsDict[project.id_producto].customizations[project.version]);
     }
   }
 
@@ -130,12 +173,13 @@ function ProjectSideBarDetailsPane({
 
   const handleProductChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setProduct(parseInt(event.target.value));
-    setVersions(versionsDict[parseInt(event.target.value)]);
+    setVersions(versionsDict[parseInt(event.target.value)].versions);
     setPendingChanges(true);
   };
 
   const handleVersionChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setVersion(event.target.value);
+    setCustomizations(versionsDict[product].customizations[event.target.value]);
     setPendingChanges(true);
   };
 
@@ -205,8 +249,8 @@ function ProjectSideBarDetailsPane({
         getProjectsFunction();
         setNameSaved(true);
         setStateSaved(true);
-        setClient(undefined);
-        setProduct(undefined);
+        setClient("");
+        setProduct("");
         setVersion("");
         setCustomization("");
         setStartDateSaved(true);
@@ -289,8 +333,8 @@ function ProjectSideBarDetailsPane({
 
         setName("Nuevo Proyecto");
         setState(0);
-        setClient(undefined);
-        setProduct(undefined);
+        setClient("");
+        setProduct("");
         setVersion("");
         setCustomization("");
         setStartDate(null);
@@ -365,6 +409,7 @@ function ProjectSideBarDetailsPane({
                     onChange={handleClientChange}
                     disabled={mode === EDIT}
                   >
+                    <option value="">Seleccione una opci&oacute;n</option>
                     {clients.map((client) => 
                       <option key={client.id} value={client.id}>{client.razon_social}</option>
                     )}
@@ -386,6 +431,7 @@ function ProjectSideBarDetailsPane({
                     onChange={handleProductChange}
                     disabled={mode === EDIT}
                   >
+                    <option value="">Seleccione una opci&oacute;n</option>
                     {products.map((product) => 
                       <option key={product.id} value={product.id}>{product.name}</option>
                     )}
@@ -407,8 +453,9 @@ function ProjectSideBarDetailsPane({
                       onChange={handleVersionChange}
                       disabled={mode === EDIT || !product}
                     >
+                      <option value="">Seleccione una opci&oacute;n</option>
                       {versions.map((version) => 
-                        <option key={version} value={version}>{version}</option>
+                        <option key={version.name} value={version.name}>{version.name}</option>
                       )}
                     </select>
                   </div>
@@ -421,15 +468,18 @@ function ProjectSideBarDetailsPane({
                     Customizaci&oacute;n *
                   </label>
                   <div className="col-md-6">
-                    <input
-                      type="text"
-                      className="form-control border-0 border-bottom rounded-0 p-0"
-                      id="customization"
-                      value={customization}
-                      onChange={handleCustomizationChange}
-                      maxLength={60}
-                      disabled={mode===EDIT}
-                    />
+                    <select
+                        className="form-select border-0 border-bottom rounded-0 p-0"
+                        id="inputGroupSelect04"
+                        value={customization}
+                        onChange={handleCustomizationChange}
+                        disabled={mode === EDIT || !version}
+                      >
+                        <option value="">Seleccione una opci&oacute;n</option>
+                        {customizations.map((customization) => 
+                          <option key={customization} value={customization}>{customization}</option>
+                        )}
+                      </select>
                   </div>
                 </div>
                 <UnsavedWarningIcon isSavePending={true} />
@@ -442,7 +492,7 @@ function ProjectSideBarDetailsPane({
                 <div className="col-md-6">
                   <select
                     className="form-select border-0 border-bottom rounded-0 p-0"
-                    id="inputGroupSelect04"
+                    id="inputGroupSelect05"
                     value={state}
                     onChange={handleStateChange}
                   >
