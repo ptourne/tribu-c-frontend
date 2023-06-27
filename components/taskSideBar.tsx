@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import TaskSideBarDetailsPane from "./taskSideBarDetailsPane";
 import { useRouter } from "next/router";
 import { Tarea } from "../pages/types";
+import { RecursosDeTareasSideBar } from "@/pages/Recursos/Components/recursosDeTareasSideBar";
+import { getTableRowUtilityClass } from "@mui/material";
 
 interface TaskSideBarProps {
   task: Tarea | undefined;
@@ -95,7 +97,7 @@ function TaskSideBar({ task, project_id, getTasksFunction }: TaskSideBarProps) {
           role="tabpanel"
           aria-labelledby="resources-tab"
         >
-          "2"
+          <RecursosDeTareasSideBar tarea= {selectedTask}/>
         </div>
       </div>
       {mode === EDIT && (
