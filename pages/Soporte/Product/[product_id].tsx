@@ -9,8 +9,7 @@ import { FormTicket } from "../Componentes/FormTicket";
 
 export default function Ticket() {
   const [tickets, setTickets] = useState<Ticket[]>([]);
-  const [productVersion, setProductVersion] = useState<Number>(0);
-  const [productName, setProductName] = useState<String>("productName");
+  const [productoSelect, setProductoSelect] = useState<Producto>();
   const fetchTickets = (): Promise<Array<Ticket>> => {
     //2) Llamanda al backend Necesitamos obtener todos los tickets.
     return fetch("https://psa-soporte.eeoo.ar/tickets").then((res) =>
@@ -43,8 +42,7 @@ export default function Ticket() {
 
   useEffect(() => {
     fetchGetProductosById().then((unProducto) => {
-      setProductName(unProducto.name);
-      setProductVersion(unProducto.version);
+      setProductoSelect(unProducto);
     });
     fetchTickets().then((ticketsFetch) => {
       const ticketsFiltradoById = ticketsFetch.filter(
@@ -126,12 +124,12 @@ export default function Ticket() {
         <h1
           style={{ fontSize: "2.2em", marginLeft: "30px", marginTop: "10px" }}
         >
-          {productName}
+          {productoSelect?.name}
         </h1>
         <h1
           style={{ fontSize: "1.8em", marginLeft: "30px", marginTop: "-20px" }}
         >
-          Versión: {productVersion.toString()}
+          Versión: {productoSelect?.version.toString()}
           <button
             type="button"
             onClick={handleOpenFormTicket}
