@@ -19,7 +19,7 @@ export const ProductBar: React.FC<ProductBarProps> = ({ products }) => {
     //Para el ruteo generico de ticket  segun el producId (evitar crear Ticket/1.tsx, /2.tsx, /3.tsx...)
     //creamos un archivo [product_id].tsx en Ticket y usamos el ${productID} para hacer el parametro id generico.
     router.push({
-      pathname: `/Soporte/Ticket/${productId}`,
+      pathname: `/Soporte/Product/${productId}`,
       query: {
         productName: products.find((product) => product.id === productId)?.name,
         productVersion: products.find((product) => product.id === productId)

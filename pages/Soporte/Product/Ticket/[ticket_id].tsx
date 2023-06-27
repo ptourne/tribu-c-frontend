@@ -48,14 +48,11 @@ function TicketPage() {
               <div className="flex flex-row justify-between place-items-center">
                 <h1 className="card-title">{ticket.title}</h1>
 
-                <div className="dropdown">
-                  <label tabIndex={0} className="btn m-1">
+                <details className="dropdown mb-32">
+                  <summary className="m-1 btn">
                     <FaEllipsisV />
-                  </label>
-                  <ul
-                    tabIndex={0}
-                    className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52"
-                  >
+                  </summary>
+                  <ul className="p-2 shadow menu dropdown-content z-[1] bg-base-100 rounded-box w-52">
                     <li>
                       <a>Modificar</a>
                     </li>
@@ -69,7 +66,7 @@ function TicketPage() {
                       <a>Finalizar</a>
                     </li>
                   </ul>
-                </div>
+                </details>
               </div>
 
               <p className="mb-2">Descripcion: {ticket.description}</p>
