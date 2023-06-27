@@ -194,7 +194,7 @@ export default function Ticket() {
               <div
                 style={{ position: "absolute", marginLeft: "300px", marginTop: "0px" }}
               >
-                <TicketActions {...ticketActionsProps} />
+                <button className="btn btn-primary" onClick={() => router.push(`/Soporte/Product/Ticket/${ticketDecod.id}`)}>Ver ticket</button>
               </div>
             </li>
           ))}

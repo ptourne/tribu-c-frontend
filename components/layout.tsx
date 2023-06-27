@@ -42,7 +42,7 @@ export default function Layout({ children }: { children: any }) {
 
   return (
     <div className="min-vh-100 d-flex flex-col bg-white">
-      <header className="bg-black sticky top-0 h-14 flex justify-center items-center font-semibold uppercase text-white">
+      <header className="bg-black z-40 sticky top-0 h-14 flex justify-center items-center font-semibold uppercase text-white">
         PSA
       </header>
       <div className="flex-grow-1 d-flex overflow-auto">
