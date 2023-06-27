@@ -1,16 +1,34 @@
-import React from "react";
+import React, { useState } from "react";
 
-const Modal = () => {
+function Modal() {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const openModal = () => {
+    setIsOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsOpen(false);
+  };
+
   return (
-    <dialog id="my_modal_3" className="modal modal-open">
-      <form method="dialog" className="modal-box">
-        <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
-          ✕
-        </button>
-        <h3 className="font-bold text-lg">Hello!</h3>
-        <p className="py-4">Press ESC key or click on ✕ button to close</p>
-      </form>
-    </dialog>
+    <div>
+      <button onClick={openModal} className="bg-blue-500 text-white px-4 py-2 rounded">
+        Abrir Modal
+      </button>
+
+      {isOpen && (
+        <div className="fixed inset-0 flex items-center justify-center z-50">
+          <div className="bg-white p-8 rounded shadow-lg">
+            <h2 className="text-xl font-bold mb-4">Modal</h2>
+            <p>Contenido del modal...</p>
+            <button onClick={closeModal} className="bg-gray-500 text-white px-4 py-2 rounded mt-4">
+              Cerrar
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
   );
 }
 

@@ -1,8 +1,6 @@
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { FaEllipsisV } from "react-icons/fa";
-import Modal from "../../Componentes/Modal";
-import handler from "@/pages/api/hello";
 
 interface Ticket {
   title: string;
@@ -29,6 +27,7 @@ function TicketPage() {
   const router = useRouter();
   const { ticket_id } = router.query;
 
+  const [isOpen, setIsOpen] = useState(false);
   const [ticket, setTicket] = useState<Ticket | null>(null);
   const [product, setProduct] = useState<Product | null>(null);
 
@@ -73,10 +72,18 @@ function TicketPage() {
       await fetch(`https://psa-soporte.eeoo.ar/tickets/${ticket?.id}`, {
         method: "DELETE",
       });
-      router.push(`/Soporte/Product/${ticket?.product_id}`)
+      router.push(`/Soporte/Product/${ticket?.product_id}`);
     } catch (error) {
       console.error("Error deleting ticket:", error);
     }
+  };
+
+  const openModal = () => {
+    setIsOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsOpen(false);
   };
 
   return (
@@ -88,25 +95,28 @@ function TicketPage() {
               <div className="flex flex-row justify-between place-items-center">
                 <h1 className="card-title">Ticket</h1>
 
-                <details className="dropdown">
-                  <summary className="m-1 btn">
+                <div className="dropdown">
+                  <label tabIndex={0} className="m-1 btn">
                     <FaEllipsisV />
-                  </summary>
-                  <ul className="p-2 shadow menu dropdown-content z-[1] bg-base-100 rounded-box w-52">
+                  </label>
+                  <ul
+                    tabIndex={0}
+                    className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52"
+                  >
                     <li>
                       <a>Modificar</a>
                     </li>
                     <li onClick={handleDelete}>
                       <a>Eliminar</a>
                     </li>
-                    <li>
-                      <a>Asignar</a>
+                    <li onClick={openModal}>
+                      <a>Derivar</a>
                     </li>
                     <li>
                       <a>Finalizar</a>
                     </li>
                   </ul>
-                </details>
+                </div>
               </div>
 
               <h1 className="card-title">{ticket.title}</h1>
@@ -137,6 +147,53 @@ function TicketPage() {
           <p>Aca van las tareas asociadas al ticket</p>
         </div>
       </div>
+
+      {isOpen && (
+        <div className="fixed inset-0 flex items-center justify-center z-50">
+          <div className="bg-white p-8 rounded shadow-lg">
+            <h2 className="text-xl font-bold mb-4">Derivar</h2>
+
+            <select className="select w-full max-w-xs my-1">
+              <option disabled selected>
+                Seleccionar Responzable
+              </option>
+              <option>Homer</option>
+              <option>Marge</option>
+              <option>Bart</option>
+              <option>Lisa</option>
+              <option>Maggie</option>
+            </select>
+
+            <select className="select w-full max-w-xs my-1">
+              <option disabled selected>
+                Seleccionar Proyecto
+              </option>
+              <option>Homer</option>
+              <option>Marge</option>
+              <option>Bart</option>
+              <option>Lisa</option>
+              <option>Maggie</option>
+            </select>
+
+            <div className="flex justify-between">
+              <button
+                onClick={closeModal}
+                className="bg-gray-500 hover:bg-gray-400 text-white px-4 py-2 rounded mt-4"
+              >
+                Cerrar
+              </button>
+
+              <button
+                onClick={closeModal}
+                className="bg-gray-500  hover:bg-gray-400 text-white px-4 py-2 rounded mt-4"
+              >
+                Asignar
+              </button>
+
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
