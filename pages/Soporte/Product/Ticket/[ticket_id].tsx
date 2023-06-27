@@ -82,7 +82,7 @@ function TicketPage() {
     if (ticket) {
       const updatedTicket = {
         ...ticket,
-        state: "Finalizado",
+        state: "Cerrado",
       };
 
       try {
@@ -100,12 +100,12 @@ function TicketPage() {
         if (response.ok) {
           // Actualizar el estado del ticket localmente si la solicitud fue exitosa
           setTicket(updatedTicket);
-          console.log("Ticket finalizado exitosamente");
+          console.log("Ticket cerrado exitosamente");
         } else {
-          console.error("Error al finalizar el ticket:", response.status);
+          console.error("Error al cerrar el ticket:", response.status);
         }
       } catch (error) {
-        console.error("Error al finalizar el ticket:", error);
+        console.error("Error al cerrar el ticket:", error);
       }
     }
   }
