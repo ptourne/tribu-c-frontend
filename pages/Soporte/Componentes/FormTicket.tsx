@@ -1,7 +1,7 @@
 import { Ticket } from "@/pages/types";
 import { headers } from "next/dist/client/components/headers";
 import { useEffect, useState } from "react";
-import { NotificacionesDelTicket } from "./NotificacionCrearTicket";
+import { NotificacionesDelTicket } from "./NotificacionTicket";
 
 interface formTicketState {
   inputValuesTicket: Ticket;
@@ -308,11 +308,7 @@ export const FormTicket: React.FC<{
       });
     }
   }, []);
-
-  //userEffect para poder asignarle el timeStart cuando hace click en el boton submit
-  useEffect(() => {
-    console.log("inputTicketValues");
-    console.log(inputTicketValues);
+  const validationInputPlus = () => {
     if (parseInt(inputTicketValues.supportTime) <= 0) {
       console.log(
         "Cantidad de horas " + inputTicketValues.supportTime + " invalidas."
@@ -353,7 +349,15 @@ export const FormTicket: React.FC<{
       setnotificacionError(true);
       return;
     }
+  };
+
+  //userEffect para poder asignarle el timeStart cuando hace click en el boton submit
+  useEffect(() => {
+    console.log("inputTicketValues");
+    console.log(inputTicketValues);
+
     if (validInputs() && clickSubmit) {
+      validationInputPlus();
       console.log(inputTicketValues);
       console.log("dentro del useEffect [inputTicketValues]-> POST ");
       if (idTicketRecv === -1) {

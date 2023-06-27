@@ -16,7 +16,7 @@ export const NotificacionesDelTicket: React.FC<Props> = ({
 }) => {
   if (tipo === "OK") {
     return (
-      <div id="NotificacionCrearTicket">
+      <div id="NotificacionTicket">
         <span> {mensaje} </span>
         <p>
           <RiCheckboxCircleLine size={140} />
@@ -28,7 +28,7 @@ export const NotificacionesDelTicket: React.FC<Props> = ({
     );
   } else {
     return (
-      <div id="NotificacionCrearTicket">
+      <div id="NotificacionTicket">
         <span> {mensaje} </span>
         <p>
           <RiCloseCircleLine size={140} />
