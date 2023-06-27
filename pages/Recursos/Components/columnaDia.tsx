@@ -1,6 +1,13 @@
 import TarjetaTarea from "./tarjetaTarea";
+import { Tarea } from "../tarea";
 
-export default function ColumnaDia({ nombreDia, numeroDia}) {
+interface ColumnaDia {
+    nombreDia: string;
+    numeroDia: number;
+    tareas: Array<Tarea>;
+}
+
+export const ColumnaDia: React.FC<ColumnaDia> = ({ nombreDia, numeroDia, tareas }) => {
     return (
         <>
             <div className="flex-column diasSemana-contenido" style={estilos.dia}>
@@ -11,9 +18,11 @@ export default function ColumnaDia({ nombreDia, numeroDia}) {
                     <h5>{numeroDia}</h5>
                 </div>
                 <div className="d-flex flex-column  border-2 border-dark rounded-2 bd-highlight mb-3" style={estilos.columnas}>
-                    <TarjetaTarea nombreTarea="Codear Backend"/>
-                    <TarjetaTarea nombreTarea="Levantar Docker"/>
-                    <TarjetaTarea nombreTarea="Terminar Front"/>
+                    {
+                        tareas.map(tarea =>
+                            <TarjetaTarea nombreTarea={tarea.titulo} estadoTarea={tarea.estado}/>
+                            )
+                    }
                 </div>
             </div>
         </>
@@ -42,4 +51,3 @@ const estilos = {
   }
 
 };
-  

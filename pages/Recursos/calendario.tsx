@@ -56,48 +56,12 @@ export default function Calendario() {
           Julio
         </div>
       </div>
-{/* {      <div style={estilos.diasSemana} className="diasSemana flex justify-content-evenly">
-        <div className="diasSemana-contenido">
-          Lunes 19
-        </div>
-        <div className="diasSemana-contenido">
-          Martes 20
-        </div>
-        <div className="diasSemana-contenido">
-          Miercoles 21
-        </div>
-        <div className="diasSemana-contenido">
-          Jueves 22
-        </div>
-        <div className="diasSemana-contenido">
-          Viernes 23
-        </div>
-      </div>} */}
       <div style={estilos.mainGrid} className="diasSemana flex justify-content-evenly    ">
         <ColumnaDia nombreDia="Lunes" numeroDia="30"/>
         <ColumnaDia nombreDia="Martes" numeroDia="20"/>
         <ColumnaDia nombreDia="Miercoles" numeroDia="21"/>
         <ColumnaDia nombreDia="Jueves" numeroDia="22"/>
         <ColumnaDia nombreDia="Viernes" numeroDia="23"/>
-        {/* {<div className="diasSemana-contenido border-2 border-dark rounded-2" style={estilos.columnas}>
-          <div className="d-flex flex-column   bd-highlight mb-3">
-            <div style={estilos.filas} className="p-2 bd-highlight border-2 border-dark rounded-1  ">Codear BackEnd</div>
-            <div style={estilos.filas} className="p-2 bd-highlight border-2 border-dark rounded-1">Armar flujo de conversacion</div>
-            <div style={estilos.filas} className="p-2 bd-highlight border-2 border-dark rounded-1">Configuracion de base de datos</div>
-          </div>
-        </div>
-        <div className="diasSemana-contenido border-2 border-dark rounded-2" style={estilos.columnas}>
-          Martes 20
-        </div>
-        <div className="diasSemana-contenido border-2 border-dark rounded-2" style={estilos.columnas}>
-          Miercoles 21
-        </div>
-        <div className="diasSemana-contenido border-2 border-dark rounded-2" style={estilos.columnas}>
-          Jueves 22
-        </div>
-        <div className="diasSemana-contenido  border-2 border-dark rounded-2" style={estilos.columnas}>
-          Viernes 23
-        </div>} */}
       </div>
 
     </div>

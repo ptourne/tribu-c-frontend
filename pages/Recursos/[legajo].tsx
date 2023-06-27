@@ -9,7 +9,8 @@ import CircularProgress from '@mui/material/CircularProgress';
 import RecursoInfoCard from "@/components/recursoInfoCard";
 import { useRouter } from "next/router";
 import TarjetaTarea from "./Components/tarjetaTarea";
-import ColumnaDia from "./Components/columnaDia";
+import { ColumnaDia } from "./Components/columnaDia";
+import { Tarea } from "./tarea";
 const inter = Inter({ subsets: ["latin"] });
 
 const estilos = {
@@ -44,11 +45,11 @@ export default function Calendario() {
         </div>
       </div>
       <div style={estilos.mainGrid} className="diasSemana flex">
-        <ColumnaDia nombreDia="Lunes" numeroDia= {diaCorrespondiente(date, 1)}/>
-        <ColumnaDia nombreDia="Martes" numeroDia={diaCorrespondiente(date, 2)}/>
-        <ColumnaDia nombreDia="Miercoles" numeroDia={diaCorrespondiente(date, 3)}/>
-        <ColumnaDia nombreDia="Jueves" numeroDia={diaCorrespondiente(date, 4)}/>
-        <ColumnaDia nombreDia="Viernes" numeroDia={diaCorrespondiente(date, 5)}/>
+        <ColumnaDia nombreDia="Lunes" numeroDia= {diaCorrespondiente(date, 1)} tareas={ getTareas() }/>
+        <ColumnaDia nombreDia="Martes" numeroDia={diaCorrespondiente(date, 2)} tareas={ getTareas() }/>
+        <ColumnaDia nombreDia="Miercoles" numeroDia={diaCorrespondiente(date, 3)} tareas={ getTareas() }/>
+        <ColumnaDia nombreDia="Jueves" numeroDia={diaCorrespondiente(date, 4)} tareas={ getTareas() }/>
+        <ColumnaDia nombreDia="Viernes" numeroDia={diaCorrespondiente(date, 5)} tareas={ getTareas() }/>
       </div>
     </div>
     </>
@@ -88,4 +89,22 @@ function numeroAMes(numero: number) {
       case 11:
         return "Diciembre";
     } 
+}
+
+function getTareas() {
+  const tareas: Tarea[] = [
+      {
+        titulo: "Codear Backend",
+        estado: 0,
+      },
+      {
+        titulo: "Asignar Front",
+        estado: 1,
+      },
+      {
+        titulo: "Tomar Mate",
+        estado: 2,
+      }
+    ]
+    return tareas;
 }
