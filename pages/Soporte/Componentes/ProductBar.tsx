@@ -18,6 +18,7 @@ export const ProductBar: React.FC<ProductBarProps> = ({ products }) => {
 
     //Para el ruteo generico de ticket  segun el producId (evitar crear Ticket/1.tsx, /2.tsx, /3.tsx...)
     //creamos un archivo [product_id].tsx en Ticket y usamos el ${productID} para hacer el parametro id generico.
+
     router.push(`/Soporte/Product/${productId}`);
   };
 
@@ -33,7 +34,7 @@ export const ProductBar: React.FC<ProductBarProps> = ({ products }) => {
           </p>
           <button
             onClick={() => {
-              handleProductClick(unProducto.id); //AACA PASAS ARGUMENTOS @THEO!!!
+              handleProductClick(unProducto.id);
             }}
           >
             Entrar
