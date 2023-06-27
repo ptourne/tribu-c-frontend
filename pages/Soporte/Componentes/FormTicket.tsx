@@ -80,7 +80,7 @@ export const FormTicket: React.FC<{
     return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
   };
   const [notificacionOk, setNotificacionOk] = useState(false);
-  const [notificacionError, setnotificacionError] = useState(false);
+  var [notificacionError, setnotificacionError] = useState(false);
 
   const validInputs = (): boolean => {
     return (
@@ -176,6 +176,17 @@ export const FormTicket: React.FC<{
         console.log("Error en la solicitud PUT", error);
       });
     limpiezaDeCamposDelForm();
+  };
+
+  function hasLetter(input: string): boolean {
+    return /[a-zA-Z]/.test(input);
+  }
+
+  const obtenerMaximoId = (tickets: Array<Ticket>) => {
+    const maxId = tickets.reduce((max, ticket) => {
+      return ticket.id > max ? ticket.id : max;
+    }, 0);
+    return maxId;
   };
 
   const [selectedPrioridad, setSelectedPrioridad] = useState("");
@@ -302,6 +313,46 @@ export const FormTicket: React.FC<{
   useEffect(() => {
     console.log("inputTicketValues");
     console.log(inputTicketValues);
+    if (parseInt(inputTicketValues.supportTime) <= 0) {
+      console.log(
+        "Cantidad de horas " + inputTicketValues.supportTime + " invalidas."
+      );
+      setnotificacionError(true);
+      return;
+    }
+
+    if (inputTicketValues.supportTime == " ") {
+      console.log("Ingrese un valor valido para las horas.");
+      setnotificacionError(true);
+      return;
+    }
+
+    if (inputTicketValues.supportTime == "") {
+      console.log("Complete el campo de horas necesarias.");
+      setnotificacionError(true);
+      return;
+    }
+
+    if (hasLetter(inputTicketValues.supportTime)) {
+      console.log("Ingrese solo numeros.");
+      setnotificacionError(true);
+      return;
+    }
+
+    if (
+      inputTicketValues.description == " " ||
+      inputTicketValues.description == ""
+    ) {
+      console.log("Descripcion invalida.");
+      setnotificacionError(true);
+      return;
+    }
+
+    if (inputTicketValues.title == "" || inputTicketValues.title == " ") {
+      console.log("Titulo invalido.");
+      setnotificacionError(true);
+      return;
+    }
     if (validInputs() && clickSubmit) {
       console.log(inputTicketValues);
       console.log("dentro del useEffect [inputTicketValues]-> POST ");
