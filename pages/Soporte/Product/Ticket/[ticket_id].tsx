@@ -78,6 +78,38 @@ function TicketPage() {
     }
   };
 
+  const handleUpdateState = async () => {
+    if (ticket) {
+      const updatedTicket = {
+        ...ticket,
+        state: "Finalizado",
+      };
+
+      try {
+        const response = await fetch(
+          `https://psa-soporte.eeoo.ar/tickets/${ticket.id}`,
+          {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(updatedTicket),
+          }
+        );
+
+        if (response.ok) {
+          // Actualizar el estado del ticket localmente si la solicitud fue exitosa
+          setTicket(updatedTicket);
+          console.log("Ticket finalizado exitosamente");
+        } else {
+          console.error("Error al finalizar el ticket:", response.status);
+        }
+      } catch (error) {
+        console.error("Error al finalizar el ticket:", error);
+      }
+    }
+  }
+
   const openModal = () => {
     setIsOpen(true);
   };
@@ -112,7 +144,7 @@ function TicketPage() {
                     <li onClick={openModal}>
                       <a>Derivar</a>
                     </li>
-                    <li>
+                    <li onClick={handleUpdateState}>
                       <a>Finalizar</a>
                     </li>
                   </ul>
