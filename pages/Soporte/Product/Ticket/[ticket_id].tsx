@@ -1,6 +1,7 @@
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { FaEllipsisV } from "react-icons/fa";
+import Modal from "../../Componentes/Modal";
 
 interface Ticket {
   title: string;
@@ -27,7 +28,7 @@ function TicketPage() {
     const fetchTicket = async () => {
       try {
         const response = await fetch(
-          `http://localhost:8008/ticket/${ticket_id}`
+          `https://psa-soporte.eeoo.ar/ticket/${ticket_id}`
         );
         const data = await response.json();
         setTicket(data);
@@ -40,13 +41,14 @@ function TicketPage() {
   }, []);
 
   return (
-    <div className="px-8 py-8">
-      <div className="card w-96 bg-base-100 shadow-xl">
+    <div className="flex px-8 py-8">
+
+      <div className="card w-1/2 mr-2 bg-base-100 shadow-xl">
         <div className="card-body">
           {ticket ? (
             <div>
               <div className="flex flex-row justify-between place-items-center">
-                <h1 className="card-title">{ticket.title}</h1>
+                <h1 className="card-title">Ticket</h1>
 
                 <details className="dropdown">
                   <summary className="m-1 btn">
@@ -69,6 +71,8 @@ function TicketPage() {
                 </details>
               </div>
 
+              <h1 className="card-title">{ticket.title}</h1>
+
               <p className="mb-2">Descripcion: {ticket.description}</p>
               <p className="mb-2">Severity: {ticket.severity}</p>
               <p className="mb-2">Priority: {ticket.priority}</p>
@@ -85,6 +89,14 @@ function TicketPage() {
           )}
         </div>
       </div>
+
+      <div className="card w-1/2 ml-2 bg-base-100 shadow-xl">
+        <div className="card-body">
+          <h2 className="card-title">Tareas</h2>
+          <p>Aca van las tareas asociadas al ticket</p>
+        </div>
+      </div>
+
     </div>
   );
 }
