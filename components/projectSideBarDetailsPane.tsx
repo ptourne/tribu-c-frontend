@@ -175,12 +175,15 @@ function ProjectSideBarDetailsPane({
     setProduct(parseInt(event.target.value));
     setVersions(versionsDict[parseInt(event.target.value)].versions);
     setPendingChanges(true);
+    setVersion("");
+    setCustomization("");
   };
 
   const handleVersionChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setVersion(event.target.value);
     setCustomizations(versionsDict[product].customizations[event.target.value]);
     setPendingChanges(true);
+    setCustomization("");
   };
 
   const handleCustomizationChange = (
