@@ -283,8 +283,9 @@ export const FormTicket: React.FC<{ productIdNumerico: number }> = ({
   //userEffect para poder asignarle el timeStart cuando hace click en el boton submit
   useEffect(() => {
     if (parseInt(inputTicketValues.supportTime) <= 0) {
-      console.log("Cantidad de horas invalidas.");
+      console.log("Cantidad de horas " + inputTicketValues.supportTime + " invalidas.");
       setnotificacionError(true);
+
     }
     if (inputTicketValues.timeStart !== "") {
       console.log(inputTicketValues);
