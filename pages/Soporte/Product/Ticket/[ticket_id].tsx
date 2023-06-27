@@ -112,6 +112,7 @@ function TicketPage() {
               <h1 className="card-title">{ticket.title}</h1>
 
               <p className="mb-2">Producto: {product?.name}</p>
+              <p className="mb-2">Version: {product?.version}</p>
               <p className="mb-2">Descripcion: {ticket.description}</p>
               <p className="mb-2">Severidad: {ticket.severity}</p>
               <p className="mb-2">Prioridad: {ticket.priority}</p>
