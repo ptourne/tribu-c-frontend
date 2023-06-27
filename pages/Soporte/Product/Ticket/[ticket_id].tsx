@@ -27,7 +27,7 @@ function TicketPage() {
     const fetchTicket = async () => {
       try {
         const response = await fetch(
-          `https://psa-soporte.eeoo.ar/ticket/${ticket_id}`
+          `http://localhost:8008/ticket/${ticket_id}`
         );
         const data = await response.json();
         setTicket(data);
@@ -48,7 +48,7 @@ function TicketPage() {
               <div className="flex flex-row justify-between place-items-center">
                 <h1 className="card-title">{ticket.title}</h1>
 
-                <details className="dropdown mb-32">
+                <details className="dropdown">
                   <summary className="m-1 btn">
                     <FaEllipsisV />
                   </summary>
