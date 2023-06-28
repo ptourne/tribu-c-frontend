@@ -48,12 +48,12 @@ export default function Ticket() {
     });
   }, []);
 
-  const [showFormTicket, setShowFormTicket] = useState(false); // Nuevo estado para controlar la visibilidad del formulario
+  const [showFormFilter, setShowFormFilter] = useState(false); // Nuevo estado para controlar la visibilidad del formulario
   const handleOpenFormTicket = () => {
-    if (showFormTicket === false) {
-      setShowFormTicket(true); // Muestra el formulario al hacer clic en el botón
+    if (showFormFilter === false) {
+      setShowFormFilter(true); // Muestra el formulario al hacer clic en el botón
     } else {
-      setShowFormTicket(false);
+      setShowFormFilter(false);
     }
   };
   
