@@ -1,9 +1,68 @@
 import { Producto, Ticket } from "@/pages/types";
+import { Select } from "@mui/material";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { SetStateAction, useEffect, useState } from "react";
+import { FaEllipsisV } from "react-icons/fa";
 interface ProductBarProps {
   products: Array<Producto>;
 }
+
+
+
+// ------------------------------------------------------------------------------------ //
+
+
+
+const handleFiltrarProducto = () => {
+  try {
+    console.log("Filtrando por producto.");
+  } catch (error) {
+    console.log(error + "Hubo error");
+  }
+};
+
+
+const handleFiltrarVersion = () => {
+  try {
+    console.log("Filtrando por version.");
+  } catch (error) {
+    console.log(error + "Hubo error");
+  }
+};
+
+
+
+<div className="flex flex-row justify-between place-items-center">
+  <h1 className="card-title">Ticket</h1>
+    <div className="dropdown">
+      <label tabIndex={0} className="m-1 btn">
+        <FaEllipsisV />
+      </label>
+        <ul
+          tabIndex={0}
+          className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52"
+        >
+        <li onClick={handleFiltrarProducto}>
+          <a>Filtrar por producto</a>
+        </li>
+        <li onClick={handleFiltrarVersion}>
+          <a>Filtrar por version</a>
+        </li>
+        </ul>
+    </div>
+</div>
+
+
+
+
+
+
+// ------------------------------------------------------------------------------------ //
+
+
+
+
+
 
 // ProductBar es un componente funcional que recibe un argumento del tipo Props (unicamente Array de Producto ) si agregamos una propiedad mas en props
 // la debemos agregar como argumento tambien al productBar si tenemos 500 propiedades en Props debemos tener 500 argums entonces.
