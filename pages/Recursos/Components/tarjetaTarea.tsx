@@ -1,12 +1,14 @@
 import { useState } from "react";
 import Popup from "./popup";
 import { Tarea } from "./types";
-
+ 
+import {   FaSistrix,FaSearchengin,FaPencilAlt, FaUserClock } from "react-icons/fa";
 interface TarjetaTarea {
   tarea: Tarea,
 }
 export const TarjetaTarea: React.FC<TarjetaTarea> = ({ tarea }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [tipoBoton, setTipoBoton] = useState("guardar");
   const [horas , setHoras] = useState(tarea.horasDedicadas);
 
   // Esto abre el popup
@@ -25,11 +27,12 @@ export const TarjetaTarea: React.FC<TarjetaTarea> = ({ tarea }) => {
   };
 
   // Evento del click del botón
-  const handleClick = () => {
+  const handleClick = ( ) => {
     //
     // TODO: Acá se debe llamar a un endpoint
     //
-    alert("Las horas cargadas son: " + horas);
+    //alert("Las horas cargadas son: " + horas);
+     
     setIsOpen(false);
   }
 
@@ -39,7 +42,12 @@ export const TarjetaTarea: React.FC<TarjetaTarea> = ({ tarea }) => {
 
   return <div>
     <div onClick={togglePopup} className= {classNameDiv}  style={estilos.filas}>
-      { tarea.titulo }
+    {!isOpen ?  
+       
+       <  FaSearchengin /> :    <></>
+      }   
+      
+      { tarea.titulo }  
     {
       isOpen && <Popup
         content={<>
@@ -53,14 +61,24 @@ export const TarjetaTarea: React.FC<TarjetaTarea> = ({ tarea }) => {
                 className={classNameInput}
                 id= "horas"
                 value= { horas }
-                onChange= {handleCambioDeHoras}
+                 
+                onChange=   { handleCambioDeHoras }    
                 maxLength={4}
               />
           </div>
         </div>
-        <div onClick= { handleClick } className="d-flex flex-column border-2 border-dark rounded-2 mb-3 mt-2 mx-10 align-items-center ">
-          Editar
+        <div  className="d-flex justify-content-evenly">
+
+        <div onClick= { handleClick } className="d-flex flex-column border-2 border-dark rounded-2 mw-100 ps-3 pe-3 mb-3 mt-2 mx-1  align-items-center ">
+           guardar
         </div>
+        <div onClick= { handleClick } className="d-flex flex-column border-2  border-dark rounded-2  ps-3 pe-3 mb-3 mt-2 mx-1 align-items-center ">
+          ocultar
+        </div>
+        
+        </div>
+        
+         
         </>}
       />
     }

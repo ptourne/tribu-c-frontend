@@ -4,7 +4,7 @@ const Popup = (props: { content: string | number | boolean | React.ReactElement<
   return (
     <div className="popup-box">
       <div className="box">
-        {props.content}
+        {props.content} 
       </div>
     </div>
   );
