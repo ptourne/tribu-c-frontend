@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { FaEllipsisV } from "react-icons/fa";
 import { FormTicket } from "../../Componentes/FormTicket";
 import { version } from "os";
-import { Ticket, Producto } from "@/pages/types";
+import { Ticket, Producto, Tarea } from "@/pages/types";
 
 const INITIAL_STATE_PRODUCT = {
   name: "UnNombre",
@@ -25,6 +25,106 @@ const INITIAL_STATE_TICKET = {
   responsible_id: 0,
 };
 
+interface TaskProps {
+  id_tarea: string;
+  id_project: string;
+  titulo: string;
+  descripcion: string;
+  tiempo_estimado_fin: number;
+  horas_acumuladas: number;
+  estado: number;
+  responsable: string;
+  id_ticket: number;
+}
+
+const INITIAL_STATE_TASK = [
+  {
+    id_tarea: "15",
+    id_project: "1",
+    titulo: "obtener la funcion de densidad",
+    descripcion:
+      "segun la muestra de alumno debemos calcular la densidad de probabilidad",
+    tiempo_estimado_fin: 40,
+    horas_acumuladas: 10,
+    estado: 0,
+    responsable: "1",
+    id_ticket: 13,
+  },
+  {
+    id_tarea: "16",
+    id_project: "1",
+    titulo: "Implementar funcionalidad de autenticación",
+    descripcion:
+      "Desarrollar un sistema de autenticación para permitir el acceso seguro a la aplicación",
+    tiempo_estimado_fin: 60,
+    horas_acumuladas: 20,
+    estado: 1,
+    responsable: "2",
+    id_ticket: 13,
+  },
+  {
+    id_tarea: "17",
+    id_project: "1",
+    titulo: "Agregar función de generación de reportes",
+    descripcion:
+      "Permitir a los usuarios generar reportes personalizados a partir de los datos del sistema",
+    tiempo_estimado_fin: 80,
+    horas_acumuladas: 30,
+    estado: 2,
+    responsable: "3",
+    id_ticket: 21,
+  },
+  {
+    id_tarea: "18",
+    id_project: "1",
+    titulo: "Optimizar algoritmo de búsqueda",
+    descripcion:
+      "El algoritmo actual de búsqueda es lento y necesita mejoras para mejorar la velocidad y precisión",
+    tiempo_estimado_fin: 40,
+    horas_acumuladas: 15,
+    estado: 0,
+    responsable: "2",
+    id_ticket: 21,
+  },
+  {
+    id_tarea: "19",
+    id_project: "1",
+    titulo: "Diseñar interfaz de usuario",
+    descripcion:
+      "Crear una interfaz de usuario atractiva y fácil de usar para mejorar la experiencia del usuario",
+    tiempo_estimado_fin: 60,
+    horas_acumuladas: 10,
+    estado: 1,
+    responsable: "1",
+    id_ticket: 20,
+  },
+  {
+    id_tarea: "55",
+    id_project: "2",
+    titulo: "Implementar sistema de pagos",
+    descripcion:
+      "Desarrollar un sistema de pagos en línea para permitir a los usuarios realizar transacciones de forma segura",
+    tiempo_estimado_fin: 120,
+    horas_acumuladas: 50,
+    estado: 2,
+    responsable: "4",
+    id_ticket: 5,
+  },
+  {
+    id_tarea: "36",
+    id_project: "2",
+    titulo: "Corregir errores de validación en el formulario de contacto",
+    descripcion:
+      "El formulario de contacto presenta problemas de validación que deben ser solucionados",
+    tiempo_estimado_fin: 40,
+    horas_acumuladas: 20,
+    estado: 1,
+    responsable: "2",
+    id_ticket: 6,
+  },
+];
+
+//Pagina donde se muestran el ABM de tickets Tareas y la asociacion de tareas.
 function TicketPage() {
   const router = useRouter();
   const { ticket_id } = router.query;
@@ -33,8 +133,29 @@ function TicketPage() {
   const [ticket, setTicket] = useState<Ticket>(INITIAL_STATE_TICKET);
   const [product, setProduct] = useState<Producto>(INITIAL_STATE_PRODUCT);
   const [showForm, setShowForm] = useState(false);
+  const [taskToSHow, setTaskToSHow] =
+    useState<Array<TaskProps>>(INITIAL_STATE_TASK); //falta modificar el typedef de tarea atributo extra id_ticket
+
+  //filter hace una busqueda te devuelve un array si queres
+  //filtras mas intenso y quedarte solo con un elemento apriori sabiendo que solo habra 1 usa find! .
+  // el project con id=1 esta asocaido al producto con id=!  pero ademas cada tarea tiene que estar asociado a un ticket
+  //en particular  !!!
+  const ticketIdNew: string = typeof ticket_id === "string" ? ticket_id : "0";
+  console.log("ticket.product_id.toString()  " + ticket.product_id.toString());
+  console.log("parseInt(ticketIdNew)   " + parseInt(ticketIdNew));
 
   useEffect(() => {
+    const taskObtenidas = taskToSHow.filter(
+      (unaTask) =>
+        unaTask.id_project === ticket.product_id.toString() &&
+        unaTask.id_ticket === parseInt(ticketIdNew)
+    );
+
+    console.log("taskObtenidas");
+    console.log(taskToSHow);
+
+    console.log("taskToSHow" + taskToSHow);
+    console.log("ticketIdNew " + ticketIdNew);
     const fetchTicket = async () => {
       try {
         const response = await fetch(
@@ -187,7 +308,22 @@ function TicketPage() {
         <div className="card w-1/2 ml-2 bg-base-100 shadow-xl">
           <div className="card-body">
             <h2 className="card-title">Tareas</h2>
-            <p>Aca van las tareas asociadas al ticket</p>
+            <ul>
+              {taskToSHow.map((unaTask) => (
+                <li key={unaTask.id_tarea}>
+                  <hr />
+                  <p>Titulo: {unaTask.titulo} </p>
+                  <p>Descripcion: {unaTask.descripcion} </p>
+                  <p>Responsable: {unaTask.responsable}</p>
+                  <p>Horas Acumuladas: {unaTask.horas_acumuladas}</p>
+                  <p>
+                    Tiempo Estimado para finalizar:{" "}
+                    {unaTask.tiempo_estimado_fin}
+                  </p>
+                  <hr />
+                </li>
+              ))}
+            </ul>
           </div>
         </div>
       </div>
