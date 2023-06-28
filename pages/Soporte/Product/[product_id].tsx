@@ -48,73 +48,15 @@ export default function Ticket() {
     });
   }, []);
 
-  const [showFormTicket, setShowFormTicket] = useState(false); // Nuevo estado para controlar la visibilidad del formulario
+  const [showFormFilter, setShowFormFilter] = useState(false); // Nuevo estado para controlar la visibilidad del formulario
   const handleOpenFormTicket = () => {
-    if (showFormTicket === false) {
-      setShowFormTicket(true); // Muestra el formulario al hacer clic en el botón
+    if (showFormFilter === false) {
+      setShowFormFilter(true); // Muestra el formulario al hacer clic en el botón
     } else {
-      setShowFormTicket(false);
+      setShowFormFilter(false);
     }
   };
-
-  //CODIGO theo
-  /*
-  //codigo theo  eliminar---------------------------------
-  const handleCloseFormTicket = () => {
-    setShowFormTicket(false); // Oculta el formulario al cerrarlo
-  };
-
-  const [selectedTicketId, setSelectedTicketId] = useState<number | null>(null);
-  const handleUpdateTitle = (ticketId: number, newTitle: string) => {
-    const updatedTickets = tickets.map((ticket) =>
-      ticket.id === ticketId ? { ...ticket, title: newTitle } : ticket
-    );
-    setTickets(updatedTickets); // Actualiza el estado de decodedTickets
-    console.log("Ticket title updated:", ticketId, newTitle);
-  };
-  const handleUpdateDescription = (
-    ticketId: number,
-    newDescription: string
-  ) => {
-    const updatedTickets = tickets.map((ticket) =>
-      ticket.id === ticketId
-        ? { ...ticket, description: newDescription }
-        : ticket
-    );
-    setTickets(updatedTickets); // Actualiza el estado de decodedTickets
-    console.log("Ticket description updated:", ticketId, newDescription);
-  };
-  const handleDeleteTicket = (ticketId: number) => {
-    const updatedTickets = tickets.filter((ticket) => ticket.id !== ticketId);
-    setTickets(updatedTickets); // Actualiza el estado de decodedTickets
-    console.log("Ticket deleted:", ticketId);
-  };
-  const handleResolveTicket = (ticketId: number) => {
-    const updatedTickets = tickets.map((ticket) =>
-      ticket.id === ticketId ? { ...ticket, state: "resolved" } : ticket
-    );
-    setTickets(updatedTickets); // Actualiza el estado de decodedTickets
-    console.log("Ticket resolved:", ticketId);
-  };
-  const handleDelegateTicket = (ticketId: number, assignedTo: string) => {
-    const updatedTickets = tickets.map((ticket) =>
-      ticket.id === ticketId ? { ...ticket, assignedTo: assignedTo } : ticket
-    );
-    setTickets(updatedTickets); // Actualiza el estado de decodedTickets
-    console.log("Ticket delegated:", ticketId, assignedTo);
-  };
-  const ticketActionsProps: TicketActionsProps = {
-    onUpdateTitle: handleUpdateTitle,
-    onUpdateDescription: handleUpdateDescription,
-    onDeleteTicket: handleDeleteTicket,
-    onResolveTicket: handleResolveTicket,
-    onDelegateTicket: handleDelegateTicket,
-    ticket: selectedTicketId
-      ? tickets.find((ticket) => ticket.id === selectedTicketId) ?? null
-      : null,
-  };
-  //codigo theo  eliminar--------------------
-*/
+  
   //Cuando creamos el ticket vamos a pasar idTicket = -1.
   return (
     <>
