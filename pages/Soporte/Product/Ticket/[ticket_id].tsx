@@ -312,7 +312,7 @@ function TicketPage() {
               {taskToSHow.map((unaTask) => (
                 <li key={unaTask.id_tarea}>
                   <hr />
-                  <p>Titulo: {unaTask.titulo} </p>
+                  <p id="TituloTask"> {unaTask.titulo} </p>
                   <p>Descripcion: {unaTask.descripcion} </p>
                   <p>Responsable: {unaTask.responsable}</p>
                   <p>Horas Acumuladas: {unaTask.horas_acumuladas}</p>

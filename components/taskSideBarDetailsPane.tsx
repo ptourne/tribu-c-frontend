@@ -147,7 +147,9 @@ function TaskSideBarDetailsPane({
         SERVER_NAME_PROYECTOS + "projects/" + project_id + "/tasks",
         taskToSave
       )
-      .then(() => {
+      .then((response) => {
+        const responseData = response.data;
+        console.log("Datos devueltos por el servidor:", responseData);
         toast.success("Tarea guardado correctamente!", {
           position: "top-right",
           autoClose: 2000,

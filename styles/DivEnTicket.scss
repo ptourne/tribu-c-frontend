@@ -1,3 +1,7 @@
+#DivPrueba{
+    background-color: aqua;
+
+}
 #DivPrincipalEnTicket{
     display: flex;
     flex-direction: column;
@@ -12,4 +16,9 @@
     padding: 0px 0px 0px 0px;
     margin: 0px 0px 20px 0px;
 
+}
+
+#TituloTask{
+    text-align: center;
+    font-size: 20px;
 }
