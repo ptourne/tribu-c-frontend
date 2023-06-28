@@ -130,6 +130,12 @@ const INITIAL_STATE_TASK = [
   },
 ];
 
+const INITIAL_RECURSO = [
+  { legajo: 1, Nombre: "Mario", Apellido: "Mendoza" },
+  { legajo: 2, Nombre: "Maria", Apellido: "Perez" },
+  { legajo: 3, Nombre: "Patricia", Apellido: "Gaona" },
+];
+
 //Pagina donde se muestran el ABM de tickets Tareas y la asociacion de tareas.
 function TicketPage() {
   const router = useRouter();
@@ -140,14 +146,14 @@ function TicketPage() {
   const [showForm, setShowForm] = useState(false);
   const [taskToSHow, setTaskToSHow] =
     useState<Array<TaskProps>>(INITIAL_STATE_TASK); //falta modificar el typedef de tarea atributo extra id_ticket
-  const [recursos, setRecursos] = useState<Array<Recurso>>([]);
+  const [recursos, setRecursos] = useState<Array<Recurso>>(INITIAL_RECURSO);
   //filter hace una busqueda te devuelve un array si queres
   //filtras mas intenso y quedarte solo con un elemento apriori sabiendo que solo habra 1 usa find! .
   // el project con id=1 esta asocaido al producto con id=!  pero ademas cada tarea tiene que estar asociado a un ticket en particular  !!!
   const ticketIdNew: string = typeof ticket_id === "string" ? ticket_id : "0";
   console.log("ticket.product_id.toString()  " + ticket.product_id.toString());
   console.log("parseInt(ticketIdNew)   " + parseInt(ticketIdNew));
-
+  /*
   const fetchRecursos = (): Promise<Array<Recurso>> => {
     const URLFetchecurso = `https://anypoint.mulesoft.com/mocking/api/v1/sources/exchange/assets/754f50e8-20d8-4223-bbdc-56d50131d0ae/recursos-psa/1.0.0/m/api/recursos`;
 
@@ -155,6 +161,27 @@ function TicketPage() {
       method: "GET",
       headers: {},
     }).then((res) => res.json());
+  };
+  //ESto no funciona  hay que cambiarlo por lo que hara recursos en un futuro . 
+  
+  
+
+   useEffect(() => {
+    fetchRecursos().then((recursosFetch) => {
+      setRecursos(recursosFetch);
+    });
+  }, []);
+
+  */
+  const obtenerNombreRecurso = (idRecurso: string): string => {
+    const idRecursoInt = parseInt(idRecurso);
+    const recurso = recursos.find(
+      (unRecurso) => unRecurso.legajo == idRecursoInt
+    );
+    if (recurso) {
+      return `${recurso.Nombre}  ${recurso.Apellido}`;
+    }
+    return "LEGAJO - DESCONOCIDO";
   };
 
   useEffect(() => {
@@ -203,23 +230,6 @@ function TicketPage() {
       fetchProduct();
     }
   }, [ticket]);
-
-  useEffect(() => {
-    fetchRecursos().then((recursosFetch) => {
-      setRecursos(recursosFetch);
-    });
-  }, []);
-
-  const obtenerNombreRecurso = (idRecurso: string): string => {
-    const idRecursoInt = parseInt(idRecurso);
-    const recurso = recursos.find(
-      (unRecurso) => unRecurso.legajo == idRecursoInt
-    );
-    if (recurso) {
-      return `${recurso.Nombre}  ${recurso.Apellido}`;
-    }
-    return "LEGAJO - DESCONOCIDO";
-  };
 
   const handleDelete = async () => {
     try {
@@ -355,7 +365,7 @@ function TicketPage() {
                   <strong>Descripcion: </strong> {unaTask.descripcion}
                 </p>
                 <p>
-                  <strong> Responsable: </strong> hola
+                  <strong> Responsable: </strong>
                   {obtenerNombreRecurso(unaTask.responsable)}
                 </p>
                 <p>
