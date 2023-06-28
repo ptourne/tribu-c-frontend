@@ -3,7 +3,11 @@ import { useRouter } from "next/router";
 import { ColumnaDia } from "./Components/columnaDia";
 import { Tarea } from "./Components/types";
 import { BsArrowLeftShort, BsArrowRightShort } from "react-icons/bs";
-
+interface TareasDia{
+  
+  numeroDia: number;
+  tareas: Array<Tarea>;
+}
 const estilos = {
   calendario: {
     width: "100%"
@@ -21,6 +25,7 @@ const estilos = {
   },
 };
 export default function Calendario() {
+  //fecha guarda fecha actual
   const [fecha, setDate] = useState(new Date());
   const router = useRouter();
   const { nombreRecurso, apellidoRecurso, legajo } = router.query;
@@ -103,35 +108,49 @@ function numeroAMes(numero: number) {
         return "Diciembre";
     } 
 }
-
+// supongo que api te dara un array [fechaTarea, titulo, estado, horasDedicadas]
 function getTareas(nombreRecurso: string | string[] | undefined, fecha: Date) {
-  if (fecha.getDate() == 28) {
-    const tareas: Tarea[] = [
-      {
-        titulo: "Codear Backend",
-        estado: 0,
-        horasDedicadas: 0,
-      },
-      {
-        titulo: "Asignar Front",
-        estado: 1,
-        horasDedicadas: 0,
-      },
-      {
-        titulo: "Tomar Mate",
-        estado: 2,
-        horasDedicadas: 11,
-      }
-    ]
-    return tareas;
-  } else {
-    const tareas: Tarea[] = [
-      {
-        titulo: "Asignar Front",
-        estado: 1,
-        horasDedicadas: 0,
-      },
-    ]
-    return tareas;
+  const currentPage=28;
+  const tareas1: Tarea[] = [
+    {
+      titulo: "Codear Backend",
+      estado: 0,
+      horasDedicadas: 0,
+    },
+    {
+      titulo: "Asignar Front",
+      estado: 1,
+      horasDedicadas: 0,
+    },
+    {
+      titulo: "Tomar Mate",
+      estado: 2,
+      horasDedicadas: 11,
+    }
+  ]
+
+  const tareas2: Tarea[] = [
+    {
+      titulo: "Asignar Front",
+      estado: 1,
+      horasDedicadas: 0,
+    },
+  ]
+
+  const tareasSegunDia: TareasDia[]=[
+  {
+    numeroDia: 26,
+    tareas:   tareas1,
+  },
+  {
+    numeroDia: 27,
+    tareas:   tareas2,
   }
+]
+const tareasDelDia = tareasSegunDia.find((tareasDia) => tareasDia.numeroDia === fecha.getDate());
+const tareas = tareasDelDia ? tareasDelDia.tareas : []; // Obtener las tareas del día actual
+ return tareas;
+   
+   
+  
 }
