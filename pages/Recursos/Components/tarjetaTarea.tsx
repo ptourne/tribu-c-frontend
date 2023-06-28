@@ -1,21 +1,21 @@
 import { useState } from "react";
 import Popup from "./popup";
-import { number } from "prop-types";
-import { setHttpClientAndAgentOptions } from "next/dist/server/config";
-import { red } from "@mui/material/colors";
-const estilos = {
-  filas: {
-    margin: "10px",
-  }
-};
-export default function TarjetaTarea({nombreTarea, estadoTarea}) {
+import { Tarea } from "./types";
+
+interface TarjetaTarea {
+  tarea: Tarea,
+}
+export const TarjetaTarea: React.FC<TarjetaTarea> = ({ tarea }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [horas , setHoras] = useState(0);
+  const [horas , setHoras] = useState(tarea.horasDedicadas);
+
+  // Esto abre el popup
   const togglePopup = () => {
     if (!isOpen)
       setIsOpen(true);
   }
 
+  // Esto es para cargar en la variable horas el input del user
   const handleCambioDeHoras = (event: React.ChangeEvent<HTMLInputElement>) => {
     let number = parseInt(event.target.value)
     if (isNaN(number)) {
@@ -24,16 +24,22 @@ export default function TarjetaTarea({nombreTarea, estadoTarea}) {
     setHoras(number);
   };
 
+  // Evento del click del botón
   const handleClick = () => {
-    // Endpoint here
-    alert("Horas" + horas);
+    //
+    // TODO: Acá se debe llamar a un endpoint
+    //
+    alert("Las horas cargadas son: " + horas);
+    setIsOpen(false);
   }
 
-  const classNameDiv = "d-flex flex-column  border-2 border-dark rounded-2 bd-highlight mb-3 align-items-center " + colorDeTarea(estadoTarea);
-  const classNameInput = "form-control border-0 rounded-0 p-1 " + colorDeTarea(estadoTarea);
+  // Acá las classnames las pongo por fuera para poder marcar el color correspondiente de la tarea (A menos que se quiera estilizar más no debería ser necesario tocar esto)
+  const classNameDiv = "d-flex flex-column  border-2 border-dark rounded-2 bd-highlight mb-3 align-items-center " + colorDeTarea(tarea.estado);
+  const classNameInput = "form-control border-0 rounded-0 p-1 " + colorDeTarea(tarea.estado);
+
   return <div>
     <div onClick={togglePopup} className= {classNameDiv}  style={estilos.filas}>
-      { nombreTarea }
+      { tarea.titulo }
     {
       isOpen && <Popup
         content={<>
@@ -52,11 +58,10 @@ export default function TarjetaTarea({nombreTarea, estadoTarea}) {
               />
           </div>
         </div>
-        <div className="d-flex flex-column border-2 border-dark rounded-2 mb-3 mt-2 mx-10 align-items-center ">
-          <button onClick= { handleClick }>Editar</button>
+        <div onClick= { handleClick } className="d-flex flex-column border-2 border-dark rounded-2 mb-3 mt-2 mx-10 align-items-center ">
+          Editar
         </div>
         </>}
-        handleClose={handleClick}
       />
     }
     
@@ -75,3 +80,9 @@ function colorDeTarea(estadoTarea: number) {
       return "bg-success"
   }
 }
+
+const estilos = {
+  filas: {
+    margin: "10px",
+  }
+};

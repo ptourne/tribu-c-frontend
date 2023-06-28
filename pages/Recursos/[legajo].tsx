@@ -1,17 +1,8 @@
-import { Inter } from "next/font/google";
-import axios from 'axios'
-import ProjectInfoCard from "@/components/projectInfoCard";
-import RecursoSideBar from "@/components/recursoSideBar";
-import React, { Fragment, useState, useEffect } from "react";
-import { MdAdd } from "react-icons/md";
-import { Typography, Tooltip } from "@mui/material";
-import CircularProgress from '@mui/material/CircularProgress';
-import RecursoInfoCard from "@/components/recursoInfoCard";
+import React, { useState } from "react";
 import { useRouter } from "next/router";
-import TarjetaTarea from "./Components/tarjetaTarea";
 import { ColumnaDia } from "./Components/columnaDia";
-import { Tarea } from "./tarea";
-const inter = Inter({ subsets: ["latin"] });
+import { Tarea } from "./Components/types";
+import { BsArrowLeftShort, BsArrowRightShort } from "react-icons/bs";
 
 const estilos = {
   calendario: {
@@ -24,34 +15,56 @@ const estilos = {
     marginLeft: "1%",
   },
   mes: {
-    width: "50%",
+    width: "95%",
     margin: "1%",
     marginBottom: "1%",
   },
 };
 export default function Calendario() {
-    const date = new Date();
-    const router = useRouter();
-    const { nombreRecurso, apellidoRecurso, legajo } = router.query;
-
+  const [fecha, setDate] = useState(new Date());
+  const router = useRouter();
+  const { nombreRecurso, apellidoRecurso, legajo } = router.query;
+  const handleLeftClick = () => {
+    setDate(diaCorrespondiente(fecha, -6));
+  }
+  const handleRightClick = () => {
+    setDate(diaCorrespondiente(fecha, 7));
+  }
   return (
-    <><div style={estilos.calendario} className="calendario">
-      <div style={estilos.mes} className="mes flex justify-content-between">
-        <div className="display-6">
-          {nombreRecurso}
-        </div>
-        <div className="display-6">
-          {numeroAMes(date.getMonth())}
+    <>
+      <div style={estilos.calendario} className="flex flex-column align-items-center">
+        <div style={estilos.mes} className="mes d-flex flex-row justify-content-between align-items-center">
+          <div className="display-6">
+            {nombreRecurso}
+          </div>
+          <div className="display-6">
+            {numeroAMes(fecha.getMonth())}
+          </div>
+          <div className="d-flex flex-row">
+            <button
+              type="button"
+              className="btn d-flex"
+              onClick={handleLeftClick}
+            >
+              <BsArrowLeftShort />
+            </button>
+            <button
+              type="button"
+              className="btn d-flex"
+              onClick={handleRightClick}
+            >
+              <BsArrowRightShort />
+            </button>
         </div>
       </div>
-      <div style={estilos.mainGrid} className="diasSemana flex">
-        <ColumnaDia nombreDia="Lunes" numeroDia= {diaCorrespondiente(date, 1)} tareas={ getTareas() }/>
-        <ColumnaDia nombreDia="Martes" numeroDia={diaCorrespondiente(date, 2)} tareas={ getTareas() }/>
-        <ColumnaDia nombreDia="Miercoles" numeroDia={diaCorrespondiente(date, 3)} tareas={ getTareas() }/>
-        <ColumnaDia nombreDia="Jueves" numeroDia={diaCorrespondiente(date, 4)} tareas={ getTareas() }/>
-        <ColumnaDia nombreDia="Viernes" numeroDia={diaCorrespondiente(date, 5)} tareas={ getTareas() }/>
+        <div style={estilos.mainGrid} className="diasSemana d-flex">
+          <ColumnaDia nombreDia="Lunes" numeroDia= {diaCorrespondiente(fecha, 1).getDate()} tareas={ getTareas(nombreRecurso, diaCorrespondiente(fecha, 1)) }/>
+          <ColumnaDia nombreDia="Martes" numeroDia={diaCorrespondiente(fecha, 2).getDate()} tareas={ getTareas(nombreRecurso, diaCorrespondiente(fecha, 2)) }/>
+          <ColumnaDia nombreDia="Miercoles" numeroDia={diaCorrespondiente(fecha, 3).getDate()} tareas={ getTareas(nombreRecurso, diaCorrespondiente(fecha, 3)) }/>
+          <ColumnaDia nombreDia="Jueves" numeroDia={diaCorrespondiente(fecha, 4).getDate()} tareas={ getTareas(nombreRecurso, diaCorrespondiente(fecha, 4)) }/>
+          <ColumnaDia nombreDia="Viernes" numeroDia={diaCorrespondiente(fecha, 5).getDate()} tareas={ getTareas(nombreRecurso, diaCorrespondiente(fecha, 5)) }/>
+        </div>
       </div>
-    </div>
     </>
   );
 }
@@ -59,7 +72,7 @@ export default function Calendario() {
 function diaCorrespondiente(fecha: Date, diaSemana: number) {
   var diaActual = new Date(fecha);
   diaActual.setDate(fecha.getDate() + (diaSemana - fecha.getDay()));
-  return diaActual.getDate()
+  return diaActual
 }
 
 function numeroAMes(numero: number) {
@@ -91,20 +104,34 @@ function numeroAMes(numero: number) {
     } 
 }
 
-function getTareas() {
-  const tareas: Tarea[] = [
+function getTareas(nombreRecurso: string | string[] | undefined, fecha: Date) {
+  if (fecha.getDate() == 28) {
+    const tareas: Tarea[] = [
       {
         titulo: "Codear Backend",
         estado: 0,
+        horasDedicadas: 0,
       },
       {
         titulo: "Asignar Front",
         estado: 1,
+        horasDedicadas: 0,
       },
       {
         titulo: "Tomar Mate",
         estado: 2,
+        horasDedicadas: 11,
       }
     ]
     return tareas;
+  } else {
+    const tareas: Tarea[] = [
+      {
+        titulo: "Asignar Front",
+        estado: 1,
+        horasDedicadas: 0,
+      },
+    ]
+    return tareas;
+  }
 }

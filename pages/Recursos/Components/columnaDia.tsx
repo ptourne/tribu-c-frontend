@@ -1,5 +1,5 @@
-import TarjetaTarea from "./tarjetaTarea";
-import { Tarea } from "../tarea";
+import { TarjetaTarea } from "./tarjetaTarea";
+import { Tarea } from "./types";
 
 interface ColumnaDia {
     nombreDia: string;
@@ -20,7 +20,7 @@ export const ColumnaDia: React.FC<ColumnaDia> = ({ nombreDia, numeroDia, tareas 
                 <div className="d-flex flex-column  border-2 border-dark rounded-2 bd-highlight mb-3" style={estilos.columnas}>
                     {
                         tareas.map(tarea =>
-                            <TarjetaTarea nombreTarea={tarea.titulo} estadoTarea={tarea.estado}/>
+                            <TarjetaTarea tarea={tarea}/>
                             )
                     }
                 </div>

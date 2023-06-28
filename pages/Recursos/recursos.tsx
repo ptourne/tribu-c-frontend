@@ -9,7 +9,7 @@ import { Typography, Tooltip } from "@mui/material";
 import CircularProgress from '@mui/material/CircularProgress';
 import { Recurso } from "../../types";
 import RecursoInfoCard from "@/components/recursoInfoCard";
-import Calendario from "./calendario";
+import Calendario from "./En Desuso/calendario";
 import { useRouter } from "next/router";
 
 const inter = Inter({ subsets: ["latin"] });

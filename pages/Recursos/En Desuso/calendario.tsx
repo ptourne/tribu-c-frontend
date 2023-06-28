@@ -9,7 +9,8 @@ import { Typography, Tooltip } from "@mui/material";
 import CircularProgress from '@mui/material/CircularProgress';
 import { Recurso } from "../../types";
 import RecursoInfoCard from "@/components/recursoInfoCard";
-import ColumnaDia from "./Components/columnaDia";
+import ColumnaDia from "../Components/columnaDia";
+import { BsArrowLeftShort } from "react-icons/bs";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -44,6 +45,9 @@ const estilos = {
 };
 export default function Calendario() {
 
+  const handleLeftClick = () => {
+    alert("Hii");
+  }
 
   return (
     <><div style={estilos.calendario} className="calendario">
@@ -56,7 +60,23 @@ export default function Calendario() {
           Julio
         </div>
       </div>
-      <div style={estilos.mainGrid} className="diasSemana flex justify-content-evenly    ">
+      <div style={estilos.mainGrid} className="diasSemana flex justify-content-evenly">
+        <Tooltip
+              title={
+                <Typography fontSize={15}>
+                  Volver al panel de proyectos
+                </Typography>
+              }
+              placement="bottom"
+            >
+              <button
+                type="button"
+                className="btn d-flex align-items-center justify-content-center mb-5 mr-4"
+                onClick={handleLeftClick}
+              >
+                <BsArrowLeftShort />
+              </button>
+            </Tooltip>
         <ColumnaDia nombreDia="Lunes" numeroDia="30"/>
         <ColumnaDia nombreDia="Martes" numeroDia="20"/>
         <ColumnaDia nombreDia="Miercoles" numeroDia="21"/>
