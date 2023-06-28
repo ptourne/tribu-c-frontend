@@ -56,7 +56,7 @@ export default function Ticket() {
       setShowFormFilter(false);
     }
   };
-  
+
   //Cuando creamos el ticket vamos a pasar idTicket = -1.
   return (
     <>
@@ -79,7 +79,7 @@ export default function Ticket() {
           </button>
         </h1>
         <div style={{ position: "absolute", left: "800px" }}>
-          {showFormTicket && (
+          {showFormFilter && (
             <FormTicket
               productIdNumerico={parseInt(productID)}
               idTicketRecv={-1}
