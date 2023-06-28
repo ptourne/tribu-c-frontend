@@ -128,7 +128,6 @@ const INITIAL_STATE_TASK = [
 function TicketPage() {
   const router = useRouter();
   const { ticket_id } = router.query;
-
   const [isOpen, setIsOpen] = useState(false);
   const [ticket, setTicket] = useState<Ticket>(INITIAL_STATE_TICKET);
   const [product, setProduct] = useState<Producto>(INITIAL_STATE_PRODUCT);
@@ -251,134 +250,159 @@ function TicketPage() {
 
   return (
     <>
-      <div className="flex px-8 py-8">
-        <div className="card w-1/2 mr-2 bg-base-100 shadow-xl">
-          <div className="card-body">
-            {ticket ? (
-              <div>
-                <div className="flex flex-row justify-between place-items-center">
-                  <h1 className="card-title">Ticket</h1>
-
-                  <div className="dropdown">
-                    <label tabIndex={0} className="m-1 btn">
-                      <FaEllipsisV />
-                    </label>
-                    <ul
-                      tabIndex={0}
-                      className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52"
-                    >
-                      <li onClick={handleModificar}>
-                        <a>Modificar</a>
-                      </li>
-                      <li onClick={handleDelete}>
-                        <a>Eliminar</a>
-                      </li>
-                      <li onClick={openModal}>
-                        <a>Derivar</a>
-                      </li>
-                      <li onClick={handleUpdateState}>
-                        <a>Finalizar</a>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-
-                <h1 className="card-title">{ticket.title}</h1>
-
-                <p className="mb-2">Producto: {product?.name}</p>
-                <p className="mb-2">Version: {product?.version}</p>
-                <p className="mb-2">Descripcion: {ticket.description}</p>
-                <p className="mb-2">Severidad: {ticket.severity}</p>
-                <p className="mb-2">Prioridad: {ticket.priority}</p>
-                <p className="mb-2">Estado: {ticket.state}</p>
-                <p className="mb-2">Inicio: {ticket.timeStart}</p>
-                <p className="mb-2">Tipo: {ticket.type}</p>
-                <p className="mb-2">
-                  Tiempo para Resolucion: {ticket.supportTime}
+      <div id="container">
+        <span id="divInfoTicketExterno">
+          <div id="divInfoTicketInterno">
+            <h2>{ticket.title}</h2>
+            <p>
+              <strong>Producto: </strong> {product?.name}
+            </p>
+            <p>
+              <strong>Version:</strong> {product?.version}
+            </p>
+            <p>
+              <strong>Descripcion:</strong> {ticket.description}
+            </p>
+            <p>
+              <strong>Severidad:</strong> {ticket.severity}
+            </p>
+            <p>
+              <strong>Prioridad:</strong> {ticket.priority}
+            </p>
+            <p>
+              <strong>Estado:</strong> {ticket.state}
+            </p>
+            <p>
+              <strong>Inicio: </strong> {ticket.timeStart}
+            </p>
+            <p>
+              <strong>Tipo: </strong> {ticket.type}
+            </p>
+            <p>
+              <strong>Tiempo para Resolucion:</strong> {ticket.supportTime}
+            </p>
+            <p>
+              <strong>Client ID:</strong> {ticket.client_id}
+            </p>
+            <p>
+              <strong>Responsible ID:</strong> {ticket.responsible_id}
+            </p>
+          </div>
+          <div id="DivBotones">
+            <button
+              type="button"
+              onClick={handleModificar}
+              id="buttonOpcionTicket"
+            >
+              <a>Modificar</a>
+            </button>
+            <button
+              type="button"
+              onClick={handleDelete}
+              id="buttonOpcionTicket"
+            >
+              <a>Eliminar</a>
+            </button>
+            <button type="button" onClick={openModal} id="buttonOpcionTicket">
+              <a>Derivar</a>
+            </button>
+            <button
+              type="button"
+              onClick={handleUpdateState}
+              id="buttonOpcionTicket"
+            >
+              <a>Finalizar</a>
+            </button>
+          </div>
+        </span>
+        <span id="divTareas">
+          <ul>
+            {taskToSHow.map((unaTask) => (
+              <li key={unaTask.id_tarea}>
+                <h4 id="tituloTask"> {unaTask.titulo}</h4>
+                <p>
+                  <strong>Descripcion: </strong> {unaTask.descripcion}
                 </p>
-                <p className="mb-2">Client ID: {ticket.client_id}</p>
-                <p className="mb-2">Responsible ID: {ticket.responsible_id}</p>
-              </div>
-            ) : (
-              <p>Cargando ticket...</p>
-            )}
-          </div>
-        </div>
-
-        <div className="card w-1/2 ml-2 bg-base-100 shadow-xl">
-          <div className="card-body">
-            <h2 className="card-title">Tareas</h2>
-            <ul>
-              {taskToSHow.map((unaTask) => (
-                <li key={unaTask.id_tarea}>
-                  <hr />
-                  <p id="TituloTask"> {unaTask.titulo} </p>
-                  <p>Descripcion: {unaTask.descripcion} </p>
-                  <p>Responsable: {unaTask.responsable}</p>
-                  <p>Horas Acumuladas: {unaTask.horas_acumuladas}</p>
-                  <p>
-                    Tiempo Estimado para finalizar:{" "}
-                    {unaTask.tiempo_estimado_fin}
-                  </p>
-                  <hr />
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      </div>
-      {isOpen && (
-        <div className="fixed inset-0 flex items-center justify-center z-50">
-          <div className="bg-white p-8 rounded shadow-lg">
-            <h2 className="text-xl font-bold mb-4">Derivar</h2>
-
-            <select className="select w-full max-w-xs my-1">
-              <option disabled selected>
-                Seleccionar Responzable
-              </option>
-              <option>Homer</option>
-              <option>Marge</option>
-              <option>Bart</option>
-              <option>Lisa</option>
-              <option>Maggie</option>
-            </select>
-
-            <select className="select w-full max-w-xs my-1">
-              <option disabled selected>
-                Seleccionar Proyecto
-              </option>
-              <option>Homer</option>
-              <option>Marge</option>
-              <option>Bart</option>
-              <option>Lisa</option>
-              <option>Maggie</option>
-            </select>
-
-            <div className="flex justify-between">
+                <p>
+                  <strong> Responsable: </strong> {unaTask.responsable}
+                </p>
+                <p>
+                  <strong>Horas Acumuladas: </strong> {unaTask.horas_acumuladas}
+                  <strong id="StrongSeparado">
+                    Horas Estimadas para finalizar:{" "}
+                  </strong>
+                  {unaTask.tiempo_estimado_fin}
+                </p>
+              </li>
+            ))}
+          </ul>
+        </span>
+        {showForm && (
+          <div
+            className="fixed inset-0 flex items-center justify-center z-50"
+            id="DivExternFormTicket"
+          >
+            <div className="bg-white p-8 rounded shadow-lg">
+              <FormTicket
+                productIdNumerico={ticket.product_id}
+                idTicketRecv={ticket.id}
+              />
               <button
-                onClick={closeModal}
-                className="bg-gray-500 hover:bg-gray-400 text-white px-4 py-2 rounded mt-4"
+                type="button"
+                id="buttonOpcionTicket"
+                onClick={() => {
+                  setShowForm(false);
+                }}
               >
                 Cerrar
               </button>
-
-              <button
-                onClick={closeModal}
-                className="bg-gray-500  hover:bg-gray-400 text-white px-4 py-2 rounded mt-4"
-              >
-                Asignar
-              </button>
             </div>
           </div>
-        </div>
-      )}
+        )}
+        {isOpen && (
+          <div className="fixed inset-0 flex items-center justify-center z-50">
+            <div className="bg-white p-8 rounded shadow-lg">
+              <h2 className="text-xl font-bold mb-4">Derivar</h2>
 
-      <div id="DivEnTicket">
-        {showForm && (
-          <FormTicket
-            productIdNumerico={ticket.product_id}
-            idTicketRecv={ticket.id}
-          />
+              <select className="select w-full max-w-xs my-1">
+                <option disabled selected>
+                  Seleccionar Responzable
+                </option>
+                <option>Homer</option>
+                <option>Marge</option>
+                <option>Bart</option>
+                <option>Lisa</option>
+                <option>Maggie</option>
+              </select>
+
+              <select className="select w-full max-w-xs my-1">
+                <option disabled selected>
+                  Seleccionar Proyecto
+                </option>
+                <option>Homer</option>
+                <option>Marge</option>
+                <option>Bart</option>
+                <option>Lisa</option>
+                <option>Maggie</option>
+              </select>
+
+              <div className="flex justify-between">
+                <button
+                  onClick={closeModal}
+                  className="bg-gray-500 hover:bg-gray-400 text-white px-4 py-2 rounded mt-4"
+                >
+                  Cerrar
+                </button>
+
+                <button
+                  onClick={closeModal}
+                  className="bg-gray-500  hover:bg-gray-400 text-white px-4 py-2 rounded mt-4"
+                >
+                  Asignar
+                </button>
+              </div>
+            </div>
+          </div>
         )}
       </div>
     </>
