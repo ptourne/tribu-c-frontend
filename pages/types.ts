@@ -56,3 +56,9 @@ export interface Ticket {
   client_id: number;
   responsible_id: number;
 }
+
+export interface Recurso {
+  nombre: string
+  apellido: string
+  legajo: number
+}

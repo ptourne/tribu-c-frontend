@@ -1,41 +1,36 @@
 import React, { useState, useEffect } from "react";
-import TaskSideBarDetailsPane from "./taskSideBarDetailsPane";
-import { useRouter } from "next/router";
-import { Tarea } from "../pages/types";
-import { RecursosDeTareasSideBar } from "@/pages/Recursos/Components/recursosDeTareasSideBar";
-import { getTableRowUtilityClass } from "@mui/material";
+import ProjectSideBarDetailsPane from "./projectSideBarDetailsPane";
+import { useRouter } from 'next/router'
+import { Recurso } from "../pages/types";
 
-interface TaskSideBarProps {
-  task: Tarea | undefined;
-  project_id: string;
-  getTasksFunction: Function;
+interface RecursoSideBarProps {
+  recurso: Recurso | undefined;
 }
 
 const ADD = 0;
 const EDIT = 1;
 
-function TaskSideBar({ task, project_id, getTasksFunction }: TaskSideBarProps) {
+function RecursoSideBar({ recurso }: RecursoSideBarProps) {
   const router = useRouter();
   const [mode, setMode] = useState(EDIT);
   const [selectedTab, setSelectedTab] = useState(0);
-  const [selectedTask, setSelectedTask] = useState<Tarea | undefined>(
+  const [selectedRecurso, setSelectedRecurso] = useState<Recurso | undefined>(
     undefined
   );
 
   useEffect(() => {
-    setSelectedTask(task);
-    if (!task) {
+    setSelectedRecurso(recurso);
+    if (!recurso) {
       setMode(ADD);
     } else {
       setMode(EDIT);
     }
-  }, [task]);
+  }, [recurso]);
 
   const getTasks = () => {
     router.push({
-      pathname: `/proyectos/${selectedTask?.id_tarea}/tareas`,
-    });
-  };
+      pathname: `/recursos/${selectedRecurso?.nombre}/tareas`});
+  }
 
   return (
     <div className="d-flex flex-column flex-fill justify-content-start border rounded-3 m-3 p-3">
@@ -54,7 +49,7 @@ function TaskSideBar({ task, project_id, getTasksFunction }: TaskSideBarProps) {
             Detalles
           </a>
         </li>
-        {mode === EDIT && (
+        { mode === EDIT &&
           <li
             className="nav-item"
             onClick={() => {
@@ -65,10 +60,10 @@ function TaskSideBar({ task, project_id, getTasksFunction }: TaskSideBarProps) {
               className={selectedTab === 1 ? "nav-link active" : "nav-link"}
               href="#"
             >
-              Recursos
+              Equipo
             </a>
           </li>
-        )}
+        }
       </ul>
       <div className="tab-content" id="myTabContent">
         <div
@@ -81,11 +76,7 @@ function TaskSideBar({ task, project_id, getTasksFunction }: TaskSideBarProps) {
           role="tabpanel"
           aria-labelledby="details-tab"
         >
-          <TaskSideBarDetailsPane
-            task={selectedTask}
-            project_id={project_id}
-            getTasksFunction={getTasksFunction}
-          />
+          
         </div>
         <div
           className={
@@ -97,20 +88,19 @@ function TaskSideBar({ task, project_id, getTasksFunction }: TaskSideBarProps) {
           role="tabpanel"
           aria-labelledby="resources-tab"
         >
-          <RecursosDeTareasSideBar tarea= {selectedTask}/>
+          "2"
         </div>
       </div>
-      {mode === EDIT && (
-        <button
-          type="button"
-          className="btn btn-primary mt-auto p-2"
-          onClick={getTasks}
-        >
-          Ver Tareas
-        </button>
-      )}
+      { mode === EDIT &&
+      <button
+        type="button"
+        className="btn btn-primary mt-auto p-2"
+        onClick={getTasks}
+      >
+        Ver Tareas
+      </button>}
     </div>
   );
 }
 
-export default TaskSideBar;
+export default RecursoSideBar;
