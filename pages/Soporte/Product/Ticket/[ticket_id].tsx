@@ -13,7 +13,6 @@ interface Ticket {
   timeStart: string;
   type: string;
   supportTime: string;
-  project_id: number;
   id: number;
   product_id: number;
   client_id: number;
@@ -102,7 +101,6 @@ const INITIALTICKET = {
   timeStart: "",
   type: "",
   supportTime: "",
-  project_id: 0,
   id: 0,
   product_id: 0,
   client_id: 0,
