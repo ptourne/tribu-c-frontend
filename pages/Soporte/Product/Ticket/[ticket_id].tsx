@@ -151,7 +151,7 @@ function TicketPage() {
     if (ticket_id) {
       fetchTicket();
     }
-  }, []);
+  }, [ticket]);
 
   useEffect(() => {
     const fetchProduct = async () => {
