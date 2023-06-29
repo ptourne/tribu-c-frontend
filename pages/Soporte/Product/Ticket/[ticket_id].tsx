@@ -171,6 +171,30 @@ function TicketPage() {
     }
   }, [ticket]);
 
+
+  const [tasksByProject, setTasksByProject] = useState<Task[]>([]);
+
+  useEffect(() => {
+    const fetchTasksByProject = async () => {
+      try {
+        const response = await fetch(
+          `https://tribu-c-proyectos-backend.onrender.com/projects/${selectedProjectId}/tasks`
+        );
+        const data = await response.json();
+
+        setTasksByProject(data.msg);
+      } catch (error) {
+        console.error("Error al obtener las tareas de un proyecto:", error);
+      }
+    };
+
+    if(selectedProjectId) {
+      fetchTasksByProject();
+    }
+
+  }, [ticket]);
+
+
   /*const [resources, setResources] = useState<Resource[]>([]);
 
   useEffect(() => {
@@ -288,7 +312,6 @@ function TicketPage() {
   };
 
   const createAssignment = async () => {
-    console.log(taskId);
 
     const assignmentData = {
       task_id: taskId,
@@ -316,6 +339,11 @@ function TicketPage() {
     }
   };
 
+
+
+
+
+
   const handleAssignment = async () => {
     const taskData = {
       titulo: ticket?.title,
@@ -341,10 +369,7 @@ function TicketPage() {
         const data = await response.json();
         setTaskId(data.msg.id_tarea);
         handleUpdateResponsible();
-
-
         createAssignment();
-
         closeModal();
       } else {
         console.error("Error al asignar la tarea:", response.status);
@@ -353,6 +378,8 @@ function TicketPage() {
       console.error("Error al asignar la tarea:", error);
     }
   };
+
+  console.log(tasksByProject)
 
   return (
     <div className="flex px-8 py-8">
