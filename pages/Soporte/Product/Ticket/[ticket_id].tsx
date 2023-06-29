@@ -152,7 +152,7 @@ function TicketPage() {
     if (ticket.product_id) {
       fetchProduct();
     }
-  }, [ticket]);
+  }, [ticket, showForm]);
 
   const [projects, setProjects] = useState<Project[]>([]);
 
