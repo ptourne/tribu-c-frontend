@@ -1,9 +1,7 @@
+import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { FaEllipsisV } from "react-icons/fa";
-import { ARRAY_CLIENTES } from "../../Componentes/Constantes";
-import { Cliente } from "@/pages/types";
-import { FormTicket } from "../../Componentes/FormTicket";
 
 interface Ticket {
   title: string;
@@ -20,21 +18,6 @@ interface Ticket {
   client_id: number;
   responsible_id: number;
 }
-const INITIAL_STATE_TICKET = {
-  title: "Nuevo Titulo",
-  description: "Nueva Descripcion",
-  severity: "",
-  priority: "",
-  state: "Iniciado",
-  timeStart: "",
-  type: "",
-  supportTime: "",
-  id: 0,
-  project_id: 0,
-  product_id: 0,
-  client_id: 0,
-  responsible_id: 0,
-};
 
 interface Product {
   name: string;
@@ -57,7 +40,7 @@ interface Project {
   version: string;
 }
 
-interface Recurso {
+interface Resource {
   legajo: number;
   Nombre: string;
   Apellido: string;
@@ -76,11 +59,17 @@ interface Task {
 
 interface Assignment {
   task_id: number;
+  project_id: number;
   id: number;
   ticket_id: number;
 }
 
-const resourcesTest: Recurso[] = [
+interface DropdownItem {
+  label: string;
+  onClick: () => void;
+}
+
+const resourcesTest: Resource[] = [
   {
     legajo: 1,
     Nombre: "Mario",
@@ -102,38 +91,30 @@ const resourcesTest: Recurso[] = [
     Apellido: "Rivero",
   },
 ];
-const INITIAL_RECURSO = [
-  { legajo: 1, Nombre: "Mario", Apellido: "Mendoza" },
-  { legajo: 2, Nombre: "Maria", Apellido: "Perez" },
-  { legajo: 3, Nombre: "Patricia", Apellido: "Gaona" },
-];
+
+const INITIALTICKET = {
+  title: "",
+  description: "",
+  severity: "",
+  priority: "",
+  state: "",
+  timeStart: "",
+  type: "",
+  supportTime: "",
+  project_id: 0,
+  id: 0,
+  product_id: 0,
+  client_id: 0,
+  responsible_id: 0,
+};
 
 function TicketPage() {
   const router = useRouter();
   const { ticket_id } = router.query;
   const [isOpen, setIsOpen] = useState(false);
-  const [ticket, setTicket] = useState<Ticket>(INITIAL_STATE_TICKET);
-  const [product, setProduct] = useState<Product>();
+  const [ticket, setTicket] = useState<Ticket>(INITIALTICKET);
+  const [product, setProduct] = useState<Product | null>(null);
   const [taskId, setTaskId] = useState<number>(0);
-  const [recursos, setRecurso] = useState<Array<Recurso>>(INITIAL_RECURSO);
-  const [clientes, setClientes] = useState<Array<Cliente>>(ARRAY_CLIENTES);
-  const [showForm, setShowForm] = useState(false);
-
-  const obtenerNombreCliente = (idCliente: number): string => {
-    const unCliente = clientes.find((unCliente) => unCliente.id == idCliente);
-    if (unCliente) {
-      return unCliente.razon_social;
-    }
-    return "CLIENTE-DESCONOCIDO";
-  };
-
-  const obtenerNombreRecurso = (idRecurso: number): string => {
-    const recurso = recursos.find((unRecurso) => unRecurso.legajo == idRecurso);
-    if (recurso) {
-      return `${recurso.Nombre}  ${recurso.Apellido}`;
-    }
-    return "LEGAJO - DESCONOCIDO";
-  };
 
   useEffect(() => {
     const fetchTicket = async () => {
@@ -166,7 +147,7 @@ function TicketPage() {
       }
     };
 
-    if (ticket?.product_id) {
+    if (ticket.product_id) {
       fetchProduct();
     }
   }, [ticket]);
@@ -237,7 +218,7 @@ function TicketPage() {
       await fetch(`https://psa-soporte.eeoo.ar/tickets/${ticket?.id}`, {
         method: "DELETE",
       });
-      router.push(`/Soporte/Product/${ticket?.product_id}`);
+      router.push(`/Soporte/Product/${ticket.product_id}`);
     } catch (error) {
       console.error("Error deleting ticket:", error);
     }
@@ -274,7 +255,7 @@ function TicketPage() {
     }
   };
 
-  const handleUpdateResponsible = async () => {
+  /*const handleUpdateResponsible = async () => {
     if (ticket) {
       const updatedTicket = {
         ...ticket,
@@ -303,7 +284,7 @@ function TicketPage() {
         console.error("Error al cerrar el ticket:", error);
       }
     }
-  };
+  };*/
 
   const openModal = () => {
     setIsOpen(true);
@@ -332,6 +313,7 @@ function TicketPage() {
   const createAssignment = async () => {
     const assignmentData = {
       task_id: taskId,
+      project_id: selectedProjectId,
     };
 
     try {
@@ -348,6 +330,15 @@ function TicketPage() {
 
       if (response.ok) {
         console.log("Asignacion ticket tarea creada exitosamente");
+        const data = await response.json();
+        // Actualizar el estado de las asignaciones
+        const newAssignment = {
+          task_id: taskId,
+          project_id: parseInt(data.project_id),
+          id: parseInt(data.id),
+          ticket_id: parseInt(data.ticket_id),
+        };
+        setAssignments([...assignments, newAssignment]);
       } else {
         console.error("Error al asignar la tarea:", response.status);
       }
@@ -356,19 +347,11 @@ function TicketPage() {
     }
   };
 
-  const handleModificar = () => {
-    try {
-      setShowForm(true);
-    } catch (error) {
-      console.log(error + "Hubo error");
-    }
-  };
-
   const handleAssignment = async () => {
     const taskData = {
-      titulo: ticket?.title,
-      descripcion: ticket?.description,
-      tiempo_estimado_finalizacion: ticket?.supportTime,
+      titulo: ticket.title,
+      descripcion: ticket.description,
+      tiempo_estimado_finalizacion: parseInt(ticket.supportTime),
       legajo_responsable: selectedResourceId,
     };
 
@@ -388,7 +371,7 @@ function TicketPage() {
         console.log("Tarea asignada exitosamente");
         const data = await response.json();
         setTaskId(data.msg.id_tarea);
-        handleUpdateResponsible();
+        /*handleUpdateResponsible();*/
         createAssignment();
         closeModal();
       } else {
@@ -399,79 +382,86 @@ function TicketPage() {
     }
   };
 
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
+  const dropdownItems: DropdownItem[] = [
+    { label: "Modificar", onClick: () => console.log("Modificar") },
+    { label: "Eliminar", onClick: handleDelete },
+    { label: "Derivar", onClick: openModal },
+    { label: "Finalizar", onClick: handleUpdateState },
+  ];
+
   return (
-    <div id="container">
-      <span id="divInfoTicketExterno">
-        <div id="divInfoTicketInterno">
-          <h2>{ticket.title}</h2>
-          <p>
-            <strong>Producto: </strong> {product?.name}
-          </p>
-          <p>
-            <strong>Version:</strong> {product?.version}
-          </p>
-          <p>
-            <strong>Descripcion:</strong> {ticket.description}
-          </p>
-          <p>
-            <strong>Severidad:</strong> {ticket.severity}
-          </p>
-          <p>
-            <strong>Prioridad:</strong> {ticket.priority}
-          </p>
-          <p>
-            <strong>Estado:</strong> {ticket.state}
-          </p>
-          <p>
-            <strong>Inicio: </strong> {ticket.timeStart}
-          </p>
-          <p>
-            <strong>Tipo: </strong> {ticket.type}
-          </p>
-          <p>
-            <strong>Horas Restantes:</strong> {ticket.supportTime}
-          </p>
-          <p>
-            <strong>Client ID:</strong>
-            {obtenerNombreCliente(ticket.client_id)}
-          </p>
-          <p>
-            <strong>Responsable:</strong>
-            {obtenerNombreRecurso(ticket.responsible_id)}
-          </p>
-        </div>
-        <div id="DivBotones">
-          <button
-            type="button"
-            onClick={handleModificar}
-            id="buttonOpcionTicket"
-          >
-            <a> modificar </a>
-          </button>
-          <button type="button" onClick={handleDelete} id="buttonOpcionTicket">
-            <a>Eliminar</a>
-          </button>
-          <button type="button" onClick={openModal} id="buttonOpcionTicket">
-            <a>Derivar</a>
-          </button>
-          <button
-            type="button"
-            onClick={handleUpdateState}
-            id="buttonOpcionTicket"
-          >
-            <a>Finalizar</a>
-          </button>
-        </div>
-      </span>
-      <div className="card w-1/2 ml-2 bg-base-100 shadow-xl">
-        <div className="card-body">
-          <h2 className="card-title">Tareas</h2>
-          {assignments.map((assignment) => (
-            <div key={assignment.id} className="card bg-base-100 shadow-xl">
-              <div className="card-body">
-                <p>{assignment.task_id}</p>
+    <div className="flex px-8 py-8">
+      <div className="w-1/2 mr-2 bg-white shadow-xl rounded-lg">
+        <div className="p-6">
+          {ticket ? (
+            <div>
+              <div className="flex flex-row justify-between place-items-center">
+                <h1 className="text-xl font-bold">Ticket</h1>
+
+                <div className="relative">
+                  <button
+                    tabIndex={0}
+                    className="m-1 btn"
+                    onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                  >
+                    <FaEllipsisV />
+                  </button>
+
+                  {isDropdownOpen && (
+                    <ul className="absolute z-10 w-52 p-2 bg-white shadow rounded">
+                      {dropdownItems.map((item) => (
+                        <li
+                          className="hover:bg-gray-300"
+                          key={item.label}
+                          onClick={item.onClick}
+                        >
+                          <a>{item.label}</a>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
               </div>
+
+              <h1 className="text-xl font-bold mb-4">{ticket.title}</h1>
+
+              <p className="mb-2">Producto: {product?.name}</p>
+              <p className="mb-2">Version: {product?.version}</p>
+              <p className="mb-2">Descripcion: {ticket.description}</p>
+              <p className="mb-2">Severidad: {ticket.severity}</p>
+              <p className="mb-2">Prioridad: {ticket.priority}</p>
+              <p className="mb-2">Estado: {ticket.state}</p>
+              <p className="mb-2">Inicio: {ticket.timeStart}</p>
+              <p className="mb-2">Tipo: {ticket.type}</p>
+              <p className="mb-2">
+                Tiempo para Resolucion: {ticket.supportTime}
+              </p>
+              <p className="mb-2">Client ID: {ticket.client_id}</p>
+              <p className="mb-2">Responsible ID: {ticket.responsible_id}</p>
             </div>
+          ) : (
+            <p>Cargando ticket...</p>
+          )}
+        </div>
+      </div>
+
+      <div className="w-1/2 ml-2 bg-white shadow-xl rounded-lg">
+        <div className="p-6">
+          <h2 className="text-xl font-bold">Tareas</h2>
+          {assignments.map((assignment) => (
+            <button
+              key={assignment.id}
+              className="bg-gray-400 hover:bg-gray-300 rounded-lg p-2 w-full"
+              onClick={() =>
+                router.push(
+                  `/proyectos/${assignment.project_id}/tareas`
+                )
+              }
+            >
+                Ver Tarea
+            </button>
           ))}
         </div>
       </div>
@@ -482,7 +472,7 @@ function TicketPage() {
             <h2 className="text-xl font-bold mb-4">Derivar</h2>
 
             <select
-              className="select w-full max-w-xs my-1"
+              className="block w-full max-w-xs p-2 mt-1 bg-white border border-gray-300 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               onChange={handleResourceChange}
               value={selectedResourceId || ""}
             >
@@ -497,7 +487,7 @@ function TicketPage() {
             </select>
 
             <select
-              className="select w-full max-w-xs my-1"
+              className="block w-full max-w-xs p-2 mt-1 bg-white border border-gray-300 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               onChange={handleProjectChange}
               value={selectedProjectId || ""}
             >
@@ -511,17 +501,17 @@ function TicketPage() {
               ))}
             </select>
 
-            <div className="flex justify-between">
+            <div className="flex justify-between mt-4">
               <button
                 onClick={closeModal}
-                className="bg-gray-500 hover:bg-gray-400 text-white px-4 py-2 rounded mt-4"
+                className="bg-gray-500 hover:bg-gray-400 text-white px-4 py-2 rounded mt-4 mx-2"
               >
                 Cerrar
               </button>
 
               <button
                 onClick={handleAssignment}
-                className="bg-gray-500  hover:bg-gray-400 text-white px-4 py-2 rounded mt-4"
+                className="bg-gray-500  hover:bg-gray-400 text-white px-4 py-2 rounded mt-4 mx-2"
               >
                 Asignar
               </button>
@@ -529,29 +519,8 @@ function TicketPage() {
           </div>
         </div>
       )}
-
-      {showForm && (
-        <div
-          className="fixed inset-0 flex items-center justify-center z-50"
-          id="DivExternFormTicket"
-        >
-          <div className="bg-white p-8 rounded shadow-lg" id="modalContenido">
-            <FormTicket
-              productIdNumerico={ticket.product_id}
-              idTicketRecv={ticket.id}
-            />
-            <button
-              onClick={() => {
-                setShowForm(false);
-              }}
-              id="buttonOpcionTicket"
-            >
-              Cerrar
-            </button>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
+
 export default TicketPage;
