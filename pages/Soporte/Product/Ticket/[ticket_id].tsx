@@ -430,13 +430,6 @@ function TicketPage() {
               >
                 Cerrar
               </button>
-
-              <button
-                onClick={handleAssignment}
-                className="bg-gray-500  hover:bg-gray-400 text-white px-4 py-2 rounded mt-4"
-              >
-                Asignar
-              </button>
             </div>
           </div>
         )}
