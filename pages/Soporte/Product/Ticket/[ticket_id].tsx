@@ -28,118 +28,52 @@ const INITIAL_STATE_TICKET = {
 
 //Pagina donde se muestra las tareas y por completo el ticket con su ABM correspondiente
 
-interface TaskProps {
-  id_tarea: string;
-  id_project: string;
-  titulo: string;
-  descripcion: string;
-  tiempo_estimado_fin: number;
-  horas_acumuladas: number;
+interface Project {
+  codigo: number;
+  costo_estimado: number;
+  customizacion: string;
   estado: number;
-  responsable: string;
-  id_ticket: number;
+  fecha_fin_estimada: string;
+  fecha_inicio: string;
+  horas_consumidas: number;
+  id_cliente: number;
+  id_producto: number;
+  nombre: string;
+  ultima_tarea: number;
+  version: string;
 }
 
 interface Recurso {
-  Nombre: string;
   legajo: number;
+  Nombre: string;
   Apellido: string;
 }
 
-const INITIAL_STATE_TASK = [
+const resourcesTest: Recurso[] = [
   {
-    id_tarea: "15",
-    id_project: "1",
-    titulo: "obtener la funcion de densidad",
-    descripcion:
-      "segun la muestra de alumno debemos calcular la densidad de probabilidad",
-    tiempo_estimado_fin: 40,
-    horas_acumuladas: 10,
-    estado: 0,
-    responsable: "1",
-    id_ticket: 13,
+    legajo: 1,
+    Nombre: "Mario",
+    Apellido: "Mendoza",
   },
   {
-    id_tarea: "16",
-    id_project: "1",
-    titulo: "Implementar funcionalidad de autenticación",
-    descripcion:
-      "Desarrollar un sistema de autenticación para permitir el acceso seguro a la aplicación",
-    tiempo_estimado_fin: 60,
-    horas_acumuladas: 20,
-    estado: 1,
-    responsable: "2",
-    id_ticket: 13,
+    legajo: 2,
+    Nombre: "Maria",
+    Apellido: "Perez",
   },
   {
-    id_tarea: "17",
-    id_project: "1",
-    titulo: "Agregar función de generación de reportes",
-    descripcion:
-      "Permitir a los usuarios generar reportes personalizados a partir de los datos del sistema",
-    tiempo_estimado_fin: 80,
-    horas_acumuladas: 30,
-    estado: 2,
-    responsable: "3",
-    id_ticket: 21,
+    legajo: 3,
+    Nombre: "Patricia",
+    Apellido: "Gaona",
   },
   {
-    id_tarea: "18",
-    id_project: "1",
-    titulo: "Optimizar algoritmo de búsqueda",
-    descripcion:
-      "El algoritmo actual de búsqueda es lento y necesita mejoras para mejorar la velocidad y precisión",
-    tiempo_estimado_fin: 40,
-    horas_acumuladas: 15,
-    estado: 0,
-    responsable: "2",
-    id_ticket: 21,
-  },
-  {
-    id_tarea: "19",
-    id_project: "1",
-    titulo: "Diseñar interfaz de usuario",
-    descripcion:
-      "Crear una interfaz de usuario atractiva y fácil de usar para mejorar la experiencia del usuario",
-    tiempo_estimado_fin: 60,
-    horas_acumuladas: 10,
-    estado: 1,
-    responsable: "1",
-    id_ticket: 20,
-  },
-  {
-    id_tarea: "55",
-    id_project: "2",
-    titulo: "Implementar sistema de pagos",
-    descripcion:
-      "Desarrollar un sistema de pagos en línea para permitir a los usuarios realizar transacciones de forma segura",
-    tiempo_estimado_fin: 120,
-    horas_acumuladas: 50,
-    estado: 2,
-    responsable: "4",
-    id_ticket: 5,
-  },
-  {
-    id_tarea: "36",
-    id_project: "2",
-    titulo: "Corregir errores de validación en el formulario de contacto",
-    descripcion:
-      "El formulario de contacto presenta problemas de validación que deben ser solucionados",
-    tiempo_estimado_fin: 40,
-    horas_acumuladas: 20,
-    estado: 1,
-    responsable: "2",
-    id_ticket: 6,
+    legajo: 4,
+    Nombre: "Marcos",
+    Apellido: "Rivero",
   },
 ];
 
-const INITIAL_RECURSO = [
-  { legajo: 1, Nombre: "Mario", Apellido: "Mendoza" },
-  { legajo: 2, Nombre: "Maria", Apellido: "Perez" },
-  { legajo: 3, Nombre: "Patricia", Apellido: "Gaona" },
-];
+const INITIAL_STATE_TASK = {};
 
-//Pagina donde se muestran el ABM de tickets Tareas y la asociacion de tareas.
 function TicketPage() {
   const router = useRouter();
   const { ticket_id } = router.query;
@@ -147,9 +81,7 @@ function TicketPage() {
   const [ticket, setTicket] = useState<Ticket>(INITIAL_STATE_TICKET);
   const [product, setProduct] = useState<Producto>(INITIAL_STATE_PRODUCT);
   const [showForm, setShowForm] = useState(false);
-  const [taskToSHow, setTaskToSHow] =
-    useState<Array<TaskProps>>(INITIAL_STATE_TASK); //falta modificar el typedef de tarea atributo extra id_ticket
-  const [recursos, setRecursos] = useState<Array<Recurso>>(INITIAL_RECURSO);
+  const [recursos, setRecursos] = useState<Array<Recurso>>(resourcesTest);
   const [clientes, setClientes] = useState<Array<Cliente>>(ARRAY_CLIENTES);
 
   const obtenerNombreCliente = (idCliente: number): string => {
@@ -197,17 +129,6 @@ function TicketPage() {
   */
 
   useEffect(() => {
-    const taskObtenidas = taskToSHow.filter(
-      (unaTask) =>
-        unaTask.id_project === ticket.product_id.toString() &&
-        unaTask.id_ticket === parseInt(ticketIdNew)
-    );
-
-    console.log("taskObtenidas");
-    console.log(taskToSHow);
-
-    console.log("taskToSHow" + taskToSHow);
-    console.log("ticketIdNew " + ticketIdNew);
     const fetchTicket = async () => {
       try {
         const response = await fetch(
@@ -243,6 +164,44 @@ function TicketPage() {
     }
   }, [ticket]);
 
+  const [projects, setProjects] = useState<Project[]>([]);
+
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        const response = await fetch(
+          "https://tribu-c-proyectos-backend.onrender.com/projects"
+        );
+        const data = await response.json();
+
+        setProjects(data.msg);
+      } catch (error) {
+        console.error("Error al obtener los proyectos:", error);
+      }
+    };
+
+    fetchProjects();
+  }, [ticket]);
+
+  /*const [resources, setResources] = useState<Resource[]>([]);
+
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        const response = await fetch(
+          "https://psa-recursos.eeoo.ar/recurso"
+        );
+        const data = await response.json();
+
+        setResources(data);
+      } catch (error) {
+        console.error("Error al obtener los proyectos:", error);
+      }
+    };
+
+    fetchProjects();
+  }, [ticket]);*/
+
   const handleDelete = async () => {
     try {
       await fetch(`https://psa-soporte.eeoo.ar/tickets/${ticket?.id}`, {
@@ -251,13 +210,6 @@ function TicketPage() {
       router.push(`/Soporte/Product/${ticket?.product_id}`);
     } catch (error) {
       console.error("Error deleting ticket:", error);
-    }
-  };
-  const handleModificar = () => {
-    try {
-      setShowForm(true);
-    } catch (error) {
-      console.log(error + "Hubo error");
     }
   };
 
@@ -281,7 +233,37 @@ function TicketPage() {
         );
 
         if (response.ok) {
-          // Actualizar el estado del ticket localmente si la solicitud fue exitosa
+          setTicket(updatedTicket);
+          console.log("Ticket cerrado exitosamente");
+        } else {
+          console.error("Error al cerrar el ticket:", response.status);
+        }
+      } catch (error) {
+        console.error("Error al cerrar el ticket:", error);
+      }
+    }
+  };
+
+  const handleUpdateResponsible = async () => {
+    if (ticket) {
+      const updatedTicket = {
+        ...ticket,
+        responsible_id: selectedResourceId,
+      };
+
+      try {
+        const response = await fetch(
+          `https://psa-soporte.eeoo.ar/tickets/${ticket.id}`,
+          {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(updatedTicket),
+          }
+        );
+
+        if (response.ok) {
           setTicket(updatedTicket);
           console.log("Ticket cerrado exitosamente");
         } else {
@@ -299,6 +281,62 @@ function TicketPage() {
 
   const closeModal = () => {
     setIsOpen(false);
+  };
+
+  const [selectedProjectId, setSelectedProjectId] = useState<number>(0);
+
+  const handleProjectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedProjectId = parseInt(event.target.value);
+    setSelectedProjectId(selectedProjectId);
+  };
+
+  const [selectedResourceId, setSelectedResourceId] = useState<number>(0);
+
+  const handleResourceChange = (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    const selectedResourceId = parseInt(event.target.value);
+    setSelectedResourceId(selectedResourceId);
+  };
+
+  const handleAssignment = async () => {
+    const taskData = {
+      titulo: ticket?.title,
+      descripcion: ticket?.description,
+      tiempo_estimado_finalizacion: ticket?.supportTime,
+      legajo_responsable: selectedResourceId,
+    };
+
+    try {
+      const response = await fetch(
+        `https://tribu-c-proyectos-backend.onrender.com/projects/${selectedProjectId}/tasks`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(taskData),
+        }
+      );
+
+      if (response.ok) {
+        console.log("Tarea asignada exitosamente");
+        handleUpdateResponsible();
+        closeModal();
+      } else {
+        console.error("Error al asignar la tarea:", response.status);
+      }
+    } catch (error) {
+      console.error("Error al asignar la tarea:", error);
+    }
+  };
+
+  const handleModificar = () => {
+    try {
+      setShowForm(true);
+    } catch (error) {
+      console.log(error + "Hubo error");
+    }
   };
 
   return (
@@ -349,8 +387,9 @@ function TicketPage() {
               onClick={handleModificar}
               id="buttonOpcionTicket"
             >
-              <a>Modificar</a>
+              <a> modificar </a>
             </button>
+
             <button
               type="button"
               onClick={handleDelete}
@@ -371,7 +410,98 @@ function TicketPage() {
           </div>
         </span>
         <span id="divTareas">
-          <ul>
+          <ul></ul>
+        </span>
+        {showForm && (
+          <div
+            className="fixed inset-0 flex items-center justify-center z-50"
+            id="DivExternFormTicket"
+          >
+            <div className="bg-white p-8 rounded shadow-lg">
+              <FormTicket
+                productIdNumerico={ticket.product_id}
+                idTicketRecv={ticket.id}
+              />
+              <button
+                onClick={() => {
+                  setShowForm(false);
+                }}
+                id="buttonOpcionTicket"
+              >
+                Cerrar
+              </button>
+
+              <button
+                onClick={handleAssignment}
+                className="bg-gray-500  hover:bg-gray-400 text-white px-4 py-2 rounded mt-4"
+              >
+                Asignar
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {isOpen && (
+        <div className="fixed inset-0 flex items-center justify-center z-50">
+          <div className="bg-white p-8 rounded shadow-lg">
+            <h2 className="text-xl font-bold mb-4">Derivar</h2>
+
+            <select
+              className="select w-full max-w-xs my-1"
+              onChange={handleResourceChange}
+              value={selectedResourceId || ""}
+            >
+              <option disabled value="">
+                Seleccionar Recurso
+              </option>
+              {resourcesTest.map((resource) => (
+                <option key={resource.legajo} value={resource.legajo}>
+                  {resource.Nombre}, {resource.Apellido}
+                </option>
+              ))}
+            </select>
+
+            <select
+              className="select w-full max-w-xs my-1"
+              onChange={handleProjectChange}
+              value={selectedProjectId || ""}
+            >
+              {" "}
+              <option disabled value="">
+                Seleccionar Proyecto
+              </option>
+              {projects.map((project) => (
+                <option key={project.codigo} value={project.codigo}>
+                  {project.nombre}
+                </option>
+              ))}
+            </select>
+            <div className="flex justify-between">
+              <button
+                onClick={closeModal}
+                className="bg-gray-500 hover:bg-gray-400 text-white px-4 py-2 rounded mt-4"
+              >
+                Cerrar
+              </button>
+              <button
+                onClick={handleAssignment}
+                className="bg-gray-500  hover:bg-gray-400 text-white px-4 py-2 rounded mt-4"
+              >
+                Asignar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
+
+export default TicketPage;
+/*
+Diseño de lista de tareas. 
+Codigo abraham: 
             {taskToSHow.map((unaTask) => (
               <li key={unaTask.id_tarea}>
                 <h4 id="tituloTask"> {unaTask.titulo}</h4>
@@ -391,78 +521,4 @@ function TicketPage() {
                 </p>
               </li>
             ))}
-          </ul>
-        </span>
-        {showForm && (
-          <div
-            className="fixed inset-0 flex items-center justify-center z-50"
-            id="DivExternFormTicket"
-          >
-            <div className="bg-white p-8 rounded shadow-lg">
-              <FormTicket
-                productIdNumerico={ticket.product_id}
-                idTicketRecv={ticket.id}
-              />
-              <button
-                type="button"
-                id="buttonOpcionTicket"
-                onClick={() => {
-                  setShowForm(false);
-                }}
-              >
-                Cerrar
-              </button>
-            </div>
-          </div>
-        )}
-        {isOpen && (
-          <div className="fixed inset-0 flex items-center justify-center z-50">
-            <div className="bg-white p-8 rounded shadow-lg">
-              <h2 className="text-xl font-bold mb-4">Derivar</h2>
-
-              <select className="select w-full max-w-xs my-1">
-                <option disabled selected>
-                  Seleccionar Responzable
-                </option>
-                <option>Homer</option>
-                <option>Marge</option>
-                <option>Bart</option>
-                <option>Lisa</option>
-                <option>Maggie</option>
-              </select>
-
-              <select className="select w-full max-w-xs my-1">
-                <option disabled selected>
-                  Seleccionar Proyecto
-                </option>
-                <option>Homer</option>
-                <option>Marge</option>
-                <option>Bart</option>
-                <option>Lisa</option>
-                <option>Maggie</option>
-              </select>
-
-              <div className="flex justify-between">
-                <button
-                  onClick={closeModal}
-                  className="bg-gray-500 hover:bg-gray-400 text-white px-4 py-2 rounded mt-4"
-                >
-                  Cerrar
-                </button>
-
-                <button
-                  onClick={closeModal}
-                  className="bg-gray-500  hover:bg-gray-400 text-white px-4 py-2 rounded mt-4"
-                >
-                  Asignar
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
-    </>
-  );
-}
-
-export default TicketPage;
+*/
