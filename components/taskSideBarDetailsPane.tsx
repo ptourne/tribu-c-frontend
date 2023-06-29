@@ -88,6 +88,33 @@ function TaskSideBarDetailsPane({
     setPendingChanges(false);
   }, [task]);
 
+  const getResources = async () => {
+    axios
+      .get("endpoint de obtener recursos")
+      .then((data) => {
+        if (data.data.ok) {
+          console.log(data);
+          //setResources(data.data.msg);
+        }
+      })
+      .catch((err) => {
+        toast.error(
+          err.response?.data?.msg
+            ? "Hubo un error al obtener los responsables: " + err.response?.data?.msg
+            : "Hubo un error al obtener los responsables",
+          {
+            position: "top-right",
+            autoClose: 2000,
+            hideProgressBar: true,
+          }
+        );
+      });
+  }
+
+  useEffect(() => {
+    getResources();
+  }, []);
+
   const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setTitulo(event.target.value);
     if (mode === EDIT) setTituloSaved(false);
