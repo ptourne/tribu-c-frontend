@@ -107,9 +107,9 @@ function TicketUrgente() {
             ))}
           </ul>
         </div>
-        <div>
+        <div id="divTicketsVencidos">
           <h1 id="tituloTicketUrgente"> Tickets vencidos </h1>
-          <h2> fasfasfsa </h2>
+          <h2> Tickets vencidos hemos perdido dinero: </h2>
         </div>
       </div>
     </>

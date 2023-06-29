@@ -2,6 +2,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { FaEllipsisV } from "react-icons/fa";
+import { FormTicket } from "../../Componentes/FormTicket";
 
 interface Ticket {
   title: string;
@@ -115,6 +116,7 @@ function TicketPage() {
   const [ticket, setTicket] = useState<Ticket>(INITIALTICKET);
   const [product, setProduct] = useState<Product | null>(null);
   const [taskId, setTaskId] = useState<number>(0);
+  const [showForm, setShowForm] = useState(false);
 
   useEffect(() => {
     const fetchTicket = async () => {
@@ -254,6 +256,13 @@ function TicketPage() {
       }
     }
   };
+  const handleModificar = () => {
+    try {
+      setShowForm(true);
+    } catch (error) {
+      console.log(error + "Hubo error");
+    }
+  };
 
   /*const handleUpdateResponsible = async () => {
     if (ticket) {
@@ -385,7 +394,7 @@ function TicketPage() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const dropdownItems: DropdownItem[] = [
-    { label: "Modificar", onClick: () => console.log("Modificar") },
+    { label: "Modificar", onClick: handleModificar },
     { label: "Eliminar", onClick: handleDelete },
     { label: "Derivar", onClick: openModal },
     { label: "Finalizar", onClick: handleUpdateState },
@@ -455,16 +464,36 @@ function TicketPage() {
               key={assignment.id}
               className="bg-gray-400 hover:bg-gray-300 rounded-lg p-2 w-full"
               onClick={() =>
-                router.push(
-                  `/proyectos/${assignment.project_id}/tareas`
-                )
+                router.push(`/proyectos/${assignment.project_id}/tareas`)
               }
             >
-                Ver Tarea
+              Ver Tarea
             </button>
           ))}
         </div>
       </div>
+
+      {showForm && (
+        <div
+          className="fixed inset-0 flex items-center justify-center z-50"
+          id="DivExternFormTicket"
+        >
+          <div className="bg-white p-8 rounded shadow-lg" id="modalContenido">
+            <FormTicket
+              productIdNumerico={ticket.product_id}
+              idTicketRecv={ticket.id}
+            />
+            <button
+              onClick={() => {
+                setShowForm(false);
+              }}
+              id="buttonOpcionTicket"
+            >
+              Cerrar
+            </button>
+          </div>
+        </div>
+      )}
 
       {isOpen && (
         <div className="fixed inset-0 flex items-center justify-center z-50">
