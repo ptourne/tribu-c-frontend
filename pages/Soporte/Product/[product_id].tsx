@@ -88,6 +88,10 @@ export default function Ticket() {
     }
   };
 
+  const handleButtonTicketUrgente = () => {
+    router.push(`/Soporte/Product/TicketsUrgente/${productID}`);
+  };
+
   //Cuando creamos el ticket vamos a pasar idTicket = -1.
   return (
     <>
@@ -107,6 +111,15 @@ export default function Ticket() {
             id="buttonAgregarTicket"
           >
             +
+          </button>
+          <button
+            type="button"
+            onClick={() =>
+              router.push(`/Soporte/Product/TicketsUrgente/${productID}`)
+            }
+            id="buttonTicketUrgente"
+          >
+            Tickets Urgentes
           </button>
         </h1>
         <div style={{ position: "absolute", left: "800px" }}>

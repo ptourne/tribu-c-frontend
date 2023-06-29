@@ -58,7 +58,7 @@ export interface Ticket {
 }
 
 export interface Recurso {
-  nombre: string
-  apellido: string
+  Nombre: string
+  Apellido: string
   legajo: number
 }
