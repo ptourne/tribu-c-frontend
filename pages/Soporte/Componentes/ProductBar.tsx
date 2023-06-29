@@ -42,31 +42,6 @@ export const ProductBar: React.FC<ProductBarProps> = ({ products }) => {
     router.push(`/Soporte/Product/${productId}`);
   };
 
-  //public JSX.Element[] renderProductBar( ){...} en cada map agregar la key.para evitar claves repetidas.project.fecha_inicio
-  /*
-  const renderProductBar = (): JSX.Element[] => {
-    console.log("Entre al renderProducBar productos son: ");
-    console.log(products);
-    return products.map((unProducto) => {
-      return (
-        <li key={unProducto.id} id="LiProducBar">
-          <p>
-            {unProducto.name} <br />
-            VERSION: {unProducto.version}
-            <br />
-          </p>
-          <button
-            onClick={() => {
-              handleProductClick(unProducto.id);
-            }}
-          >
-            Entrar
-          </button>
-        </li>
-      );
-    });
-  };
-*/
   return (
     <>
       <ul>

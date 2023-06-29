@@ -58,51 +58,60 @@ function TicketUrgente() {
 
   return (
     <>
-      <h1 id="tituloTicketUrgente">Tickets proximos a vencer: </h1>
-      <ul style={{ marginTop: "30px", width: "800px" }}>
-        {tickets.map((unTicket) => (
-          <li
-            key={unTicket.id}
-            id="LiTicketForAProductUrgent"
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-            }}
-          >
-            <div style={{ marginBottom: "10px" }}>
-              <h1 id="tituloH1Blanco">{unTicket.title}</h1>
-              <p id="LetraGrande">
-                <strong>
-                  Horas Restantes: {unTicket.supportTime} (
-                  {60 * parseFloat(unTicket.supportTime)} minutos ){" "}
-                </strong>
-              </p>
+      <div id="ContainerUrgentes">
+        <div id="divTicketsProxVencer">
+          <h1 id="tituloTicketUrgente">Tickets proximos a vencer: </h1>
 
-              <p>
-                <strong>Descripción:</strong> {unTicket.description}
-              </p>
-              <p>
-                <strong>Inicio:</strong> {unTicket.timeStart}
-              </p>
-              <p>
-                <strong>Cliente:</strong>{" "}
-                {obtenerNombreCliente(unTicket.client_id)}
-              </p>
-              <p>
-                <strong>Responsable:</strong>{" "}
-                {obtenerNombreRecurso(unTicket.responsible_id)}
-              </p>
-            </div>
-            <div
-              style={{
-                position: "absolute",
-                marginLeft: "300px",
-                marginTop: "0px",
-              }}
-            ></div>
-          </li>
-        ))}
-      </ul>
+          <ul style={{ marginTop: "30px", width: "800px" }}>
+            {tickets.map((unTicket) => (
+              <li
+                key={unTicket.id}
+                id="LiTicketForAProductUrgent"
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                }}
+              >
+                <div style={{ marginBottom: "10px" }}>
+                  <h1 id="tituloH1BlancoUrgene">{unTicket.title}</h1>
+                  <p id="LetraGrande">
+                    <strong>
+                      Horas Restantes: {unTicket.supportTime} (
+                      {60 * parseFloat(unTicket.supportTime)} minutos ){" "}
+                    </strong>
+                  </p>
+
+                  <p>
+                    <strong>Descripción:</strong> {unTicket.description}
+                  </p>
+                  <p>
+                    <strong>Inicio:</strong> {unTicket.timeStart}
+                  </p>
+                  <p>
+                    <strong>Cliente:</strong>{" "}
+                    {obtenerNombreCliente(unTicket.client_id)}
+                  </p>
+                  <p>
+                    <strong>Responsable:</strong>{" "}
+                    {obtenerNombreRecurso(unTicket.responsible_id)}
+                  </p>
+                </div>
+                <div
+                  style={{
+                    position: "absolute",
+                    marginLeft: "300px",
+                    marginTop: "0px",
+                  }}
+                ></div>
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div>
+          <h1 id="tituloTicketUrgente"> Tickets vencidos </h1>
+          <h2> fasfasfsa </h2>
+        </div>
+      </div>
     </>
   );
 }
