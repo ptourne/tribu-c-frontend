@@ -352,7 +352,7 @@ function TicketPage() {
                     className="m-1 btn"
                     onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                   >
-                    <FaEllipsisV/>
+                    <FaEllipsisV />
                   </button>
 
                   {isDropdownOpen && (
@@ -371,21 +371,27 @@ function TicketPage() {
                 </div>
               </div>
 
-              <h1 className="text-xl text-white font-bold mb-4">{ticket.title}</h1>
+              <h1 className="text-xl text-white font-bold mb-4">
+                {ticket.title}
+              </h1>
 
               <p className="mb-2 text-white">Producto: {product?.name}</p>
               <p className="mb-2 text-white">Version: {product?.version}</p>
-              <p className="mb-2 text-white">Descripcion: {ticket.description}</p>
+              <p className="mb-2 text-white">
+                Descripcion: {ticket.description}
+              </p>
               <p className="mb-2 text-white">Severidad: {ticket.severity}</p>
               <p className="mb-2 text-white">Prioridad: {ticket.priority}</p>
               <p className="mb-2 text-white">Estado: {ticket.state}</p>
               <p className="mb-2 text-white">Inicio: {ticket.timeStart}</p>
               <p className="mb-2 text-white">Tipo: {ticket.type}</p>
               <p className="mb-2 text-white">
-                Tiempo para Resolucion: {ticket.supportTime}
+                Horas restantes: {ticket.supportTime}
               </p>
               <p className="mb-2 text-white">Client ID: {ticket.client_id}</p>
-              <p className="mb-2 text-white">Responsible ID: {ticket.responsible_id}</p>
+              <p className="mb-2 text-white">
+                Responsible ID: {ticket.responsible_id}
+              </p>
             </div>
           ) : (
             <p>Cargando ticket...</p>
