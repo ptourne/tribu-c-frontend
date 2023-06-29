@@ -48,13 +48,14 @@ function TaskSideBarDetailsPane({
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
 
   useEffect(() => {
+    console.log(task)
     if (task) {
       setMode(EDIT);
       setTitulo(task.titulo || "");
       setResponsible(task.legajo_responsable || "");
       setState(task.estado || 0);
       setDescription(task.descripcion || "");
-      setEstimatedDuration(task.tiempo_estimado_fin || 0);
+      setEstimatedDuration(task.tiempo_estimado_finalizacion);
       setAccumulatedHours(task.horas_acumuladas || 0);
       if (!lastTask) setLastTask(task);
     } else {
