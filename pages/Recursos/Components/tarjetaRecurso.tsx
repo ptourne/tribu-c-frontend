@@ -8,18 +8,21 @@ import { toast } from "react-toastify";
 import DatePicker from "react-datepicker";
 import { SERVER_NAME_PROYECTOS } from "@/environments";
 import { RiContactsBookLine } from "react-icons/ri";
+import { CircularProgress } from "@mui/material";
 
 interface TarjetaRecurso {
     recurso: Recurso;
     tareaActual: Tarea;
 }
 export const TarjetaRecurso: React.FC<TarjetaRecurso> = ({ recurso, tareaActual }) => {
+    const [loading, setLoading] = useState(true);
     const [isOpen, setIsOpen] = useState(false);
     const [horas , setHoras] = useState(0);
     const [bloque, setBloque] = useState<BloqueDeTrabajo | undefined>(undefined);
     const [fechaDelBloque, setStartDate] = useState(new Date());
     const [horasDedicadasATarea, sethorasDedicadasATarea] = useState(0);
     const [horasDedicadasAProyecto, sethorasDedicadasAProyecto] = useState(0);
+    const [disponibilidadSemanal, setdisponibilidadSemanal] = useState(40);
     // Esto abre el popup
     const togglePopup = () => {
         if (!isOpen)
@@ -60,6 +63,7 @@ export const TarjetaRecurso: React.FC<TarjetaRecurso> = ({ recurso, tareaActual 
         autoClose: 2000,
         hideProgressBar: true,
       });
+      setIsOpen(false);
     })
     .catch((e) => {
       toast.error(
@@ -100,6 +104,7 @@ export const TarjetaRecurso: React.FC<TarjetaRecurso> = ({ recurso, tareaActual 
             })
             sethorasDedicadasATarea(horasTotalesEnTarea);
             sethorasDedicadasAProyecto(horasTotalesEnProyecto);
+            setLoading(false);
           });
         } catch (error) {
           console.error("Error fetching ticket:", error);
@@ -112,10 +117,19 @@ export const TarjetaRecurso: React.FC<TarjetaRecurso> = ({ recurso, tareaActual 
     
     return (
         <>
+        {loading ? (
+            <>
+              <CircularProgress></CircularProgress>
+              <p className="mt-3">Cargando Proyectos</p>
+            </>
+          ) : 
             <div onClick={togglePopup} className="d-flex flex-column border-2 border-dark rounded-2 mb-3 mt-3 mx-3">
                 <div className="d-flex justify-content-between mr-6">
                 <label className="my-3 ml-3">
                     {recurso.Nombre}
+                </label>
+                <label className="my-3 ml-9">
+                    {disponibilidadSemanal + " Horas"}
                 </label>
                 <button onClick={closePopup}>
                     X
@@ -169,7 +183,7 @@ export const TarjetaRecurso: React.FC<TarjetaRecurso> = ({ recurso, tareaActual 
                                             className="btn btn-primary mt-auto p-2"
                                             onClick={ handleClick }
                                             >
-                                                Editar
+                                                Asignar bloque
                                         </button>
                                     </div>
                                 </div>
@@ -179,6 +193,7 @@ export const TarjetaRecurso: React.FC<TarjetaRecurso> = ({ recurso, tareaActual 
                     />
                 }
             </div>
+            }
         </>
     )
 };

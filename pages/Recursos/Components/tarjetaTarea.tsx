@@ -65,18 +65,6 @@ export const TarjetaTarea: React.FC<TarjetaTarea> = ({ bloqueDeTrabajo }) => {
     setHoras(number);
   };
 
-  const deleteCodBloqueLaboral = async (id:number) => {
-    try {
-      const response = await fetch(
-        RECURSOS_URL + "bloque_laboral?codBloqueLaboral="+id
-      );
-      const data = await response.json();
-      
-    } catch (error) {
-      console.error("Error eliminando codBloqueLaboral:", error);
-    }
-  };
-
   // Evento del click del botón
   const guardarClick = () => {
     const bloque = {
@@ -112,42 +100,29 @@ export const TarjetaTarea: React.FC<TarjetaTarea> = ({ bloqueDeTrabajo }) => {
   }
 
   const eliminarClick = async () => {
-    //   axios
-    // .delete(RECURSOS_URL + "bloque_laboral/" + bloqueDeTrabajo.codBloqueLaboral.toString())
-    // .then(() => {
-    // toast.success("Bloque eliminado", {
-    //   position: "top-right",
-    //   autoClose: 2000,
-    //   hideProgressBar: true,
-    // });
-    // })
-    // .catch((e) => {
-    // toast.error(
-    //   e.response?.data?.msg
-    //     ? "Hubo un error al eliminar el bloque: " + e.response?.data?.msg
-    //     : "Hubo un error al eliminar el bloque",
-    //   {
-    //     position: "top-right",
-    //     autoClose: 2000,
-    //     hideProgressBar: true,
-    //   }
-    // );
-    // });
-    try {
-      const response = await fetch(
-        RECURSOS_URL + "bloque_laboral?codBloqueLaboral="+ bloqueDeTrabajo.codBloqueLaboral.toString()
-      );
-      toast.success("Bloque eliminado", {
+      axios
+    .delete(RECURSOS_URL + bloqueDeTrabajo.codBloqueLaboral.toString())
+    .then(() => {
+    toast.success("Bloque eliminado", {
       position: "top-right",
       autoClose: 2000,
       hideProgressBar: true,
-      });
-      const data = await response.json();
-      setIsOpen(false);
-      
-    } catch (error) {
-      console.error("Error eliminando codBloqueLaboral:", error);
-    }
+    });
+    setIsOpen(false);
+    setHoras(0);
+    })
+    .catch((e) => {
+    toast.error(
+      e.response?.data?.msg
+        ? "Hubo un error al eliminar el bloque: " + e.response?.data?.msg
+        : "Hubo un error al eliminar el bloque",
+      {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: true,
+      }
+    );
+    });
   }
 
   useEffect(() => {
@@ -156,48 +131,50 @@ export const TarjetaTarea: React.FC<TarjetaTarea> = ({ bloqueDeTrabajo }) => {
 
 
   return <div>
-    <div onClick={togglePopup} className= {classNameDiv}  style={estilos.filas}> 
+    {
+      horas != 0?
+      <div onClick={togglePopup} className= {classNameDiv}  style={estilos.filas}> 
       
       { tareaAsociada.titulo }  
-    {
-      isOpen && <Popup
-        content={<>
-          <div className="flex-grow-1 d-flex justify-content-between align-items-center flex-row ml-1">
-            <label className="col-md-6 form-label align-items-center">
-              Horas aplicadas
-            </label>
-            <div className="col-md-6">
-              <input
-                type= "text"
-                className={classNameInput}
-                id= "horas"
-                value= { horas }
-                 
-                onChange=   { handleCambioDeHoras }    
-                maxLength={4}
-              />
-          </div>
-        </div>
-        <div  className="d-flex justify-content-evenly">
+      {
+        isOpen && <Popup
+          content={<>
+            <div className="flex-grow-1 d-flex justify-content-between align-items-center flex-row ml-1">
+              <label className="col-md-6 form-label align-items-center">
+                Horas aplicadas
+              </label>
+              <div className="col-md-6">
+                <input
+                  type= "text"
+                  className={classNameInput}
+                  id= "horas"
+                  value= { horas }
+                  
+                  onChange=   { handleCambioDeHoras }    
+                  maxLength={4}
+                />
+            </div>
+            </div>
+            <div  className="d-flex justify-content-evenly">
 
-        <div onClick= { guardarClick } className="d-flex flex-column border-2 border-dark rounded-2 mw-100 ps-3 pe-3 mb-3 mt-2 mx-1  align-items-center ">
-           guardar
-        </div>
-        <div onClick= { eliminarClick } className="d-flex flex-column border-2 border-dark rounded-2 mw-100 ps-3 pe-3 mb-3 mt-2 mx-1  align-items-center ">
-           eliminar
-        </div>
-        <div onClick= { ocultarClick } className="d-flex flex-column border-2  border-dark rounded-2  ps-3 pe-3 mb-3 mt-2 mx-1 align-items-center ">
-          ocultar
-        </div>
-        
-        </div>
-        
-         
-        </>}
-      />
+              <div onClick= { guardarClick } className="d-flex flex-column border-2 border-dark rounded-2 mw-100 ps-3 pe-3 mb-3 mt-2 mx-1  align-items-center ">
+                guardar
+              </div>
+              <div onClick= { eliminarClick } className="d-flex flex-column border-2 border-dark rounded-2 mw-100 ps-3 pe-3 mb-3 mt-2 mx-1  align-items-center ">
+                eliminar
+              </div>
+              <div onClick= { ocultarClick } className="d-flex flex-column border-2  border-dark rounded-2  ps-3 pe-3 mb-3 mt-2 mx-1 align-items-center ">
+                ocultar
+              </div>
+              
+            </div>
+          </>}
+        />
+      }   
+      </div>
+      :
+      <div></div>
     }
-    
-    </div>
   </div>
 }
 
