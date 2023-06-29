@@ -5,9 +5,9 @@ export interface Usuario {
 }
 
 export interface Cliente {
-  id: string
+  id: number
   razon_social: string
-  cuit: number
+  CUIT: string
 }
 
 export interface Proyecto {
@@ -55,4 +55,10 @@ export interface Ticket {
   product_id: number;
   client_id: number;
   responsible_id: number;
+}
+
+export interface Recurso {
+  nombre: string
+  apellido: string
+  legajo: number
 }

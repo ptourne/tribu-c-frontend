@@ -1,8 +1,8 @@
-import { Ticket } from "@/pages/types";
+import { Ticket, Cliente } from "@/pages/types";
 import { headers } from "next/dist/client/components/headers";
 import { useEffect, useState } from "react";
 import { NotificacionesDelTicket } from "./NotificacionTicket";
-
+import { ARRAY_CLIENTES } from "./Constantes";
 interface formTicketState {
   inputValuesTicket: Ticket;
 }
@@ -20,14 +20,9 @@ const INITIAL_STATE = {
   client_id: 0,
   responsible_id: 0,
 };
-//REMPLAZARLO CON FETCH
-const ARRAY_CLIENTES = [
-  { id: 1, "razon social": "FIUBA", CUIT: "20-12345678-2" },
-  { id: 2, "razon social": "FSOC", CUIT: "20-12345678-5" },
-  { id: 3, "razon social": "Macro", CUIT: "20-12345678-3" },
-];
 
-//REMPLAZARLO CON FETCH
+//REMPLAZARLO CON FETCH en un futuro lo de ARRAY_CLIENTES
+
 const ARRAY_RECURSOS = [
   { legajo: 1, Nombre: "Mario", Apellido: "Mendoza" },
   { legajo: 2, Nombre: "Maria", Apellido: "Perez" },
@@ -49,12 +44,26 @@ export const FormTicket: React.FC<{
 
   const [clickSubmit, setClickSubmit] = useState<Boolean>(false);
   const [tickets, setTickets] = useState<Array<Ticket>>([]);
+  const [showCient, setShowCliente] = useState<Boolean>(true);
+  const [clientes, setClientes] = useState<Cliente[]>(ARRAY_CLIENTES);
+
+  /*
+  const fetchClientes = (): Promise<Array<Cliente>> => {
+    return fetch(
+      `https://abrahamosco.github.io/prueba.github.io/clientes.html`,
+      { method: "GET", headers: {} }
+    ).then((res) => res.json());
+  };
+  */
+
   const fetchTickets = (): Promise<Array<Ticket>> => {
     //2) Llamanda al backend Necesitamos obtener todos los tickets.
-    return fetch("https://psa-soporte.eeoo.ar/tickets").then((res) =>
-      res.json()
-    );
+    return fetch("https://psa-soporte.eeoo.ar/tickets", {
+      method: "GET",
+      headers: {},
+    }).then((res) => res.json());
   };
+
   const getMaxIdTicket = (tickets: Array<Ticket>) => {
     const maxId = tickets.reduce((max, ticket) => {
       return ticket.id > max ? ticket.id : max;
@@ -62,10 +71,10 @@ export const FormTicket: React.FC<{
     return maxId;
   };
 
-  const getTimeStartByTicketID = (): Promise<string> => {
-    return fetch(`https://psa-soporte.eeoo.ar/ticket/${idTicketRecv}`)
-      .then((res) => res.json())
-      .then((unTicket: Ticket) => unTicket.timeStart);
+  const getTicketByTicketID = (): Promise<Ticket> => {
+    return fetch(`https://psa-soporte.eeoo.ar/ticket/${idTicketRecv}`).then(
+      (res) => res.json()
+    );
   };
 
   const [notificacion, setNotificacion] = useState<boolean>(false);
@@ -102,16 +111,6 @@ export const FormTicket: React.FC<{
     setSelectedSeveridad("");
     setselectRecursoOption("");
     setselectTipoTicket("");
-  };
-
-  const mostrarResultadoSend = () => {
-    if (validInputs()) {
-      setNotificacionOk(true);
-      return true;
-    } else {
-      setnotificacionError(true);
-    }
-    return false;
   };
 
   const [inputTicketValues, setInputTicketValues] =
@@ -188,13 +187,6 @@ export const FormTicket: React.FC<{
     return /[a-zA-Z]/.test(input);
   }
 
-  const obtenerMaximoId = (tickets: Array<Ticket>) => {
-    const maxId = tickets.reduce((max, ticket) => {
-      return ticket.id > max ? ticket.id : max;
-    }, 0);
-    return maxId;
-  };
-
   const [selectedPrioridad, setSelectedPrioridad] = useState("");
   const handlePrioridadClick = (prioridad: string) => {
     setSelectedPrioridad(prioridad);
@@ -228,7 +220,7 @@ export const FormTicket: React.FC<{
   ) => {
     setSelectedClientOption(event.target.value);
     const clienteCoincideRazon = ARRAY_CLIENTES.find(
-      (unCliente) => unCliente["razon social"] === event.target.value //En el fin de usa triple === igual !!!!
+      (unCliente) => unCliente["razon_social"] === event.target.value //En el fin de usa triple === igual !!!!
     );
     let clientId = 100;
     if (typeof clienteCoincideRazon === "undefined") {
@@ -290,6 +282,10 @@ export const FormTicket: React.FC<{
   //UserEffect para obtener el maxId de ticket le sumamos 1 , lo neceistamos para hacer un post del nuevo ticket.
   useEffect(() => {
     //Caso de crear Ticket necesitamos un id y el productID
+    //fetchClientes().then((clientesFetch) => {
+    //  setClientes(clientesFetch);
+    //});
+
     if (idTicketRecv === -1) {
       fetchTickets().then((ticketsFetch) => {
         setTickets(ticketsFetch);
@@ -302,18 +298,21 @@ export const FormTicket: React.FC<{
     } else {
       //caso edicion ya recibimos el id como argumento lo usamos recopilamos el id
       //aca debemos hacer el fetch de tiket por el id que recibimos
+      setShowCliente(false);
       console.log("Entramos al else estamos en el EDITAR !!------");
-      getTimeStartByTicketID().then((unTimeStart) => {
-        console.log(`unTimeStart ->>>: -${unTimeStart}-`);
+      //.then((unTicket: Ticket) => unTicket.timeStart)
+      getTicketByTicketID().then((unTicket) => {
         setInputTicketValues({
           ...inputTicketValues,
-          timeStart: unTimeStart,
+          timeStart: unTicket.timeStart,
           product_id: productIdNumerico,
           id: idTicketRecv,
+          client_id: unTicket.client_id,
         });
       });
     }
   }, []);
+
   const validationInputPlus = () => {
     if (parseInt(inputTicketValues.supportTime) <= 0) {
       console.log(
@@ -468,19 +467,23 @@ export const FormTicket: React.FC<{
               Bug
             </button>
           </div>
-          <div id="divListBox">
-            <label htmlFor="listbox">Seleccione el cliente:</label>
-            <select
-              id="listbox"
-              value={selectedClientOption}
-              onChange={handleClientOptionChange}
-            >
-              <option value=""> Seleccione... </option>
-              {ARRAY_CLIENTES.map((unCliente) => (
-                <option key={unCliente.id}>{unCliente["razon social"]}</option>
-              ))}
-            </select>
-          </div>
+          {showCient && (
+            <div id="divListBox">
+              <label htmlFor="listbox">Seleccione el cliente:</label>
+              <select
+                id="listbox"
+                value={selectedClientOption}
+                onChange={handleClientOptionChange}
+              >
+                <option value=""> Seleccione... </option>
+                {clientes.map((unCliente) => (
+                  <option key={unCliente.id}>
+                    {unCliente["razon_social"]}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
           <div id="divListBox">
             <label htmlFor="listbox">Seleccione un recurso :</label>
             <select

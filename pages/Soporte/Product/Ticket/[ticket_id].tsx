@@ -1,28 +1,32 @@
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { FaEllipsisV } from "react-icons/fa";
+import { FormTicket } from "../../Componentes/FormTicket";
+import { version } from "os";
+import { Ticket, Producto, Tarea, Cliente } from "@/pages/types";
+import { ARRAY_CLIENTES } from "../../Componentes/Constantes";
 
-interface Ticket {
-  title: string;
-  description: string;
-  severity: string;
-  priority: string;
-  state: string;
-  timeStart: string;
-  type: string;
-  supportTime: string;
-  project_id: number;
-  id: number;
-  product_id: number;
-  client_id: number;
-  responsible_id: number;
-}
+const INITIAL_STATE_PRODUCT = {
+  name: "UnNombre",
+  version: "0.0",
+  id: 0,
+};
+const INITIAL_STATE_TICKET = {
+  title: "Nuevo Titulo",
+  description: "Nueva Descripcion",
+  severity: "",
+  priority: "",
+  state: "Iniciado",
+  timeStart: "",
+  type: "",
+  supportTime: "",
+  id: 0,
+  product_id: 0,
+  client_id: 0,
+  responsible_id: 0,
+};
 
-interface Product {
-  name: string;
-  version: string;
-  id: number;
-}
+//Pagina donde se muestra las tareas y por completo el ticket con su ABM correspondiente
 
 interface Project {
   codigo: number;
@@ -39,13 +43,13 @@ interface Project {
   version: string;
 }
 
-interface Resource {
+interface Recurso {
   legajo: number;
   Nombre: string;
   Apellido: string;
 }
 
-const resourcesTest: Resource[] = [
+const resourcesTest: Recurso[] = [
   {
     legajo: 1,
     Nombre: "Mario",
@@ -68,12 +72,61 @@ const resourcesTest: Resource[] = [
   },
 ];
 
+const INITIAL_STATE_TASK = {};
+
 function TicketPage() {
   const router = useRouter();
   const { ticket_id } = router.query;
   const [isOpen, setIsOpen] = useState(false);
-  const [ticket, setTicket] = useState<Ticket | null>(null);
-  const [product, setProduct] = useState<Product | null>(null);
+  const [ticket, setTicket] = useState<Ticket>(INITIAL_STATE_TICKET);
+  const [product, setProduct] = useState<Producto>(INITIAL_STATE_PRODUCT);
+  const [showForm, setShowForm] = useState(false);
+  const [recursos, setRecursos] = useState<Array<Recurso>>(resourcesTest);
+  const [clientes, setClientes] = useState<Array<Cliente>>(ARRAY_CLIENTES);
+
+  const obtenerNombreCliente = (idCliente: number): string => {
+    const unCliente = clientes.find((unCliente) => unCliente.id == idCliente);
+    if (unCliente) {
+      return unCliente.razon_social;
+    }
+    return "CLIENTE-DESCONOCIDO";
+  };
+
+  const obtenerNombreRecurso = (idRecurso: string): string => {
+    const idRecursoInt = parseInt(idRecurso);
+    const recurso = recursos.find(
+      (unRecurso) => unRecurso.legajo == idRecursoInt
+    );
+    if (recurso) {
+      return `${recurso.Nombre}  ${recurso.Apellido}`;
+    }
+    return "LEGAJO-DESCONOCIDO";
+  };
+
+  //filter hace una busqueda te devuelve un array si queres filtras mas intenso y quedarte solo con un elemento apriori sabiendo que solo habra 1 usa find! .
+  // el project con id=1 esta asocaido al producto con id=!  pero ademas cada tarea tiene que estar asociado a un ticket en particular  !!!
+  const ticketIdNew: string = typeof ticket_id === "string" ? ticket_id : "0";
+
+  /*
+  const fetchRecursos = (): Promise<Array<Recurso>> => {
+    const URLFetchecurso = `https://anypoint.mulesoft.com/mocking/api/v1/sources/exchange/assets/754f50e8-20d8-4223-bbdc-56d50131d0ae/recursos-psa/1.0.0/m/api/recursos`;
+
+    return fetch(URLFetchecurso, {
+      method: "GET",
+      headers: {},
+    }).then((res) => res.json());
+  };
+  //ESto no funciona  hay que cambiarlo por lo que hara recursos en un futuro . 
+  
+  
+
+   useEffect(() => {
+    fetchRecursos().then((recursosFetch) => {
+      setRecursos(recursosFetch);
+    });
+  }, []);
+
+  */
 
   useEffect(() => {
     const fetchTicket = async () => {
@@ -246,7 +299,6 @@ function TicketPage() {
     setSelectedResourceId(selectedResourceId);
   };
 
-
   const handleAssignment = async () => {
     const taskData = {
       titulo: ticket?.title,
@@ -269,7 +321,7 @@ function TicketPage() {
 
       if (response.ok) {
         console.log("Tarea asignada exitosamente");
-        handleUpdateResponsible()
+        handleUpdateResponsible();
         closeModal();
       } else {
         console.error("Error al asignar la tarea:", response.status);
@@ -279,67 +331,115 @@ function TicketPage() {
     }
   };
 
+  const handleModificar = () => {
+    try {
+      setShowForm(true);
+    } catch (error) {
+      console.log(error + "Hubo error");
+    }
+  };
 
   return (
-    <div className="flex px-8 py-8">
-      <div className="card w-1/2 mr-2 bg-base-100 shadow-xl">
-        <div className="card-body">
-          {ticket ? (
-            <div>
-              <div className="flex flex-row justify-between place-items-center">
-                <h1 className="card-title">Ticket</h1>
+    <>
+      <div id="container">
+        <span id="divInfoTicketExterno">
+          <div id="divInfoTicketInterno">
+            <h2>{ticket.title}</h2>
+            <p>
+              <strong>Producto: </strong> {product?.name}
+            </p>
+            <p>
+              <strong>Version:</strong> {product?.version}
+            </p>
+            <p>
+              <strong>Descripcion:</strong> {ticket.description}
+            </p>
+            <p>
+              <strong>Severidad:</strong> {ticket.severity}
+            </p>
+            <p>
+              <strong>Prioridad:</strong> {ticket.priority}
+            </p>
+            <p>
+              <strong>Estado:</strong> {ticket.state}
+            </p>
+            <p>
+              <strong>Inicio: </strong> {ticket.timeStart}
+            </p>
+            <p>
+              <strong>Tipo: </strong> {ticket.type}
+            </p>
+            <p>
+              <strong>Horas Restantes:</strong> {ticket.supportTime}
+            </p>
+            <p>
+              <strong>Client ID:</strong>
+              {obtenerNombreCliente(ticket.client_id)}
+            </p>
+            <p>
+              <strong>Responsable:</strong>
+              {obtenerNombreRecurso(ticket.responsible_id.toString())}
+            </p>
+          </div>
+          <div id="DivBotones">
+            <button
+              type="button"
+              onClick={handleModificar}
+              id="buttonOpcionTicket"
+            >
+              <a> modificar </a>
+            </button>
 
-                <div className="dropdown">
-                  <label tabIndex={0} className="m-1 btn">
-                    <FaEllipsisV />
-                  </label>
-                  <ul
-                    tabIndex={0}
-                    className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52"
-                  >
-                    <li>
-                      <a>Modificar</a>
-                    </li>
-                    <li onClick={handleDelete}>
-                      <a>Eliminar</a>
-                    </li>
-                    <li onClick={openModal}>
-                      <a>Derivar</a>
-                    </li>
-                    <li onClick={handleUpdateState}>
-                      <a>Finalizar</a>
-                    </li>
-                  </ul>
-                </div>
-              </div>
+            <button
+              type="button"
+              onClick={handleDelete}
+              id="buttonOpcionTicket"
+            >
+              <a>Eliminar</a>
+            </button>
+            <button type="button" onClick={openModal} id="buttonOpcionTicket">
+              <a>Derivar</a>
+            </button>
+            <button
+              type="button"
+              onClick={handleUpdateState}
+              id="buttonOpcionTicket"
+            >
+              <a>Finalizar</a>
+            </button>
+          </div>
+        </span>
+        <span id="divTareas">
+          <ul></ul>
+        </span>
+        {showForm && (
+          <div
+            className="fixed inset-0 flex items-center justify-center z-50"
+            id="DivExternFormTicket"
+          >
+            <div className="bg-white p-8 rounded shadow-lg">
+              <FormTicket
+                productIdNumerico={ticket.product_id}
+                idTicketRecv={ticket.id}
+              />
+              <button
+                onClick={() => {
+                  setShowForm(false);
+                }}
+                id="buttonOpcionTicket"
+              >
+                Cerrar
+              </button>
 
-              <h1 className="card-title">{ticket.title}</h1>
-
-              <p className="mb-2">Producto: {product?.name}</p>
-              <p className="mb-2">Version: {product?.version}</p>
-              <p className="mb-2">Descripcion: {ticket.description}</p>
-              <p className="mb-2">Severidad: {ticket.severity}</p>
-              <p className="mb-2">Prioridad: {ticket.priority}</p>
-              <p className="mb-2">Estado: {ticket.state}</p>
-              <p className="mb-2">Inicio: {ticket.timeStart}</p>
-              <p className="mb-2">Tipo: {ticket.type}</p>
-              <p className="mb-2">
-                Tiempo para Resolucion: {ticket.supportTime}
-              </p>
-              <p className="mb-2">Client ID: {ticket.client_id}</p>
-              <p className="mb-2">Responsible ID: {ticket.responsible_id}</p>
+              <button
+                onClick={handleAssignment}
+                className="bg-gray-500  hover:bg-gray-400 text-white px-4 py-2 rounded mt-4"
+              >
+                Asignar
+              </button>
             </div>
-          ) : (
-            <p>Cargando ticket...</p>
-          )}
-        </div>
-      </div>
-
-      <div className="card w-1/2 ml-2 bg-base-100 shadow-xl">
-        <div className="card-body">
-          <h2 className="card-title">Tareas</h2>
-          <p>Aca van las tareas asociadas al ticket</p>
-        </div>
+          </div>
+        )}
       </div>
 
       {isOpen && (
@@ -367,6 +467,7 @@ function TicketPage() {
               onChange={handleProjectChange}
               value={selectedProjectId || ""}
             >
+              {" "}
               <option disabled value="">
                 Seleccionar Proyecto
               </option>
@@ -376,7 +477,6 @@ function TicketPage() {
                 </option>
               ))}
             </select>
-
             <div className="flex justify-between">
               <button
                 onClick={closeModal}
@@ -384,7 +484,6 @@ function TicketPage() {
               >
                 Cerrar
               </button>
-
               <button
                 onClick={handleAssignment}
                 className="bg-gray-500  hover:bg-gray-400 text-white px-4 py-2 rounded mt-4"
@@ -395,8 +494,31 @@ function TicketPage() {
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 }
 
 export default TicketPage;
+/*
+Diseño de lista de tareas. 
+Codigo abraham: 
+            {taskToSHow.map((unaTask) => (
+              <li key={unaTask.id_tarea}>
+                <h4 id="tituloTask"> {unaTask.titulo}</h4>
+                <p>
+                  <strong>Descripcion: </strong> {unaTask.descripcion}
+                </p>
+                <p>
+                  <strong> Desorralladores de la tarea: </strong>
+                  {obtenerNombreRecurso(unaTask.responsable)}
+                </p>
+                <p>
+                  <strong>Horas Acumuladas: </strong> {unaTask.horas_acumuladas}
+                  <strong id="StrongSeparado">
+                    Horas Estimadas para finalizar:{" "}
+                  </strong>
+                  {unaTask.tiempo_estimado_fin}
+                </p>
+              </li>
+            ))}
+*/
