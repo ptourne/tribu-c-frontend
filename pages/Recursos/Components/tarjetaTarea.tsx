@@ -5,6 +5,9 @@ import { Tarea } from "../../types";
 import {   FaSistrix,FaSearchengin,FaPencilAlt, FaUserClock } from "react-icons/fa";
 import { BloqueDeTrabajo } from "@/pages/types";
 import { SERVER_NAME_PROYECTOS } from "@/environments";
+import axios from "axios";
+import RECURSOS_URL from "./recursosURL";
+import { toast } from "react-toastify";
 interface TarjetaTarea {
   bloqueDeTrabajo: BloqueDeTrabajo,
 }
@@ -30,6 +33,10 @@ export const TarjetaTarea: React.FC<TarjetaTarea> = ({ bloqueDeTrabajo }) => {
     if (!isOpen)
       setIsOpen(true);
   }
+  const closePopup = () => {
+    if (isOpen)
+      setIsOpen(false);
+  }
   const getTareasDeProyecto = async () => {
     try {
       const response = await fetch(
@@ -37,8 +44,7 @@ export const TarjetaTarea: React.FC<TarjetaTarea> = ({ bloqueDeTrabajo }) => {
       );
 
       response.json().then((data) => {
-        let x = data.msg;
-        x.forEach((tarea: Tarea) => {
+        data.msg.forEach((tarea: Tarea) => {
           if (tarea.id_tarea == bloqueDeTrabajo.codTarea.toString() && tarea.id_proyecto == bloqueDeTrabajo.codProyectoDeLaTarea.toString()) {
             setTareaAsociada(tarea);
             setClassNameDiv("d-flex flex-column  border-2 border-dark rounded-2 bd-highlight mb-3 align-items-center " + colorDeTarea(tareaAsociada.estado));
@@ -65,24 +71,44 @@ export const TarjetaTarea: React.FC<TarjetaTarea> = ({ bloqueDeTrabajo }) => {
     // TODO: Acá se debe llamar a un endpoint
     //
     //alert("Las horas cargadas son: " + horas);
-     
+    const bloque = {
+      codBloqueLaboral: bloqueDeTrabajo.codBloqueLaboral,
+      codProyectoDeLaTarea: bloqueDeTrabajo.codProyectoDeLaTarea,
+      codTarea: bloqueDeTrabajo.codTarea,
+      legajo: bloqueDeTrabajo.legajo,
+      horasDelBloque: horas,
+      fecha: bloqueDeTrabajo.fecha, // Agregar bloque laboral
+    };
+      axios
+    .put(RECURSOS_URL + "bloque_laboral/" + bloqueDeTrabajo.codBloqueLaboral.toString(), bloque)
+    .then(() => {
+    toast.success("Bloque asignado", {
+      position: "top-right",
+      autoClose: 2000,
+      hideProgressBar: true,
+    });
+    })
+    .catch((e) => {
+    toast.error(
+      e.response?.data?.msg
+        ? "Hubo un error al crear el bloque: " + e.response?.data?.msg
+        : "Hubo un error al crear el bloque",
+      {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: true,
+      }
+    );
+    });
     setIsOpen(false);
   }
   useEffect(() => {
-    console.log("1er useff");
     getTareasDeProyecto();
   }, []);
   // Acá las classnames las pongo por fuera para poder marcar el color correspondiente de la tarea (A menos que se quiera estilizar más no debería ser necesario tocar esto)
 
   return <div>
-    {
-      ""
-    }
-    <div onClick={togglePopup} className= {classNameDiv}  style={estilos.filas}>
-    {!isOpen ?  
-       
-       <  FaSearchengin /> :    <></>
-      }   
+    <div onClick={togglePopup} className= {classNameDiv}  style={estilos.filas}> 
       
       { tareaAsociada.titulo }  
     {
@@ -109,7 +135,7 @@ export const TarjetaTarea: React.FC<TarjetaTarea> = ({ bloqueDeTrabajo }) => {
         <div onClick= { handleClick } className="d-flex flex-column border-2 border-dark rounded-2 mw-100 ps-3 pe-3 mb-3 mt-2 mx-1  align-items-center ">
            guardar
         </div>
-        <div onClick= { handleClick } className="d-flex flex-column border-2  border-dark rounded-2  ps-3 pe-3 mb-3 mt-2 mx-1 align-items-center ">
+        <div onClick= { closePopup } className="d-flex flex-column border-2  border-dark rounded-2  ps-3 pe-3 mb-3 mt-2 mx-1 align-items-center ">
           ocultar
         </div>
         
@@ -128,16 +154,12 @@ export const TarjetaTarea: React.FC<TarjetaTarea> = ({ bloqueDeTrabajo }) => {
 function colorDeTarea(estadoTarea: number) {
   switch(estadoTarea) {
     case 0:
-      console.log("Entra en 0");
       return "bg-warning"
     case 1:
-      console.log("Entra en 1");
       return "bg-info"
     case 2:
-      console.log("Entra en 2");
       return "bg-success"
     default:
-      console.log("Entra en default");
       return;
   }
 }

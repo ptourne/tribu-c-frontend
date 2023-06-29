@@ -29,7 +29,6 @@ export default function recurso() {
       const response = await fetch(
         RECURSOS_URL + "recurso"
       );
-        console.log("");
       const data = await response.json();
       setRecursos(data);
       setLoading(false);
@@ -57,17 +56,6 @@ export default function recurso() {
       <div className="flex flex-fill col-md-1 h-full flex-col p-4 bg-white w-30">
         <div className="flex">
           <h1 className="text-black mb-5 font-bold">Recursos</h1>
-          <Tooltip title={<Typography fontSize={15}>Nuevo Recurso</Typography>} placement="right">
-            <button
-              type="button"
-              className="btn btn-outline-primary d-flex align-items-center justify-content-center mb-5 ml-4 space-x-4"
-              onClick={() => {
-                addRecurso();
-              }}
-            >
-              <MdAdd />
-            </button>
-          </Tooltip> 
         </div>
         <div
           className={

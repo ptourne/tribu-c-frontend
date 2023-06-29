@@ -30,40 +30,6 @@ export default function Calendario() {
   const [bloquesDeTrabajo, setBloquesDeTrabajo] = useState<BloqueDeTrabajo[]>([]);
   const [loading, setLoading] = useState(true);
   const [proyectos, setProyectos] = useState<Proyecto[]>([]);
-  // let tareas: Map<number, Map<string, Tarea>> = new Map<number, Map<string, Tarea>>();
-
-  // const getProyectos = async () => {
-  //   try {
-  //     const response = await fetch(
-  //       SERVER_NAME_PROYECTOS + "projects/"
-  //     );
-  //     const data = await response.json();
-  //     alert("Hii <3");
-  //     setProyectos(proyectos);
-  //     proyectos.forEach((proyecto: Proyecto) => {
-  //       let map = new Map<string, Tarea>();
-  //       tareas.set(proyecto.id_producto, map);
-  //     });
-  //     setLoading(false);
-  //   } catch (error) {
-  //     console.error("Error fetching ticket:", error);
-  //   }
-  // };
-
-  // const getTareasDeProyecto = async (map: Map<string, Tarea>,id_project: number) => {
-  //   try {
-  //     const response = await fetch(
-  //       SERVER_NAME_PROYECTOS + "projects/" + id_project.toString() + "/tasks"
-  //     );
-
-  //     const data = await response.json();
-  //     data.forEach((tarea: Tarea) => {
-  //       map.set(tarea.id_tarea, tarea);
-  //     });
-  //   } catch (error) {
-  //     console.error("Error fetching ticket:", error);
-  //   }
-  // };
 
   const getBloquesDeTareas = async () => {
     try {
@@ -71,7 +37,6 @@ export default function Calendario() {
         RECURSOS_URL + "bloque_laboral"
       );
       let data = await response.json();
-      // asignarTareaABloque(data, tareas);
       setBloquesDeTrabajo(data);
       setLoading(false);
     } catch (error) {
@@ -81,10 +46,6 @@ export default function Calendario() {
 
 
   useEffect(() => {
-    // getProyectos();
-    // tareas.forEach((map, id_proyecto) => {
-    //   getTareasDeProyecto(map, id_proyecto)
-    // })
     getBloquesDeTareas();
   }, []);
   const handleLeftClick = () => {

@@ -70,5 +70,4 @@ export interface BloqueDeTrabajo {
   legajo: number
   horasDelBloque: number
   fecha: Date
-  tareaAsociada: Tarea | null
 }

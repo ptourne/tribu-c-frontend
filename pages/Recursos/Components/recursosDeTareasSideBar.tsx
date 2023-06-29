@@ -55,36 +55,13 @@ export const RecursosDeTareasSideBar: React.FC<RecursosDeTareasSideBar> = ({ tar
                       </>
                       :
                       recursos.map((recurso: Recurso) =>
-                          <TarjetaRecurso recurso={recurso} recursoStats= {getEstadisticasRecursos(recurso)} tarea= {tarea} key= {recurso.legajo}/>
+                          tarea && <TarjetaRecurso recurso={recurso} tareaActual= {tarea} key= {recurso.legajo}/>
                           )
                   }
               </div>
           </form>
       </>
   )
-}
-
-
-// Esta función obtiene las estadisticas de los recursos (Se deben obtener llamando a endpoints)
-function getEstadisticasRecursos(recurso: Recurso) {
-  //
-  // TODO: Acá se deben obtener vía endpoints
-  //
-
-  // Todo esto de acá es momentaneo. Me pareció que tener una función a la que se le pase un recurso y esta devuelva la info del recurso es lo más sencillo. 
-  if (recurso.Nombre == "Maria") {
-    return ({
-      horasConsumidasEnTarea: 10,
-      horasConsumidasEnProyecto: 150,
-      tareasFinalizadasEnElProyecto: 15,
-    })
-  } else {
-    return ({
-      horasConsumidasEnTarea: 0,
-      horasConsumidasEnProyecto: 75,
-      tareasFinalizadasEnElProyecto: 8,
-    })
-  }
 }
 
 const estilos = {
