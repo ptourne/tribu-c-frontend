@@ -10,17 +10,6 @@
     border: 1px solid rgb(221, 221, 221);
 }
 
-#divInfoTicketExterno{
-    flex-basis: 40%;
-    border-radius: 10px;
-    border: 1px solid rgb(221, 221, 221);
-    margin-top: 25px;
-    margin-left: 1%;
-    background-color: rgb(255, 255, 255);
-    margin-bottom: 20px;
-    background-color: #61a1fe;
-    text-align: center;
-}
 #divInfoTicketInterno{
     h2{
         color: white;
@@ -56,33 +45,11 @@
 
 }
 #DivExternFormTicket{
-    width: 2600px;
-    height: 830px;
+    width: 2800px;
+    height: 740px;
     #modalContenido{
         width: 800px;
         height: 700px;    
     }
 }
 
-/*
-#DivPrincipalEnTicket{
-    display: flex;
-    flex-direction: column;
-    background-color: rgb(59, 130, 231);
-    margin-bottom: 200px;
-    padding-bottom: 200px;
-}
-#DivEnTicket{
-    display: flex;
-    flex-direction: row;
-    background-color: rgb(255, 255, 255);
-    padding: 0px 0px 0px 0px;
-    margin: 0px 0px 20px 0px;
-
-}
-
-
-#TituloTask{
-    text-align: center;
-    font-size: 20px;
-}*/

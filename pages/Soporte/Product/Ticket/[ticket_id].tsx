@@ -2,6 +2,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { FaEllipsisV } from "react-icons/fa";
+import { FormTicket } from "../../Componentes/FormTicket";
 
 interface Ticket {
   title: string;
@@ -115,6 +116,7 @@ function TicketPage() {
   const [ticket, setTicket] = useState<Ticket>(INITIALTICKET);
   const [product, setProduct] = useState<Product | null>(null);
   const [taskId, setTaskId] = useState<number>(0);
+  const [showForm, setShowForm] = useState(false);
 
   useEffect(() => {
     const fetchTicket = async () => {
@@ -150,7 +152,7 @@ function TicketPage() {
     if (ticket.product_id) {
       fetchProduct();
     }
-  }, [ticket]);
+  }, [ticket, showForm]);
 
   const [projects, setProjects] = useState<Project[]>([]);
 
@@ -252,6 +254,13 @@ function TicketPage() {
       } catch (error) {
         console.error("Error al cerrar el ticket:", error);
       }
+    }
+  };
+  const handleModificar = () => {
+    try {
+      setShowForm(true);
+    } catch (error) {
+      console.log(error + "Hubo error");
     }
   };
 
@@ -385,7 +394,7 @@ function TicketPage() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const dropdownItems: DropdownItem[] = [
-    { label: "Modificar", onClick: () => console.log("Modificar") },
+    { label: "Modificar", onClick: handleModificar },
     { label: "Eliminar", onClick: handleDelete },
     { label: "Derivar", onClick: openModal },
     { label: "Finalizar", onClick: handleUpdateState },
@@ -393,12 +402,12 @@ function TicketPage() {
 
   return (
     <div className="flex px-8 py-8">
-      <div className="w-1/2 mr-2 bg-white shadow-xl rounded-lg">
+      <div className="w-1/2 mr-2 bg-blue-400 shadow-xl rounded-lg">
         <div className="p-6">
           {ticket ? (
             <div>
               <div className="flex flex-row justify-between place-items-center">
-                <h1 className="text-xl font-bold">Ticket</h1>
+                <h1 className="text-xl text-black font-bold">Ticket</h1>
 
                 <div className="relative">
                   <button
@@ -406,14 +415,14 @@ function TicketPage() {
                     className="m-1 btn"
                     onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                   >
-                    <FaEllipsisV />
+                    <FaEllipsisV/>
                   </button>
 
                   {isDropdownOpen && (
                     <ul className="absolute z-10 w-52 p-2 bg-white shadow rounded">
                       {dropdownItems.map((item) => (
                         <li
-                          className="hover:bg-gray-300"
+                          className="hover:bg-blue-500 hover:text-white"
                           key={item.label}
                           onClick={item.onClick}
                         >
@@ -425,21 +434,21 @@ function TicketPage() {
                 </div>
               </div>
 
-              <h1 className="text-xl font-bold mb-4">{ticket.title}</h1>
+              <h1 className="text-xl text-white font-bold mb-4">{ticket.title}</h1>
 
-              <p className="mb-2">Producto: {product?.name}</p>
-              <p className="mb-2">Version: {product?.version}</p>
-              <p className="mb-2">Descripcion: {ticket.description}</p>
-              <p className="mb-2">Severidad: {ticket.severity}</p>
-              <p className="mb-2">Prioridad: {ticket.priority}</p>
-              <p className="mb-2">Estado: {ticket.state}</p>
-              <p className="mb-2">Inicio: {ticket.timeStart}</p>
-              <p className="mb-2">Tipo: {ticket.type}</p>
-              <p className="mb-2">
+              <p className="mb-2 text-white">Producto: {product?.name}</p>
+              <p className="mb-2 text-white">Version: {product?.version}</p>
+              <p className="mb-2 text-white">Descripcion: {ticket.description}</p>
+              <p className="mb-2 text-white">Severidad: {ticket.severity}</p>
+              <p className="mb-2 text-white">Prioridad: {ticket.priority}</p>
+              <p className="mb-2 text-white">Estado: {ticket.state}</p>
+              <p className="mb-2 text-white">Inicio: {ticket.timeStart}</p>
+              <p className="mb-2 text-white">Tipo: {ticket.type}</p>
+              <p className="mb-2 text-white">
                 Tiempo para Resolucion: {ticket.supportTime}
               </p>
-              <p className="mb-2">Client ID: {ticket.client_id}</p>
-              <p className="mb-2">Responsible ID: {ticket.responsible_id}</p>
+              <p className="mb-2 text-white">Client ID: {ticket.client_id}</p>
+              <p className="mb-2 text-white">Responsible ID: {ticket.responsible_id}</p>
             </div>
           ) : (
             <p>Cargando ticket...</p>
@@ -447,24 +456,44 @@ function TicketPage() {
         </div>
       </div>
 
-      <div className="w-1/2 ml-2 bg-white shadow-xl rounded-lg">
+      <div className="w-1/2 ml-2 bg-white border-solid border-2 border-gray-200 shadow-xl rounded-lg">
         <div className="p-6">
           <h2 className="text-xl font-bold">Tareas</h2>
           {assignments.map((assignment) => (
             <button
               key={assignment.id}
-              className="bg-gray-400 hover:bg-gray-300 rounded-lg p-2 w-full"
+              className="bg-blue-500 hover:bg-blue-400 text-white font-bold rounded-lg p-2 w-full"
               onClick={() =>
-                router.push(
-                  `/proyectos/${assignment.project_id}/tareas`
-                )
+                router.push(`/proyectos/${assignment.project_id}/tareas`)
               }
             >
-                Ver Tarea
+              Ver Tarea
             </button>
           ))}
         </div>
       </div>
+
+      {showForm && (
+        <div
+          className="fixed inset-0 flex items-center justify-center z-50"
+          id="DivExternFormTicket"
+        >
+          <div className="bg-white p-8 rounded shadow-lg" id="modalContenido">
+            <FormTicket
+              productIdNumerico={ticket.product_id}
+              idTicketRecv={ticket.id}
+            />
+            <button
+              onClick={() => {
+                setShowForm(false);
+              }}
+              id="buttonOpcionTicket"
+            >
+              Cerrar
+            </button>
+          </div>
+        </div>
+      )}
 
       {isOpen && (
         <div className="fixed inset-0 flex items-center justify-center z-50">

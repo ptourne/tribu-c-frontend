@@ -62,3 +62,12 @@ export interface Recurso {
   Apellido: string
   legajo: number
 }
+
+export interface BloqueDeTrabajo {
+  codBloqueLaboral: number
+  codProyectoDeLaTarea: number
+  codTarea: number
+  legajo: number
+  horasDelBloque: number
+  fecha: Date
+}
