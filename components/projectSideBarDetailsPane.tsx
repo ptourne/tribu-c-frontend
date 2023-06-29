@@ -49,7 +49,7 @@ const productList = [
   },
   {
     id: 4,
-    name: "Gestión de Inventario",
+    name: "Sistema de Tickets",
     versions: [
       {
         name: "1.0.0",
@@ -59,7 +59,7 @@ const productList = [
   },
   {
     id: 5,
-    name: "Gestión de Inventario",
+    name: "Sistema de Molinetes",
     versions: [
       {
         name: "1.0.0",
