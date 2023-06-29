@@ -30,13 +30,14 @@ export default function Soporte() {
 
   return (
     <>
+    
       <h1 id="tituloH1"> Productos </h1>
       <button
             type="button"
             onClick={handleReporte}
             id="buttonReportes"
           >
-            Reporte
+            Reporte de Tickets
           </button>
       <ProductBar products={products} />
       
