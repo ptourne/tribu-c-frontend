@@ -119,7 +119,6 @@ function TaskSideBarDetailsPane({
   const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setTitulo(event.target.value);
     if (mode === EDIT) setTituloSaved(false);
-    setTituloSaved(false);
     setPendingChanges(true);
   };
 
@@ -132,7 +131,6 @@ function TaskSideBarDetailsPane({
   const handleStateChange = (value: number) => {
     setState(value);
     if (mode === EDIT) setStateSaved(false);
-    setStateSaved(false);
     setPendingChanges(true);
   };
 
@@ -142,7 +140,6 @@ function TaskSideBarDetailsPane({
     const value = event.target.value;
     setDescription(value);
     if (mode === EDIT) setDescriptionSaved(false);
-    setDescriptionSaved(false);
     setPendingChanges(true);
   };
 
@@ -153,7 +150,6 @@ function TaskSideBarDetailsPane({
     if (!isNaN(value) && estimatedDuration != value) {
       setEstimatedDuration(value);
       if (mode === EDIT) setEstimatedDurationSaved(false);
-      setEstimatedDurationSaved(false);
       setPendingChanges(true);
     }
   };
@@ -161,7 +157,6 @@ function TaskSideBarDetailsPane({
   const handleAccumulatedHoursChange = (value: number) => {
     setAccumulatedHours(value);
     if (mode === EDIT) setAccumulatedHoursSaved(false);
-    setAccumulatedHoursSaved(false);
     setPendingChanges(true);
   };
 
