@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { Producto, Ticket } from "../types";
 import { ProductBar } from "./Componentes/ProductBar";
+import { Modal } from "react-bootstrap";
 
 export default function Soporte() {
   //Usado similiar al constructor inicia con INITIAL_STATE
@@ -14,11 +15,13 @@ export default function Soporte() {
     );
   };
 
+
+  
   const handleReporte = () => {
     console.log("Click en reporte.");
-    <div>
-      <img src={'/public/reportes.jpeg'} alt="Mi imagen" />
-    </div>
+    const imagen = new Image();
+    imagen.src = 'https://github.com/ptourne/tribu-c-frontend/blob/main/public/reportes.jpeg?raw=true';
+    window.open(imagen.src);
   }
   
 
