@@ -136,7 +136,26 @@ function ProjectSideBarDetailsPane({
   }, [project]);
 
   const getClients = async () => {
-
+    axios
+      .get("https://anypoint.mulesoft.com/mocking/api/v1/sources/exchange/assets/754f50e8-20d8-4223-bbdc-56d50131d0ae/clientes-psa/1.0.0/m/api/clientes")
+      .then((data) => {
+        if (data.data.ok) {
+          console.log(data);
+          //setClients(data.data.msg);
+        }
+      })
+      .catch((err) => {
+        toast.error(
+          err.response?.data?.msg
+            ? "Hubo un error al obtener los clientes: " + err.response?.data?.msg
+            : "Hubo un error al obtener los clientes",
+          {
+            position: "top-right",
+            autoClose: 2000,
+            hideProgressBar: true,
+          }
+        );
+      });
   }
 
   const getProducts = async () => {
