@@ -91,7 +91,7 @@ function TaskSideBarDetailsPane({
 
   const getResources = async () => {
     axios
-      .get("endpoint de obtener recursos")
+      .get("https://psa-recursos.eeoo.ar/recurso")
       .then((data) => {
         if (data.data.ok) {
           console.log(data);
