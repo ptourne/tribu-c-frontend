@@ -45,6 +45,17 @@ interface Resource {
   Apellido: string;
 }
 
+interface Task {
+  descripcion: string;
+  estado: number;
+  horas_acumuladas: number;
+  id_proyecto: number;
+  id_tarea: number;
+  legajo_responsable: number;
+  tiempo_estimado_finalizacion: number;
+  titulo: string;
+}
+
 const resourcesTest: Resource[] = [
   {
     legajo: 1,
@@ -74,6 +85,7 @@ function TicketPage() {
   const [isOpen, setIsOpen] = useState(false);
   const [ticket, setTicket] = useState<Ticket | null>(null);
   const [product, setProduct] = useState<Product | null>(null);
+  const [taskId, setTaskId] = useState<number>(0);
 
   useEffect(() => {
     const fetchTicket = async () => {
@@ -269,7 +281,10 @@ function TicketPage() {
 
       if (response.ok) {
         console.log("Tarea asignada exitosamente");
+        const data = await response.json();
+        setTaskId(data.msg.id_tarea)
         handleUpdateResponsible()
+
         closeModal();
       } else {
         console.error("Error al asignar la tarea:", response.status);
@@ -279,6 +294,7 @@ function TicketPage() {
     }
   };
 
+  console.log(taskId);
 
   return (
     <div className="flex px-8 py-8">
