@@ -75,7 +75,7 @@ export default function Ticket() {
       );
       setTickets(ticketsFiltradoById);
     });
-  }, [product_id]); //el product_id cambia muchas veces asi que hacemos un UE por esa variable.
+  }, [product_id, productID, tickets]); //el product_id cambia muchas veces asi que hacemos un UE por esa variable.
 
   const [showFormFilter, setShowFormFilter] = useState(false); // Nuevo estado para controlar la visibilidad del formulario
   const handleOpenFormTicket = () => {
