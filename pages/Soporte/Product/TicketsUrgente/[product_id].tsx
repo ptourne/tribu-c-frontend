@@ -58,7 +58,7 @@ function TicketUrgente() {
 
   return (
     <>
-      <h1> Ricardo my bro</h1>
+      <h1 id="tituloTicketUrgente">Tickets proximos a vencer: </h1>
       <ul style={{ marginTop: "30px", width: "800px" }}>
         {tickets.map((unTicket) => (
           <li
@@ -72,7 +72,10 @@ function TicketUrgente() {
             <div style={{ marginBottom: "10px" }}>
               <h1 id="tituloH1Blanco">{unTicket.title}</h1>
               <p id="LetraGrande">
-                <strong>Horas Restantes: {unTicket.supportTime} </strong>
+                <strong>
+                  Horas Restantes: {unTicket.supportTime} (
+                  {60 * parseFloat(unTicket.supportTime)} minutos ){" "}
+                </strong>
               </p>
 
               <p>
