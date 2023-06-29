@@ -32,7 +32,7 @@ export interface Tarea {
   tiempo_estimado_fin: number;
   horas_acumuladas: number;
   estado: number;
-  responsable: string;
+  legajo_responsable: string;
 
 }
 

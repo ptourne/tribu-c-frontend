@@ -28,11 +28,15 @@ function TaskSideBarDetailsPane({
   project_id,
   getTasksFunction,
 }: TaskSideBarProps) {
+  const [resources, setResources] = useState([{legajo: 1, Nombre: "Juan", Apellido: "Perez"}, {legajo: 2, Nombre: "Maria", Apellido: "Lopez"}]);
+
   const [mode, setMode] = useState(EDIT);
   const [lastTask, setLastTask] = useState<Tarea | undefined>(undefined);
   const [pendingChanges, setPendingChanges] = useState(false);
   const [titulo, setTitulo] = useState("");
   const [tituloSaved, setTituloSaved] = useState(true);
+  const [responsible, setResponsible] = useState("");
+  const [responsibleSaved, setResponsibleSaved] = useState(true);
   const [state, setState] = useState(0);
   const [stateSaved, setStateSaved] = useState(true);
   const [description, setDescription] = useState("");
@@ -47,6 +51,7 @@ function TaskSideBarDetailsPane({
     if (task) {
       setMode(EDIT);
       setTitulo(task.titulo || "");
+      setResponsible(task.legajo_responsable || "");
       setState(task.estado || 0);
       setDescription(task.descripcion || "");
       setEstimatedDuration(task.tiempo_estimado_fin || 0);
@@ -55,6 +60,7 @@ function TaskSideBarDetailsPane({
     } else {
       setMode(ADD);
       setTitulo("Nuevo Tarea");
+      setResponsible("");
       setState(0);
       setDescription("");
       setEstimatedDuration(0);
@@ -74,6 +80,7 @@ function TaskSideBarDetailsPane({
     }
     setLastTask(task);
     setTituloSaved(true);
+    setResponsibleSaved(true);
     setStateSaved(true);
     setDescriptionSaved(true);
     setEstimatedDurationSaved(true);
@@ -85,6 +92,12 @@ function TaskSideBarDetailsPane({
     setTitulo(event.target.value);
     if (mode === EDIT) setTituloSaved(false);
     setTituloSaved(false);
+    setPendingChanges(true);
+  };
+
+  const handleResponsibleChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setResponsible(event.target.value);
+    if (mode === EDIT) setResponsibleSaved(false);
     setPendingChanges(true);
   };
 
@@ -133,8 +146,9 @@ function TaskSideBarDetailsPane({
       tiempo_estimado_finalizacion: estimatedDuration,
       horas_acumuladas: 1,
       estado: state,
-      legajo_responsable: 1,
+      legajo_responsable: responsible,
     };
+    console.log(taskToSave);
 
     // Make an API request to save the changes
     if (mode === ADD) saveTask(taskToSave);
@@ -157,6 +171,7 @@ function TaskSideBarDetailsPane({
         });
         getTasksFunction();
         setTituloSaved(true);
+        setResponsibleSaved(true);
         setStateSaved(true);
         setLastTask(task);
         setTituloSaved(true);
@@ -168,6 +183,7 @@ function TaskSideBarDetailsPane({
 
         setTitulo("Nueva Tarea");
         setState(0);
+        setResponsible("");
         setDescription("");
         setEstimatedDuration(0);
         setAccumulatedHours(0);
@@ -189,7 +205,7 @@ function TaskSideBarDetailsPane({
 
   const updateTask = (taskToSave: Tarea) => {
     axios
-      .put(SERVER_NAME_PROYECTOS + "admin/save-price-rules", taskToSave)
+      .put(SERVER_NAME_PROYECTOS + "projects/" + project_id + "/tasks/" + task?.id_tarea, taskToSave)
       .then(() => {
         toast.success("Cambios guardados correctamente!", {
           position: "top-right",
@@ -198,6 +214,7 @@ function TaskSideBarDetailsPane({
         });
         getTasksFunction();
         setTituloSaved(true);
+        setResponsibleSaved(true);
         setStateSaved(true);
         setLastTask(task);
         setTituloSaved(true);
@@ -228,6 +245,7 @@ function TaskSideBarDetailsPane({
 
         getTasksFunction();
         setTituloSaved(true);
+        setResponsibleSaved(true);
         setStateSaved(true);
         setLastTask(task);
         setTituloSaved(true);
@@ -237,6 +255,7 @@ function TaskSideBarDetailsPane({
         setAccumulatedHoursSaved(true);
 
         setTitulo(task?.titulo || "");
+        setResponsible("");
         setState(task?.estado || 0);
         setDescription(task?.descripcion || "");
         setEstimatedDuration(task?.tiempo_estimado_fin || 0);
@@ -302,7 +321,7 @@ function TaskSideBarDetailsPane({
           <div className="d-flex justify-content-between flex-col mt-1 mb-3">
             <div className="d-flex justify-content-between align-items-center flex-row">
               <div className="d-flex my-1 flex-fill justify-content-between align-items-center flex-row">
-                <div className="col-md-5">Estado</div>
+                <div className="col-md-5">Estado *</div>
                 <div className="col-md-7 ms-3 d-flex justify-content-between align-items-center flex-row flex-fill">
                   <TaskStatusButtons
                     selectedState={state}
@@ -329,8 +348,29 @@ function TaskSideBarDetailsPane({
             </div>
           </div>
           <div className="d-flex justify-content-between align-items-center flex-row">
+              <div className="flex-grow-1 d-flex justify-content-between align-items-center flex-row">
+                <label htmlFor="state" className="col-md-6 form-label">
+                  Responsable Asignado *
+                </label>
+                <div className="col-md-6">
+                  <select
+                    className="form-select border-0 border-bottom rounded-0 p-0"
+                    id="inputGroupSelect01"
+                    value={responsible}
+                    onChange={handleResponsibleChange}
+                  >
+                    <option value="">Seleccione una opci&oacute;n</option>
+                    {resources.map((resource) => 
+                      <option key={resource.legajo} value={resource.legajo}>{resource.Nombre + ' ' + resource.Apellido}</option>
+                    )}
+                  </select>
+                </div>
+              </div>
+              <UnsavedWarningIcon isSavePending={responsibleSaved} />
+          </div>
+          <div className="d-flex justify-content-between align-items-center flex-row">
             <div className="d-flex my-1 flex-fill justify-content-between align-items-center flex-row">
-              <div className="col-md-5">Tiempo estimado de trabajo</div>
+              <div className="col-md-5">Tiempo estimado de trabajo *</div>
 
               <div className="col-md-7 ms-3 d-flex justify-content-between align-items-center flex-row flex-fill">
                 <input
