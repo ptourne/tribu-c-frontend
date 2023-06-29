@@ -100,15 +100,6 @@ function TaskSideBar({ task, project_id, getTasksFunction }: TaskSideBarProps) {
           <RecursosDeTareasSideBar tarea= {selectedTask} project_id= {project_id}/>
         </div>
       </div>
-      {mode === EDIT && (
-        <button
-          type="button"
-          className="btn btn-primary mt-auto p-2"
-          onClick={getTasks}
-        >
-          Ver Tareas
-        </button>
-      )}
     </div>
   );
 }
