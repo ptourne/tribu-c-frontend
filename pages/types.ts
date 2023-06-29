@@ -29,10 +29,10 @@ export interface Tarea {
   id_project: string;
   titulo: string;
   descripcion: string;
-  tiempo_estimado_fin: number;
+  tiempo_estimado_finalizacion: number;
   horas_acumuladas: number;
   estado: number;
-  responsable: string;
+  legajo_responsable: string;
 
 }
 
