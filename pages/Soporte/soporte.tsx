@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { Producto, Ticket } from "../types";
 import { ProductBar } from "./Componentes/ProductBar";
+import { Modal } from "react-bootstrap";
 
 export default function Soporte() {
   //Usado similiar al constructor inicia con INITIAL_STATE
@@ -14,6 +15,17 @@ export default function Soporte() {
     );
   };
 
+
+  
+  const handleReporte = () => {
+    console.log("Click en reporte.");
+    
+    const imagen = new Image();
+    imagen.src = 'https://github.com/ptourne/tribu-c-frontend/blob/main/public/reportes.jpeg?raw=true';
+    window.open(imagen.src);
+  }
+  
+
   useEffect(() => {
     fetchProductos().then((productosFetch) => {
       setProducts(productosFetch);
@@ -22,8 +34,18 @@ export default function Soporte() {
 
   return (
     <>
+    
       <h1 id="tituloH1"> Productos </h1>
+      <button
+            type="button"
+            onClick={handleReporte}
+            id="buttonReportes"
+          >
+            Reporte de Tickets
+          </button>
       <ProductBar products={products} />
+      
     </>
+    
   );
 }
