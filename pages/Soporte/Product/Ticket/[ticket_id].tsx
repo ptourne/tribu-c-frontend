@@ -181,7 +181,37 @@ function TicketPage() {
         );
 
         if (response.ok) {
-          // Actualizar el estado del ticket localmente si la solicitud fue exitosa
+          setTicket(updatedTicket);
+          console.log("Ticket cerrado exitosamente");
+        } else {
+          console.error("Error al cerrar el ticket:", response.status);
+        }
+      } catch (error) {
+        console.error("Error al cerrar el ticket:", error);
+      }
+    }
+  };
+
+  const handleUpdateResponsible = async () => {
+    if (ticket) {
+      const updatedTicket = {
+        ...ticket,
+        responsible_id: selectedResourceId,
+      };
+
+      try {
+        const response = await fetch(
+          `https://psa-soporte.eeoo.ar/tickets/${ticket.id}`,
+          {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(updatedTicket),
+          }
+        );
+
+        if (response.ok) {
           setTicket(updatedTicket);
           console.log("Ticket cerrado exitosamente");
         } else {
@@ -201,18 +231,14 @@ function TicketPage() {
     setIsOpen(false);
   };
 
-  const [selectedProjectId, setSelectedProjectId] = useState<number | null>(
-    null
-  );
+  const [selectedProjectId, setSelectedProjectId] = useState<number>(0);
 
   const handleProjectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedProjectId = parseInt(event.target.value);
     setSelectedProjectId(selectedProjectId);
   };
 
-  const [selectedResourceId, setSelectedResourceId] = useState<number | null>(
-    null
-  );
+  const [selectedResourceId, setSelectedResourceId] = useState<number>(0);
 
   const handleResourceChange = (
     event: React.ChangeEvent<HTMLSelectElement>
@@ -224,9 +250,9 @@ function TicketPage() {
 
   const handleAssignment = async () => {
     const taskData = {
-      titulo: "prueba asignacion",
-      descripcion: "asignacion de tarea",
-      tiempo_estimado_finalizacion: 1,
+      titulo: ticket?.title,
+      descripcion: ticket?.description,
+      tiempo_estimado_finalizacion: ticket?.supportTime,
       legajo_responsable: selectedResourceId,
     };
 
@@ -244,6 +270,7 @@ function TicketPage() {
 
       if (response.ok) {
         console.log("Tarea asignada exitosamente");
+        handleUpdateResponsible()
         closeModal();
       } else {
         console.error("Error al asignar la tarea:", response.status);
