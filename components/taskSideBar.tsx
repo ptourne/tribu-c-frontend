@@ -97,18 +97,9 @@ function TaskSideBar({ task, project_id, getTasksFunction }: TaskSideBarProps) {
           role="tabpanel"
           aria-labelledby="resources-tab"
         >
-          <RecursosDeTareasSideBar tarea= {selectedTask}/>
+          <RecursosDeTareasSideBar tarea={selectedTask} />
         </div>
       </div>
-      {mode === EDIT && (
-        <button
-          type="button"
-          className="btn btn-primary mt-auto p-2"
-          onClick={getTasks}
-        >
-          Ver Tareas
-        </button>
-      )}
     </div>
   );
 }
