@@ -96,7 +96,7 @@ function ProjectSideBarDetailsPane({
       setCustomization(project.customizacion);
       setStartDate(project.fecha_inicio || null);
       setFinishDate(project.fecha_fin_estimada || null);
-      setEstimatedCost(project.costo_estimado.toString());
+      setEstimatedCost(project.costo_estimado || 0);
       if (versionsDict[project.id_producto]) {
         setVersions(versionsDict[project.id_producto].versions);
         if (versionsDict[project.id_producto].customizations[project.version])

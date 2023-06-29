@@ -1,22 +1,61 @@
-import { useState } from "react";
+import { SetStateAction, useEffect, useState } from "react";
 import Popup from "./popup";
-import { Tarea } from "./types";
+import { Tarea } from "../../types";
  
 import {   FaSistrix,FaSearchengin,FaPencilAlt, FaUserClock } from "react-icons/fa";
+import { BloqueDeTrabajo } from "@/pages/types";
+import { SERVER_NAME_PROYECTOS } from "@/environments";
+import axios from "axios";
+import RECURSOS_URL from "./recursosURL";
+import { toast } from "react-toastify";
 interface TarjetaTarea {
-  tarea: Tarea,
+  bloqueDeTrabajo: BloqueDeTrabajo,
 }
-export const TarjetaTarea: React.FC<TarjetaTarea> = ({ tarea }) => {
+export const TarjetaTarea: React.FC<TarjetaTarea> = ({ bloqueDeTrabajo }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [tipoBoton, setTipoBoton] = useState("guardar");
-  const [horas , setHoras] = useState(tarea.horasDedicadas);
+  const [tipoBoton, setTipoBoton] = useState("guardar");   
+  const [horas , setHoras] = useState(bloqueDeTrabajo.horasDelBloque);
+  const [tareaAsociada, setTareaAsociada] = useState<Tarea>({
+    id_tarea: "",
+    id_project: "",
+    titulo: "",
+    descripcion: "",
+    tiempo_estimado_fin: 0,
+    horas_acumuladas: 0,
+    estado: 0,
+    responsable: ""
+  });
+  const [classNameDiv, setClassNameDiv] = useState("");
+  const [classNameInput, setClassNameInput] = useState("");
 
   // Esto abre el popup
   const togglePopup = () => {
     if (!isOpen)
       setIsOpen(true);
   }
+  const ocultarClick = () => {
+    if (isOpen)
+      setIsOpen(false);
+  }
+  const getTareasDeProyecto = async () => {
+    try {
+      const response = await fetch(
+        SERVER_NAME_PROYECTOS + "projects/" + bloqueDeTrabajo.codProyectoDeLaTarea + "/tasks"
+      );
 
+      response.json().then((data) => {
+        data.msg.forEach((tarea: Tarea) => {
+          if (tarea.id_tarea == bloqueDeTrabajo.codTarea.toString() && tarea.id_proyecto == bloqueDeTrabajo.codProyectoDeLaTarea.toString()) {
+            setTareaAsociada(tarea);
+            setClassNameDiv("d-flex flex-column  border-2 border-dark rounded-2 bd-highlight mb-3 align-items-center " + colorDeTarea(tareaAsociada.estado));
+            setClassNameInput("form-control border-0 rounded-0 p-1 " + colorDeTarea(tareaAsociada.estado));
+        } 
+        })
+      });
+    } catch (error) {
+      console.error("Error fetching ticket:", error);
+    }
+  };
   // Esto es para cargar en la variable horas el input del user
   const handleCambioDeHoras = (event: React.ChangeEvent<HTMLInputElement>) => {
     let number = parseInt(event.target.value)
@@ -26,28 +65,100 @@ export const TarjetaTarea: React.FC<TarjetaTarea> = ({ tarea }) => {
     setHoras(number);
   };
 
+  const deleteCodBloqueLaboral = async (id:number) => {
+    try {
+      const response = await fetch(
+        RECURSOS_URL + "bloque_laboral?codBloqueLaboral="+id
+      );
+      const data = await response.json();
+      
+    } catch (error) {
+      console.error("Error eliminando codBloqueLaboral:", error);
+    }
+  };
+
   // Evento del click del botón
-  const handleClick = ( ) => {
-    //
-    // TODO: Acá se debe llamar a un endpoint
-    //
-    //alert("Las horas cargadas son: " + horas);
-     
+  const guardarClick = () => {
+    const bloque = {
+      codBloqueLaboral: bloqueDeTrabajo.codBloqueLaboral,
+      codProyectoDeLaTarea: bloqueDeTrabajo.codProyectoDeLaTarea,
+      codTarea: bloqueDeTrabajo.codTarea,
+      legajo: bloqueDeTrabajo.legajo,
+      horasDelBloque: horas,
+      fecha: bloqueDeTrabajo.fecha, // Agregar bloque laboral
+    };
+      axios
+    .put(RECURSOS_URL + "bloque_laboral/" + bloqueDeTrabajo.codBloqueLaboral.toString(), bloque)
+    .then(() => {
+    toast.success("Bloque asignado", {
+      position: "top-right",
+      autoClose: 2000,
+      hideProgressBar: true,
+    });
+    })
+    .catch((e) => {
+    toast.error(
+      e.response?.data?.msg
+        ? "Hubo un error al crear el bloque: " + e.response?.data?.msg
+        : "Hubo un error al crear el bloque",
+      {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: true,
+      }
+    );
+    });
     setIsOpen(false);
   }
 
-  // Acá las classnames las pongo por fuera para poder marcar el color correspondiente de la tarea (A menos que se quiera estilizar más no debería ser necesario tocar esto)
-  const classNameDiv = "d-flex flex-column  border-2 border-dark rounded-2 bd-highlight mb-3 align-items-center " + colorDeTarea(tarea.estado);
-  const classNameInput = "form-control border-0 rounded-0 p-1 " + colorDeTarea(tarea.estado);
+  const eliminarClick = async () => {
+    //   axios
+    // .delete(RECURSOS_URL + "bloque_laboral/" + bloqueDeTrabajo.codBloqueLaboral.toString())
+    // .then(() => {
+    // toast.success("Bloque eliminado", {
+    //   position: "top-right",
+    //   autoClose: 2000,
+    //   hideProgressBar: true,
+    // });
+    // })
+    // .catch((e) => {
+    // toast.error(
+    //   e.response?.data?.msg
+    //     ? "Hubo un error al eliminar el bloque: " + e.response?.data?.msg
+    //     : "Hubo un error al eliminar el bloque",
+    //   {
+    //     position: "top-right",
+    //     autoClose: 2000,
+    //     hideProgressBar: true,
+    //   }
+    // );
+    // });
+    try {
+      const response = await fetch(
+        RECURSOS_URL + "bloque_laboral?codBloqueLaboral="+ bloqueDeTrabajo.codBloqueLaboral.toString()
+      );
+      toast.success("Bloque eliminado", {
+      position: "top-right",
+      autoClose: 2000,
+      hideProgressBar: true,
+      });
+      const data = await response.json();
+      setIsOpen(false);
+      
+    } catch (error) {
+      console.error("Error eliminando codBloqueLaboral:", error);
+    }
+  }
+
+  useEffect(() => {
+    getTareasDeProyecto();
+  }, []);
+
 
   return <div>
-    <div onClick={togglePopup} className= {classNameDiv}  style={estilos.filas}>
-    {!isOpen ?  
-       
-       <  FaSearchengin /> :    <></>
-      }   
+    <div onClick={togglePopup} className= {classNameDiv}  style={estilos.filas}> 
       
-      { tarea.titulo }  
+      { tareaAsociada.titulo }  
     {
       isOpen && <Popup
         content={<>
@@ -69,10 +180,13 @@ export const TarjetaTarea: React.FC<TarjetaTarea> = ({ tarea }) => {
         </div>
         <div  className="d-flex justify-content-evenly">
 
-        <div onClick= { handleClick } className="d-flex flex-column border-2 border-dark rounded-2 mw-100 ps-3 pe-3 mb-3 mt-2 mx-1  align-items-center ">
+        <div onClick= { guardarClick } className="d-flex flex-column border-2 border-dark rounded-2 mw-100 ps-3 pe-3 mb-3 mt-2 mx-1  align-items-center ">
            guardar
         </div>
-        <div onClick= { handleClick } className="d-flex flex-column border-2  border-dark rounded-2  ps-3 pe-3 mb-3 mt-2 mx-1 align-items-center ">
+        <div onClick= { eliminarClick } className="d-flex flex-column border-2 border-dark rounded-2 mw-100 ps-3 pe-3 mb-3 mt-2 mx-1  align-items-center ">
+           eliminar
+        </div>
+        <div onClick= { ocultarClick } className="d-flex flex-column border-2  border-dark rounded-2  ps-3 pe-3 mb-3 mt-2 mx-1 align-items-center ">
           ocultar
         </div>
         
@@ -96,9 +210,10 @@ function colorDeTarea(estadoTarea: number) {
       return "bg-info"
     case 2:
       return "bg-success"
+    default:
+      return;
   }
 }
-
 const estilos = {
   filas: {
     margin: "10px",
