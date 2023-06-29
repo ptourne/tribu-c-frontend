@@ -34,7 +34,7 @@ export default function Layout({ children }: { children: any }) {
       title: "Soporte",
     },
     {
-      href: "/recursos",
+      href: "/Recursos/recursos",
       icon: FaUserClock,
       title: "Recursos",
     },

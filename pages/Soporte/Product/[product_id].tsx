@@ -1,16 +1,47 @@
-import { Producto, Ticket } from "@/pages/types";
+import { Cliente, Producto, Ticket } from "@/pages/types";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { useState } from "react";
+import { ARRAY_CLIENTES } from "../Componentes/Constantes";
 import TicketActions, {
   TicketActionsProps,
 } from "@/pages/Soporte/Componentes/TicketActions";
 import { FormTicket } from "../Componentes/FormTicket";
 
+interface Recurso {
+  Nombre: string;
+  legajo: number;
+  Apellido: string;
+}
+
 //Pagina donde se muestran todos los ticket_id y esta el boton [+] para crear el nuevo ticket.
+const INITIAL_RECURSO = [
+  { legajo: 1, Nombre: "Mario", Apellido: "Mendoza" },
+  { legajo: 2, Nombre: "Maria", Apellido: "Perez" },
+  { legajo: 3, Nombre: "Patricia", Apellido: "Gaona" },
+];
+
 export default function Ticket() {
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const [productoSelect, setProductoSelect] = useState<Producto>();
+  const [recursos, setRecurso] = useState<Array<Recurso>>(INITIAL_RECURSO);
+  const [clientes, setClientes] = useState<Array<Cliente>>(ARRAY_CLIENTES);
+
+  const obtenerNombreCliente = (idCliente: number): string => {
+    const unCliente = clientes.find((unCliente) => unCliente.id == idCliente);
+    if (unCliente) {
+      return unCliente.razon_social;
+    }
+    return "CLIENTE-DESCONOCIDO";
+  };
+
+  const obtenerNombreRecurso = (idRecurso: number): string => {
+    const recurso = recursos.find((unRecurso) => unRecurso.legajo == idRecurso);
+    if (recurso) {
+      return `${recurso.Nombre}  ${recurso.Apellido}`;
+    }
+    return "LEGAJO - DESCONOCIDO";
+  };
 
   const fetchTickets = (): Promise<Array<Ticket>> => {
     //2) Llamanda al backend Necesitamos obtener todos los tickets.
@@ -23,11 +54,9 @@ export default function Ticket() {
   // para acceder al 2 utilizamos product_id en router.query. en este caso pasamos el produc_id y los ticketsQuery
   const router = useRouter();
   const { product_id } = router.query;
+  const productID: string =
+    typeof product_id === "string" ? product_id : "VACIO";
 
-  let productID: string = "INICIADO";
-  if (typeof product_id === "string") {
-    productID = product_id;
-  }
   const fetchGetProductosById = (): Promise<Producto> => {
     //1) Llamanda al backend hacemos un GET de productos los id van en number recuerda !
     return fetch(`https://psa-soporte.eeoo.ar/product/${parseInt(productID)}`, {
@@ -46,7 +75,7 @@ export default function Ticket() {
       );
       setTickets(ticketsFiltradoById);
     });
-  }, []);
+  }, [product_id, productID, tickets]); //el product_id cambia muchas veces asi que hacemos un UE por esa variable.
 
   const [showFormFilter, setShowFormFilter] = useState(false); // Nuevo estado para controlar la visibilidad del formulario
   const handleOpenFormTicket = () => {
@@ -56,7 +85,7 @@ export default function Ticket() {
       setShowFormFilter(false);
     }
   };
-  
+
   //Cuando creamos el ticket vamos a pasar idTicket = -1.
   return (
     <>
@@ -76,6 +105,15 @@ export default function Ticket() {
             id="buttonAgregarTicket"
           >
             +
+          </button>
+          <button
+            type="button"
+            onClick={() =>
+              router.push(`/Soporte/Product/TicketsUrgente/${productID}`)
+            }
+            id="buttonTicketUrgente"
+          >
+            Tickets Urgentes
           </button>
         </h1>
         <div style={{ position: "absolute", left: "800px" }}>
@@ -97,14 +135,9 @@ export default function Ticket() {
               }}
             >
               <div style={{ marginBottom: "10px" }}>
-                <p>
-                  <strong>Título:</strong> {unTicket.title}
-                </p>
+                <h2 id="tituloH1Blanco">{unTicket.title}</h2>
                 <p>
                   <strong>Descripción:</strong> {unTicket.description}
-                </p>
-                <p>
-                  <strong>Estado:</strong> {unTicket.state}
                 </p>
                 <p>
                   <strong>Severidad:</strong> {unTicket.severity}
@@ -113,7 +146,24 @@ export default function Ticket() {
                   <strong>Prioridad:</strong> {unTicket.priority}
                 </p>
                 <p>
-                  <strong>Fecha inicio:</strong> {unTicket.timeStart}
+                  <strong>Estado:</strong> {unTicket.state}
+                </p>
+                <p>
+                  <strong>Inicio:</strong> {unTicket.timeStart}
+                </p>
+                <p>
+                  <strong>Tipo:</strong> {unTicket.type}
+                </p>
+                <p>
+                  <strong>Horas Restantes:</strong> {unTicket.supportTime}
+                </p>
+                <p>
+                  <strong>Cliente:</strong>{" "}
+                  {obtenerNombreCliente(unTicket.client_id)}
+                </p>
+                <p>
+                  <strong>Responsable:</strong>{" "}
+                  {obtenerNombreRecurso(unTicket.responsible_id)}
                 </p>
               </div>
               <div

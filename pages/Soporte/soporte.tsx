@@ -8,6 +8,7 @@ export default function Soporte() {
   const [products, setProducts] = useState<Array<Producto>>([]);
   const fetchProductos = (): Promise<Array<Producto>> => {
     //1) Llamanda al backend hacemos un GET de productos.
+    console.log("products SON:----- ");
     return fetch("https://psa-soporte.eeoo.ar/products").then((res) =>
       res.json()
     );
