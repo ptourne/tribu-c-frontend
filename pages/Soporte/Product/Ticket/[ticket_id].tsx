@@ -214,13 +214,45 @@ function TicketPage() {
     null
   );
 
-  const handleResourceChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleResourceChange = (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => {
     const selectedResourceId = parseInt(event.target.value);
     setSelectedResourceId(selectedResourceId);
   };
 
-  console.log(selectedProjectId)
-  console.log(selectedResourceId)
+
+  const handleAssignment = async () => {
+    const taskData = {
+      titulo: "prueba asignacion",
+      descripcion: "asignacion de tarea",
+      tiempo_estimado_finalizacion: 1,
+      legajo_responsable: selectedResourceId,
+    };
+
+    try {
+      const response = await fetch(
+        `https://tribu-c-proyectos-backend.onrender.com/projects/${selectedProjectId}/tasks`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(taskData),
+        }
+      );
+
+      if (response.ok) {
+        console.log("Tarea asignada exitosamente");
+        closeModal();
+      } else {
+        console.error("Error al asignar la tarea:", response.status);
+      }
+    } catch (error) {
+      console.error("Error al asignar la tarea:", error);
+    }
+  };
+
 
   return (
     <div className="flex px-8 py-8">
@@ -328,7 +360,7 @@ function TicketPage() {
               </button>
 
               <button
-                onClick={closeModal}
+                onClick={handleAssignment}
                 className="bg-gray-500  hover:bg-gray-400 text-white px-4 py-2 rounded mt-4"
               >
                 Asignar
