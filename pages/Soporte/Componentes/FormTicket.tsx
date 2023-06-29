@@ -532,7 +532,7 @@ export const FormTicket: React.FC<{
           <NotificacionesDelTicket
             onClose={() => setnotificacionError(false)}
             tipo="ERROR"
-            mensaje="ERROR ! Falta ingresar datos por favor ingreselos"
+            mensaje="Error. Ingrese todos los datos"
           />
         )}
       </form>

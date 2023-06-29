@@ -1,6 +1,9 @@
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { FaEllipsisV } from "react-icons/fa";
+import { ARRAY_CLIENTES } from "../../Componentes/Constantes";
+import { Cliente } from "@/pages/types";
+import { FormTicket } from "../../Componentes/FormTicket";
 
 interface Ticket {
   title: string;
@@ -17,6 +20,21 @@ interface Ticket {
   client_id: number;
   responsible_id: number;
 }
+const INITIAL_STATE_TICKET = {
+  title: "Nuevo Titulo",
+  description: "Nueva Descripcion",
+  severity: "",
+  priority: "",
+  state: "Iniciado",
+  timeStart: "",
+  type: "",
+  supportTime: "",
+  id: 0,
+  project_id: 0,
+  product_id: 0,
+  client_id: 0,
+  responsible_id: 0,
+};
 
 interface Product {
   name: string;
@@ -39,7 +57,7 @@ interface Project {
   version: string;
 }
 
-interface Resource {
+interface Recurso {
   legajo: number;
   Nombre: string;
   Apellido: string;
@@ -62,7 +80,7 @@ interface Assignment {
   ticket_id: number;
 }
 
-const resourcesTest: Resource[] = [
+const resourcesTest: Recurso[] = [
   {
     legajo: 1,
     Nombre: "Mario",
@@ -84,14 +102,38 @@ const resourcesTest: Resource[] = [
     Apellido: "Rivero",
   },
 ];
+const INITIAL_RECURSO = [
+  { legajo: 1, Nombre: "Mario", Apellido: "Mendoza" },
+  { legajo: 2, Nombre: "Maria", Apellido: "Perez" },
+  { legajo: 3, Nombre: "Patricia", Apellido: "Gaona" },
+];
 
 function TicketPage() {
   const router = useRouter();
   const { ticket_id } = router.query;
   const [isOpen, setIsOpen] = useState(false);
-  const [ticket, setTicket] = useState<Ticket | null>(null);
-  const [product, setProduct] = useState<Product | null>(null);
+  const [ticket, setTicket] = useState<Ticket>(INITIAL_STATE_TICKET);
+  const [product, setProduct] = useState<Product>();
   const [taskId, setTaskId] = useState<number>(0);
+  const [recursos, setRecurso] = useState<Array<Recurso>>(INITIAL_RECURSO);
+  const [clientes, setClientes] = useState<Array<Cliente>>(ARRAY_CLIENTES);
+  const [showForm, setShowForm] = useState(false);
+
+  const obtenerNombreCliente = (idCliente: number): string => {
+    const unCliente = clientes.find((unCliente) => unCliente.id == idCliente);
+    if (unCliente) {
+      return unCliente.razon_social;
+    }
+    return "CLIENTE-DESCONOCIDO";
+  };
+
+  const obtenerNombreRecurso = (idRecurso: number): string => {
+    const recurso = recursos.find((unRecurso) => unRecurso.legajo == idRecurso);
+    if (recurso) {
+      return `${recurso.Nombre}  ${recurso.Apellido}`;
+    }
+    return "LEGAJO - DESCONOCIDO";
+  };
 
   useEffect(() => {
     const fetchTicket = async () => {
@@ -288,7 +330,6 @@ function TicketPage() {
   };
 
   const createAssignment = async () => {
-
     const assignmentData = {
       task_id: taskId,
     };
@@ -312,6 +353,14 @@ function TicketPage() {
       }
     } catch (error) {
       console.error("Error al asignar la tarea:", error);
+    }
+  };
+
+  const handleModificar = () => {
+    try {
+      setShowForm(true);
+    } catch (error) {
+      console.log(error + "Hubo error");
     }
   };
 
@@ -351,60 +400,69 @@ function TicketPage() {
   };
 
   return (
-    <div className="flex px-8 py-8">
-      <div className="card w-1/2 mr-2 bg-base-100 shadow-xl">
-        <div className="card-body">
-          {ticket ? (
-            <div>
-              <div className="flex flex-row justify-between place-items-center">
-                <h1 className="card-title">Ticket</h1>
-
-                <div className="dropdown">
-                  <label tabIndex={0} className="m-1 btn">
-                    <FaEllipsisV />
-                  </label>
-                  <ul
-                    tabIndex={0}
-                    className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52"
-                  >
-                    <li>
-                      <a>Modificar</a>
-                    </li>
-                    <li onClick={handleDelete}>
-                      <a>Eliminar</a>
-                    </li>
-                    <li onClick={openModal}>
-                      <a>Derivar</a>
-                    </li>
-                    <li onClick={handleUpdateState}>
-                      <a>Finalizar</a>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-
-              <h1 className="card-title">{ticket.title}</h1>
-
-              <p className="mb-2">Producto: {product?.name}</p>
-              <p className="mb-2">Version: {product?.version}</p>
-              <p className="mb-2">Descripcion: {ticket.description}</p>
-              <p className="mb-2">Severidad: {ticket.severity}</p>
-              <p className="mb-2">Prioridad: {ticket.priority}</p>
-              <p className="mb-2">Estado: {ticket.state}</p>
-              <p className="mb-2">Inicio: {ticket.timeStart}</p>
-              <p className="mb-2">Tipo: {ticket.type}</p>
-              <p className="mb-2">
-                Tiempo para Resolucion: {ticket.supportTime}
-              </p>
-              <p className="mb-2">Client ID: {ticket.client_id}</p>
-              <p className="mb-2">Responsible ID: {ticket.responsible_id}</p>
-            </div>
-          ) : (
-            <p>Cargando ticket...</p>
-          )}
+    <div id="container">
+      <span id="divInfoTicketExterno">
+        <div id="divInfoTicketInterno">
+          <h2>{ticket.title}</h2>
+          <p>
+            <strong>Producto: </strong> {product?.name}
+          </p>
+          <p>
+            <strong>Version:</strong> {product?.version}
+          </p>
+          <p>
+            <strong>Descripcion:</strong> {ticket.description}
+          </p>
+          <p>
+            <strong>Severidad:</strong> {ticket.severity}
+          </p>
+          <p>
+            <strong>Prioridad:</strong> {ticket.priority}
+          </p>
+          <p>
+            <strong>Estado:</strong> {ticket.state}
+          </p>
+          <p>
+            <strong>Inicio: </strong> {ticket.timeStart}
+          </p>
+          <p>
+            <strong>Tipo: </strong> {ticket.type}
+          </p>
+          <p>
+            <strong>Horas Restantes:</strong> {ticket.supportTime}
+          </p>
+          <p>
+            <strong>Client ID:</strong>
+            {obtenerNombreCliente(ticket.client_id)}
+          </p>
+          <p>
+            <strong>Responsable:</strong>
+            {obtenerNombreRecurso(ticket.responsible_id)}
+          </p>
         </div>
-      </div>
-
+        <div id="DivBotones">
+          <button
+            type="button"
+            onClick={handleModificar}
+            id="buttonOpcionTicket"
+          >
+            <a> modificar </a>
+          </button>
+          <button type="button" onClick={handleDelete} id="buttonOpcionTicket">
+            <a>Eliminar</a>
+          </button>
+          <button type="button" onClick={openModal} id="buttonOpcionTicket">
+            <a>Derivar</a>
+          </button>
+          <button
+            type="button"
+            onClick={handleUpdateState}
+            id="buttonOpcionTicket"
+          >
+            <a>Finalizar</a>
+          </button>
+        </div>
+      </span>
       <div className="card w-1/2 ml-2 bg-base-100 shadow-xl">
         <div className="card-body">
           <h2 className="card-title">Tareas</h2>
@@ -471,8 +529,29 @@ function TicketPage() {
           </div>
         </div>
       )}
+
+      {showForm && (
+        <div
+          className="fixed inset-0 flex items-center justify-center z-50"
+          id="DivExternFormTicket"
+        >
+          <div className="bg-white p-8 rounded shadow-lg" id="modalContenido">
+            <FormTicket
+              productIdNumerico={ticket.product_id}
+              idTicketRecv={ticket.id}
+            />
+            <button
+              onClick={() => {
+                setShowForm(false);
+              }}
+              id="buttonOpcionTicket"
+            >
+              Cerrar
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
-
 export default TicketPage;
