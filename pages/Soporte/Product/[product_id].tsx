@@ -54,11 +54,9 @@ export default function Ticket() {
   // para acceder al 2 utilizamos product_id en router.query. en este caso pasamos el produc_id y los ticketsQuery
   const router = useRouter();
   const { product_id } = router.query;
+  const productID: string =
+    typeof product_id === "string" ? product_id : "VACIO";
 
-  let productID: string = "INICIADO";
-  if (typeof product_id === "string") {
-    productID = product_id;
-  }
   const fetchGetProductosById = (): Promise<Producto> => {
     //1) Llamanda al backend hacemos un GET de productos los id van en number recuerda !
     return fetch(`https://psa-soporte.eeoo.ar/product/${parseInt(productID)}`, {
@@ -77,7 +75,7 @@ export default function Ticket() {
       );
       setTickets(ticketsFiltradoById);
     });
-  }, []);
+  }, [product_id]); //el product_id cambia muchas veces asi que hacemos un UE por esa variable.
 
   const [showFormFilter, setShowFormFilter] = useState(false); // Nuevo estado para controlar la visibilidad del formulario
   const handleOpenFormTicket = () => {
@@ -86,10 +84,6 @@ export default function Ticket() {
     } else {
       setShowFormFilter(false);
     }
-  };
-
-  const handleButtonTicketUrgente = () => {
-    router.push(`/Soporte/Product/TicketsUrgente/${productID}`);
   };
 
   //Cuando creamos el ticket vamos a pasar idTicket = -1.
