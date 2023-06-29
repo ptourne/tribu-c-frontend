@@ -3,7 +3,8 @@ import React, { useEffect, useState } from "react";
 import { FaEllipsisV } from "react-icons/fa";
 import { FormTicket } from "../../Componentes/FormTicket";
 import { version } from "os";
-import { Ticket, Producto, Tarea } from "@/pages/types";
+import { Ticket, Producto, Tarea, Cliente } from "@/pages/types";
+import { ARRAY_CLIENTES } from "../../Componentes/Constantes";
 
 const INITIAL_STATE_PRODUCT = {
   name: "UnNombre",
@@ -24,6 +25,8 @@ const INITIAL_STATE_TICKET = {
   client_id: 0,
   responsible_id: 0,
 };
+
+//Pagina donde se muestra las tareas y por completo el ticket con su ABM correspondiente
 
 interface TaskProps {
   id_tarea: string;
@@ -147,12 +150,31 @@ function TicketPage() {
   const [taskToSHow, setTaskToSHow] =
     useState<Array<TaskProps>>(INITIAL_STATE_TASK); //falta modificar el typedef de tarea atributo extra id_ticket
   const [recursos, setRecursos] = useState<Array<Recurso>>(INITIAL_RECURSO);
-  //filter hace una busqueda te devuelve un array si queres
-  //filtras mas intenso y quedarte solo con un elemento apriori sabiendo que solo habra 1 usa find! .
+  const [clientes, setClientes] = useState<Array<Cliente>>(ARRAY_CLIENTES);
+
+  const obtenerNombreCliente = (idCliente: number): string => {
+    const unCliente = clientes.find((unCliente) => unCliente.id == idCliente);
+    if (unCliente) {
+      return unCliente.razon_social;
+    }
+    return "CLIENTE-DESCONOCIDO";
+  };
+
+  const obtenerNombreRecurso = (idRecurso: string): string => {
+    const idRecursoInt = parseInt(idRecurso);
+    const recurso = recursos.find(
+      (unRecurso) => unRecurso.legajo == idRecursoInt
+    );
+    if (recurso) {
+      return `${recurso.Nombre}  ${recurso.Apellido}`;
+    }
+    return "LEGAJO-DESCONOCIDO";
+  };
+
+  //filter hace una busqueda te devuelve un array si queres filtras mas intenso y quedarte solo con un elemento apriori sabiendo que solo habra 1 usa find! .
   // el project con id=1 esta asocaido al producto con id=!  pero ademas cada tarea tiene que estar asociado a un ticket en particular  !!!
   const ticketIdNew: string = typeof ticket_id === "string" ? ticket_id : "0";
-  console.log("ticket.product_id.toString()  " + ticket.product_id.toString());
-  console.log("parseInt(ticketIdNew)   " + parseInt(ticketIdNew));
+
   /*
   const fetchRecursos = (): Promise<Array<Recurso>> => {
     const URLFetchecurso = `https://anypoint.mulesoft.com/mocking/api/v1/sources/exchange/assets/754f50e8-20d8-4223-bbdc-56d50131d0ae/recursos-psa/1.0.0/m/api/recursos`;
@@ -173,16 +195,6 @@ function TicketPage() {
   }, []);
 
   */
-  const obtenerNombreRecurso = (idRecurso: string): string => {
-    const idRecursoInt = parseInt(idRecurso);
-    const recurso = recursos.find(
-      (unRecurso) => unRecurso.legajo == idRecursoInt
-    );
-    if (recurso) {
-      return `${recurso.Nombre}  ${recurso.Apellido}`;
-    }
-    return "LEGAJO - DESCONOCIDO";
-  };
 
   useEffect(() => {
     const taskObtenidas = taskToSHow.filter(
@@ -320,13 +332,15 @@ function TicketPage() {
               <strong>Tipo: </strong> {ticket.type}
             </p>
             <p>
-              <strong>Tiempo para Resolucion:</strong> {ticket.supportTime}
+              <strong>Horas Restantes:</strong> {ticket.supportTime}
             </p>
             <p>
-              <strong>Client ID:</strong> {ticket.client_id}
+              <strong>Client ID:</strong>
+              {obtenerNombreCliente(ticket.client_id)}
             </p>
             <p>
-              <strong>Responsible ID:</strong> {ticket.responsible_id}
+              <strong>Responsable:</strong>
+              {obtenerNombreRecurso(ticket.responsible_id.toString())}
             </p>
           </div>
           <div id="DivBotones">
@@ -365,7 +379,7 @@ function TicketPage() {
                   <strong>Descripcion: </strong> {unaTask.descripcion}
                 </p>
                 <p>
-                  <strong> Responsable: </strong>
+                  <strong> Desorralladores de la tarea: </strong>
                   {obtenerNombreRecurso(unaTask.responsable)}
                 </p>
                 <p>
