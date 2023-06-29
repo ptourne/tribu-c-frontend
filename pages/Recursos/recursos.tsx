@@ -8,7 +8,6 @@ import { Typography, Tooltip } from "@mui/material";
 import CircularProgress from '@mui/material/CircularProgress';
 import { Recurso } from "../types";
 import RecursoInfoCard from "@/components/recursoInfoCard";
-import Calendario from "./En Desuso/calendario";
 import { useRouter } from "next/router";
 import RECURSOS_URL from "./Components/recursosURL"
 const inter = Inter({ subsets: ["latin"] });
@@ -36,11 +35,6 @@ export default function recurso() {
       console.error("Error fetching ticket:", error);
     }
   };
-
-  const addRecurso = () => {
-    setSelectedRecurso(undefined);
-    setSelectedIndex(-1);
-  }
 
   useEffect(() => {
     getRecursos();
@@ -93,9 +87,6 @@ export default function recurso() {
                 : "Aún no hay proyectos creados. Seleccione agregar para crear uno nuevo")
           }
         </div>
-      </div>
-      <div className="col-md-6 flex flex-col h-full">
-        {<RecursoSideBar recurso={selectedRecurso} />}
       </div>
       </div>
   );

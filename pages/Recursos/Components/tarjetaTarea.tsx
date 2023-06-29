@@ -33,7 +33,7 @@ export const TarjetaTarea: React.FC<TarjetaTarea> = ({ bloqueDeTrabajo }) => {
     if (!isOpen)
       setIsOpen(true);
   }
-  const closePopup = () => {
+  const ocultarClick = () => {
     if (isOpen)
       setIsOpen(false);
   }
@@ -66,11 +66,7 @@ export const TarjetaTarea: React.FC<TarjetaTarea> = ({ bloqueDeTrabajo }) => {
   };
 
   // Evento del click del botón
-  const handleClick = () => {
-    //
-    // TODO: Acá se debe llamar a un endpoint
-    //
-    //alert("Las horas cargadas son: " + horas);
+  const guardarClick = () => {
     const bloque = {
       codBloqueLaboral: bloqueDeTrabajo.codBloqueLaboral,
       codProyectoDeLaTarea: bloqueDeTrabajo.codProyectoDeLaTarea,
@@ -102,10 +98,36 @@ export const TarjetaTarea: React.FC<TarjetaTarea> = ({ bloqueDeTrabajo }) => {
     });
     setIsOpen(false);
   }
+
+  const eliminarClick = () => {
+      axios
+    .delete(RECURSOS_URL + "bloque_laboral/" + bloqueDeTrabajo.codBloqueLaboral.toString())
+    .then(() => {
+    toast.success("Bloque eliminado", {
+      position: "top-right",
+      autoClose: 2000,
+      hideProgressBar: true,
+    });
+    })
+    .catch((e) => {
+    toast.error(
+      e.response?.data?.msg
+        ? "Hubo un error al eliminar el bloque: " + e.response?.data?.msg
+        : "Hubo un error al eliminar el bloque",
+      {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: true,
+      }
+    );
+    });
+    setIsOpen(false);
+  }
+
   useEffect(() => {
     getTareasDeProyecto();
   }, []);
-  // Acá las classnames las pongo por fuera para poder marcar el color correspondiente de la tarea (A menos que se quiera estilizar más no debería ser necesario tocar esto)
+
 
   return <div>
     <div onClick={togglePopup} className= {classNameDiv}  style={estilos.filas}> 
@@ -132,10 +154,13 @@ export const TarjetaTarea: React.FC<TarjetaTarea> = ({ bloqueDeTrabajo }) => {
         </div>
         <div  className="d-flex justify-content-evenly">
 
-        <div onClick= { handleClick } className="d-flex flex-column border-2 border-dark rounded-2 mw-100 ps-3 pe-3 mb-3 mt-2 mx-1  align-items-center ">
+        <div onClick= { guardarClick } className="d-flex flex-column border-2 border-dark rounded-2 mw-100 ps-3 pe-3 mb-3 mt-2 mx-1  align-items-center ">
            guardar
         </div>
-        <div onClick= { closePopup } className="d-flex flex-column border-2  border-dark rounded-2  ps-3 pe-3 mb-3 mt-2 mx-1 align-items-center ">
+        <div onClick= { eliminarClick } className="d-flex flex-column border-2 border-dark rounded-2 mw-100 ps-3 pe-3 mb-3 mt-2 mx-1  align-items-center ">
+           eliminar
+        </div>
+        <div onClick= { ocultarClick } className="d-flex flex-column border-2  border-dark rounded-2  ps-3 pe-3 mb-3 mt-2 mx-1 align-items-center ">
           ocultar
         </div>
         

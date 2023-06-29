@@ -7,6 +7,7 @@ import RECURSOS_URL from "./recursosURL";
 import { toast } from "react-toastify";
 import DatePicker from "react-datepicker";
 import { SERVER_NAME_PROYECTOS } from "@/environments";
+import { RiContactsBookLine } from "react-icons/ri";
 
 interface TarjetaRecurso {
     recurso: Recurso;
@@ -19,11 +20,14 @@ export const TarjetaRecurso: React.FC<TarjetaRecurso> = ({ recurso, tareaActual 
     const [fechaDelBloque, setStartDate] = useState(new Date());
     const [horasDedicadasATarea, sethorasDedicadasATarea] = useState(0);
     const [horasDedicadasAProyecto, sethorasDedicadasAProyecto] = useState(0);
-    console.log(tareaActual);
     // Esto abre el popup
     const togglePopup = () => {
         if (!isOpen)
         setIsOpen(true);
+    }
+    const closePopup = () => {
+        if (isOpen)
+        setIsOpen(false);
     }
 
     // Esto es para cargar en la variable horas el input del user
@@ -36,7 +40,7 @@ export const TarjetaRecurso: React.FC<TarjetaRecurso> = ({ recurso, tareaActual 
       };
 
 
-    const handleStartDateChange = (date: Date) => {
+    const handleCambioDeFecha = (date: Date) => {
         setStartDate(date);
     }
     // Evento del click del botón
@@ -82,11 +86,15 @@ export const TarjetaRecurso: React.FC<TarjetaRecurso> = ({ recurso, tareaActual 
             // console.log("Data[0]:" + data[0]);
             let horasTotalesEnTarea = 0;
             let horasTotalesEnProyecto = 0;
+            console.log("Recurso: L:" + recurso.legajo);
+            console.log("Tarea actual: P:" + tareaActual.id_proyecto + " T:" + tareaActual.id_tarea);
             data.forEach((bloqueDeTrabajo: BloqueDeTrabajo) => {
                 // No contabilizar horas futuras
-                if (recurso.legajo == bloqueDeTrabajo.legajo && bloqueDeTrabajo.codTarea.toString() == tareaActual.id_tarea && bloqueDeTrabajo.codProyectoDeLaTarea.toString() == tareaActual.id_project) {
+                // console.log(tareaActual.)
+                console.log("Bloque de trabajo: P:" + bloqueDeTrabajo.codProyectoDeLaTarea + " T:" + bloqueDeTrabajo.codTarea);
+                if (recurso.legajo == bloqueDeTrabajo.legajo && bloqueDeTrabajo.codTarea.toString() == tareaActual.id_tarea && bloqueDeTrabajo.codProyectoDeLaTarea.toString() == tareaActual.id_proyecto) {
                     horasTotalesEnTarea += bloqueDeTrabajo.horasDelBloque;
-                } else if (recurso.legajo == bloqueDeTrabajo.legajo && bloqueDeTrabajo.codProyectoDeLaTarea.toString() == tareaActual.id_project) {
+                } else if (recurso.legajo == bloqueDeTrabajo.legajo && bloqueDeTrabajo.codProyectoDeLaTarea.toString() == tareaActual.id_proyecto) {
                     horasTotalesEnProyecto += bloqueDeTrabajo.horasDelBloque;
                 }
             })
@@ -105,9 +113,14 @@ export const TarjetaRecurso: React.FC<TarjetaRecurso> = ({ recurso, tareaActual 
     return (
         <>
             <div onClick={togglePopup} className="d-flex flex-column border-2 border-dark rounded-2 mb-3 mt-3 mx-3">
+                <div className="d-flex justify-content-between mr-6">
                 <label className="my-3 ml-3">
                     {recurso.Nombre}
                 </label>
+                <button onClick={closePopup}>
+                    X
+                </button>
+                </div>
                 {
                     isOpen && <Popup
                         content= {
@@ -143,7 +156,7 @@ export const TarjetaRecurso: React.FC<TarjetaRecurso> = ({ recurso, tareaActual 
                                         <div className="col-md-6">
                                         <DatePicker
                                             selected={fechaDelBloque}
-                                            onChange={handleStartDateChange}
+                                            onChange={handleCambioDeFecha}
                                             className="form-control border-0 border-bottom rounded-0 p-0"
                                             dateFormat="dd/MM/yyyy"
                                             placeholderText="Seleccione una fecha"
