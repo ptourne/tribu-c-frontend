@@ -13,7 +13,6 @@ interface Ticket {
   timeStart: string;
   type: string;
   supportTime: string;
-  project_id: number;
   id: number;
   product_id: number;
   client_id: number;
@@ -45,17 +44,6 @@ interface Resource {
   legajo: number;
   Nombre: string;
   Apellido: string;
-}
-
-interface Task {
-  descripcion: string;
-  estado: number;
-  horas_acumuladas: number;
-  id_proyecto: number;
-  id_tarea: number;
-  legajo_responsable: number;
-  tiempo_estimado_finalizacion: number;
-  titulo: string;
 }
 
 interface Assignment {
@@ -102,7 +90,6 @@ const INITIALTICKET = {
   timeStart: "",
   type: "",
   supportTime: "",
-  project_id: 0,
   id: 0,
   product_id: 0,
   client_id: 0,
@@ -196,25 +183,6 @@ function TicketPage() {
     }
   }, [ticket]);
 
-  /*const [resources, setResources] = useState<Resource[]>([]);
-
-  useEffect(() => {
-    const fetchProjects = async () => {
-      try {
-        const response = await fetch(
-          "https://psa-recursos.eeoo.ar/recurso"
-        );
-        const data = await response.json();
-
-        setResources(data);
-      } catch (error) {
-        console.error("Error al obtener los proyectos:", error);
-      }
-    };
-
-    fetchProjects();
-  }, [ticket]);*/
-
   const handleDelete = async () => {
     try {
       await fetch(`https://psa-soporte.eeoo.ar/tickets/${ticket?.id}`, {
@@ -263,37 +231,6 @@ function TicketPage() {
       console.log(error + "Hubo error");
     }
   };
-
-  /*const handleUpdateResponsible = async () => {
-    if (ticket) {
-      const updatedTicket = {
-        ...ticket,
-        responsible_id: selectedResourceId,
-      };
-
-      try {
-        const response = await fetch(
-          `https://psa-soporte.eeoo.ar/tickets/${ticket.id}`,
-          {
-            method: "PUT",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(updatedTicket),
-          }
-        );
-
-        if (response.ok) {
-          setTicket(updatedTicket);
-          console.log("Ticket cerrado exitosamente");
-        } else {
-          console.error("Error al cerrar el ticket:", response.status);
-        }
-      } catch (error) {
-        console.error("Error al cerrar el ticket:", error);
-      }
-    }
-  };*/
 
   const openModal = () => {
     setIsOpen(true);

@@ -314,7 +314,7 @@ export const FormTicket: React.FC<{
   }, []);
 
   const validationInputPlus = () => {
-    if (parseFloat(inputTicketValues.supportTime) <= 0) {
+    if (parseInt(inputTicketValues.supportTime) <= 0 || parseInt(inputTicketValues.supportTime) >= 10000) {
       console.log(
         "Cantidad de horas " + inputTicketValues.supportTime + " invalidas."
       );
