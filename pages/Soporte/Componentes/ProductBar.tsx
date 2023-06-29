@@ -14,20 +14,20 @@ interface ProductBarProps {
 export const ProductBar: React.FC<ProductBarProps> = ({ products }) => {
   
 
-  const [showFormTicket, setShowFormTicket] = useState(false); // Nuevo estado para controlar la visibilidad del formulario
+  const [showFormFiltro, setShowFormFiltro] = useState(false); // Nuevo estado para controlar la visibilidad del formulario
 
-  const handleOpenFormTicket = () => {
-    if (showFormTicket === false) {
-      setShowFormTicket(true); // Muestra el formulario al hacer clic en el botón
+  const handleOpenFormFiltro = () => {
+    if (showFormFiltro === false) {
+      setShowFormFiltro(true); // Muestra el formulario al hacer clic en el botón
     } else {
-      setShowFormTicket(false);
+      setShowFormFiltro(false);
     }
   };
   
   <button
             type="button"
-            onClick={handleOpenFormTicket}
-            id="buttonAgregarTicket"
+            onClick={handleOpenFormFiltro}
+            id="buttonFiltrarProductos"
           ></button>
 
   // cuando funcione tendremos que ir y darle a cada boton su correspondiente handler depnde en cual haga click. posiblmente su objeto Ticket correspondiente.
