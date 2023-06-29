@@ -38,7 +38,8 @@ export interface Tarea {
 
 export interface Producto {
   name: string
-  version: number;
+  version: string;
+  id: number
 }
 
 export interface Ticket {

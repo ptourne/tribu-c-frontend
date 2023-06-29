@@ -116,7 +116,7 @@ export default function Tareas() {
             loading
               ? "flex justify-content-center align-items-center flex-column"
               : tasks.length > 0
-              ? "flex h-full flex-col space-y-4 text-black"
+              ? "flex h-full flex-col space-y-4 text-black h-75"
               : "text-black"
           }
         >
