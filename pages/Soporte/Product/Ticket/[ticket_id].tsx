@@ -39,6 +39,35 @@ interface Project {
   version: string;
 }
 
+interface Resource {
+  legajo: number;
+  Nombre: string;
+  Apellido: string;
+}
+
+const resourcesTest: Resource[] = [
+  {
+    legajo: 1,
+    Nombre: "Mario",
+    Apellido: "Mendoza",
+  },
+  {
+    legajo: 2,
+    Nombre: "Maria",
+    Apellido: "Perez",
+  },
+  {
+    legajo: 3,
+    Nombre: "Patricia",
+    Apellido: "Gaona",
+  },
+  {
+    legajo: 4,
+    Nombre: "Marcos",
+    Apellido: "Rivero",
+  },
+];
+
 function TicketPage() {
   const router = useRouter();
   const { ticket_id } = router.query;
@@ -102,6 +131,25 @@ function TicketPage() {
     fetchProjects();
   }, [ticket]);
 
+  /*const [resources, setResources] = useState<Resource[]>([]);
+
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        const response = await fetch(
+          "https://psa-recursos.eeoo.ar/recurso"
+        );
+        const data = await response.json();
+
+        setResources(data);
+      } catch (error) {
+        console.error("Error al obtener los proyectos:", error);
+      }
+    };
+
+    fetchProjects();
+  }, [ticket]);*/
+
   const handleDelete = async () => {
     try {
       await fetch(`https://psa-soporte.eeoo.ar/tickets/${ticket?.id}`, {
@@ -153,13 +201,26 @@ function TicketPage() {
     setIsOpen(false);
   };
 
-  const [selectedProjectId, setSelectedProjectId] = useState<number | null>(null);
+  const [selectedProjectId, setSelectedProjectId] = useState<number | null>(
+    null
+  );
 
   const handleProjectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedProjectId = parseInt(event.target.value);
     setSelectedProjectId(selectedProjectId);
-    console.log(selectedProjectId)
   };
+
+  const [selectedResourceId, setSelectedResourceId] = useState<number | null>(
+    null
+  );
+
+  const handleResourceChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedResourceId = parseInt(event.target.value);
+    setSelectedResourceId(selectedResourceId);
+  };
+
+  console.log(selectedProjectId)
+  console.log(selectedResourceId)
 
   return (
     <div className="flex px-8 py-8">
@@ -228,13 +289,19 @@ function TicketPage() {
           <div className="bg-white p-8 rounded shadow-lg">
             <h2 className="text-xl font-bold mb-4">Derivar</h2>
 
-            <select className="select w-full max-w-xs my-1">
-              <option disabled>Seleccionar Responzable</option>
-              <option>Homer</option>
-              <option>Marge</option>
-              <option>Bart</option>
-              <option>Lisa</option>
-              <option>Maggie</option>
+            <select
+              className="select w-full max-w-xs my-1"
+              onChange={handleResourceChange}
+              value={selectedResourceId || ""}
+            >
+              <option disabled value="">
+                Seleccionar Recurso
+              </option>
+              {resourcesTest.map((resource) => (
+                <option key={resource.legajo} value={resource.legajo}>
+                  {resource.Nombre}, {resource.Apellido}
+                </option>
+              ))}
             </select>
 
             <select
@@ -242,9 +309,13 @@ function TicketPage() {
               onChange={handleProjectChange}
               value={selectedProjectId || ""}
             >
-              <option disabled value="">Seleccionar Proyecto</option>
+              <option disabled value="">
+                Seleccionar Proyecto
+              </option>
               {projects.map((project) => (
-                <option key={project.codigo} value={project.codigo}>{project.nombre}</option>
+                <option key={project.codigo} value={project.codigo}>
+                  {project.nombre}
+                </option>
               ))}
             </select>
 
