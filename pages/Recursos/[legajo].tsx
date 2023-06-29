@@ -1,13 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { ColumnaDia } from "./Components/columnaDia";
-import { Tarea } from "./Components/types";
+// import { Tarea } from "./Components/types";
 import { BsArrowLeftShort, BsArrowRightShort } from "react-icons/bs";
-interface TareasDia{
-  
-  numeroDia: number;
-  tareas: Array<Tarea>;
-}
+import RECURSOS_URL from "./Components/recursosURL";
+import { BloqueDeTrabajo, Proyecto, Tarea } from "../types";
+import { SERVER_NAME_PROYECTOS } from "@/environments";
 const estilos = {
   calendario: {
     width: "100%"
@@ -29,6 +27,66 @@ export default function Calendario() {
   const [fecha, setDate] = useState(new Date());
   const router = useRouter();
   const { nombreRecurso, apellidoRecurso, legajo } = router.query;
+  const [bloquesDeTrabajo, setBloquesDeTrabajo] = useState<BloqueDeTrabajo[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [proyectos, setProyectos] = useState<Proyecto[]>([]);
+  // let tareas: Map<number, Map<string, Tarea>> = new Map<number, Map<string, Tarea>>();
+
+  // const getProyectos = async () => {
+  //   try {
+  //     const response = await fetch(
+  //       SERVER_NAME_PROYECTOS + "projects/"
+  //     );
+  //     const data = await response.json();
+  //     alert("Hii <3");
+  //     setProyectos(proyectos);
+  //     proyectos.forEach((proyecto: Proyecto) => {
+  //       let map = new Map<string, Tarea>();
+  //       tareas.set(proyecto.id_producto, map);
+  //     });
+  //     setLoading(false);
+  //   } catch (error) {
+  //     console.error("Error fetching ticket:", error);
+  //   }
+  // };
+
+  // const getTareasDeProyecto = async (map: Map<string, Tarea>,id_project: number) => {
+  //   try {
+  //     const response = await fetch(
+  //       SERVER_NAME_PROYECTOS + "projects/" + id_project.toString() + "/tasks"
+  //     );
+
+  //     const data = await response.json();
+  //     data.forEach((tarea: Tarea) => {
+  //       map.set(tarea.id_tarea, tarea);
+  //     });
+  //   } catch (error) {
+  //     console.error("Error fetching ticket:", error);
+  //   }
+  // };
+
+  const getBloquesDeTareas = async () => {
+    try {
+      const response = await fetch(
+        RECURSOS_URL + "bloque_laboral"
+      );
+      let data = await response.json();
+      // asignarTareaABloque(data, tareas);
+      setBloquesDeTrabajo(data);
+      setLoading(false);
+    } catch (error) {
+      console.error("Error fetching ticket:", error);
+    }
+  };
+
+
+  useEffect(() => {
+    // getProyectos();
+    // tareas.forEach((map, id_proyecto) => {
+    //   getTareasDeProyecto(map, id_proyecto)
+    // })
+    getBloquesDeTareas();
+  }, []);
   const handleLeftClick = () => {
     setDate(diaCorrespondiente(fecha, -6));
   }
@@ -63,11 +121,11 @@ export default function Calendario() {
         </div>
       </div>
         <div style={estilos.mainGrid} className="diasSemana d-flex">
-          <ColumnaDia nombreDia="Lunes" numeroDia= {diaCorrespondiente(fecha, 1).getDate()} tareas={ getTareas(nombreRecurso, diaCorrespondiente(fecha, 1)) }/>
-          <ColumnaDia nombreDia="Martes" numeroDia={diaCorrespondiente(fecha, 2).getDate()} tareas={ getTareas(nombreRecurso, diaCorrespondiente(fecha, 2)) }/>
-          <ColumnaDia nombreDia="Miercoles" numeroDia={diaCorrespondiente(fecha, 3).getDate()} tareas={ getTareas(nombreRecurso, diaCorrespondiente(fecha, 3)) }/>
-          <ColumnaDia nombreDia="Jueves" numeroDia={diaCorrespondiente(fecha, 4).getDate()} tareas={ getTareas(nombreRecurso, diaCorrespondiente(fecha, 4)) }/>
-          <ColumnaDia nombreDia="Viernes" numeroDia={diaCorrespondiente(fecha, 5).getDate()} tareas={ getTareas(nombreRecurso, diaCorrespondiente(fecha, 5)) }/>
+          <ColumnaDia nombreDia="Lunes" numeroDia= {diaCorrespondiente(fecha, 1).getDate()} bloquesDeTrabajo={ getBloquesDelDia(legajo, diaCorrespondiente(fecha, 1), bloquesDeTrabajo) }/>
+          <ColumnaDia nombreDia="Martes" numeroDia={diaCorrespondiente(fecha, 2).getDate()} bloquesDeTrabajo={ getBloquesDelDia(legajo, diaCorrespondiente(fecha, 2), bloquesDeTrabajo) }/>
+          <ColumnaDia nombreDia="Miercoles" numeroDia={diaCorrespondiente(fecha, 3).getDate()} bloquesDeTrabajo={ getBloquesDelDia(legajo, diaCorrespondiente(fecha, 3), bloquesDeTrabajo) }/>
+          <ColumnaDia nombreDia="Jueves" numeroDia={diaCorrespondiente(fecha, 4).getDate()} bloquesDeTrabajo={ getBloquesDelDia(legajo, diaCorrespondiente(fecha, 4), bloquesDeTrabajo) }/>
+          <ColumnaDia nombreDia="Viernes" numeroDia={diaCorrespondiente(fecha, 5).getDate()} bloquesDeTrabajo={ getBloquesDelDia(legajo, diaCorrespondiente(fecha, 5), bloquesDeTrabajo) }/>
         </div>
       </div>
     </>
@@ -109,48 +167,34 @@ function numeroAMes(numero: number) {
     } 
 }
 // supongo que api te dara un array [fechaTarea, titulo, estado, horasDedicadas]
-function getTareas(nombreRecurso: string | string[] | undefined, fecha: Date) {
-  const currentPage=28;
-  const tareas1: Tarea[] = [
-    {
-      titulo: "Codear Backend",
-      estado: 0,
-      horasDedicadas: 0,
-    },
-    {
-      titulo: "Asignar Front",
-      estado: 1,
-      horasDedicadas: 0,
-    },
-    {
-      titulo: "Tomar Mate",
-      estado: 2,
-      horasDedicadas: 11,
+function getBloquesDelDia(legajo: string | number | string[] | undefined, fecha: Date, bloques: BloqueDeTrabajo[]) {
+  let bloques_filtrados = new Array<BloqueDeTrabajo>();
+  bloques.forEach((bloque) => {
+    const fechaBloque = new Date(bloque.fecha);
+    if (bloque.legajo.toString() === legajo && 
+        fecha.getDate() == fechaBloque.getDate() && 
+        fecha.getMonth() == fechaBloque.getMonth() && 
+        fecha.getFullYear() == fechaBloque.getFullYear()) {
+      
+          bloques_filtrados.push(bloque);
     }
-  ]
+  })
+  return bloques_filtrados;
+}
 
-  const tareas2: Tarea[] = [
-    {
-      titulo: "Asignar Front",
-      estado: 1,
-      horasDedicadas: 0,
-    },
-  ]
-
-  const tareasSegunDia: TareasDia[]=[
-  {
-    numeroDia: 26,
-    tareas:   tareas1,
-  },
-  {
-    numeroDia: 27,
-    tareas:   tareas2,
-  }
-]
-const tareasDelDia = tareasSegunDia.find((tareasDia) => tareasDia.numeroDia === fecha.getDate());
-const tareas = tareasDelDia ? tareasDelDia.tareas : []; // Obtener las tareas del día actual
- return tareas;
-   
-   
-  
+function asignarTareaABloque(bloques: Array<BloqueDeTrabajo>, tareas: Map<number, Map<string, Tarea>>) {
+  bloques.forEach((bloque) => {
+    let diccionarioDeProyectos = tareas.get(bloque.codProyectoDeLaTarea);
+    if (diccionarioDeProyectos === undefined){
+      bloque.tareaAsociada = null;
+      return;
+    }
+    let tareaAsociada = diccionarioDeProyectos.get(bloque.codTarea.toString())
+    if (tareaAsociada === undefined) {
+      bloque.tareaAsociada = null;
+      return;
+    }
+    bloque.tareaAsociada = tareaAsociada;
+  });
+  return bloques;
 }

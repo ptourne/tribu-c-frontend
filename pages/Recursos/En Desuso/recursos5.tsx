@@ -45,14 +45,14 @@ export default function Recurso() {
   const getRecursos = async () => {
     const recursos: Recurso[] = [
         {
-          nombre: "1",
-          apellido: "Primer Recurso",
+          Nombre: "1",
+          Apellido: "Primer Recurso",
           legajo: 234, // March 1, 2023
         
         },
         {
-            nombre: "2",
-            apellido: "segundo recurso",
+            Nombre: "2",
+            Apellido: "segundo recurso",
             legajo: 234, // March 1, 2023
         },
          

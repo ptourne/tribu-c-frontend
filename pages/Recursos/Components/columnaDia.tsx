@@ -1,13 +1,13 @@
+import { BloqueDeTrabajo } from "@/pages/types";
 import { TarjetaTarea } from "./tarjetaTarea";
-import { Tarea } from "./types";
 
 interface ColumnaDia {
     nombreDia: string;
     numeroDia: number;
-    tareas: Array<Tarea>;
+    bloquesDeTrabajo: Array<BloqueDeTrabajo>;
 }
 
-export const ColumnaDia: React.FC<ColumnaDia> = ({ nombreDia, numeroDia, tareas }) => {
+export const ColumnaDia: React.FC<ColumnaDia> = ({ nombreDia, numeroDia, bloquesDeTrabajo }) => {
     return (
         <>
             <div className="flex-column diasSemana-contenido" style={estilos.dia}>
@@ -19,8 +19,8 @@ export const ColumnaDia: React.FC<ColumnaDia> = ({ nombreDia, numeroDia, tareas 
                 </div>
                 <div className="d-flex flex-column  border-2 border-dark rounded-2 bd-highlight mb-3" style={estilos.columnas}>
                     {
-                        tareas.map(tarea =>
-                            <TarjetaTarea tarea={tarea}/>
+                        bloquesDeTrabajo.map(bloqueDeTrabajo =>
+                            <TarjetaTarea bloqueDeTrabajo={bloqueDeTrabajo} key={bloqueDeTrabajo.codBloqueLaboral}/>
                             )
                     }
                 </div>

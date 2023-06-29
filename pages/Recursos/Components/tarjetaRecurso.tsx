@@ -1,17 +1,21 @@
-import TarjetaTarea from "./tarjetaTarea";
-import { Recurso } from "../../types";
-import { RecursoStats } from "./types";
+import { BloqueDeTrabajo, Recurso, Tarea } from "../../types";
+// import { RecursoStats } from "./types";
 import Popup from "./popup";
 import { useState } from "react";
+import axios from "axios";
+import RECURSOS_URL from "./recursosURL";
+import { toast } from "react-toastify";
 
 interface TarjetaRecurso {
     recurso: Recurso;
     recursoStats: RecursoStats;
+    tarea: Tarea;
 }
-export const TarjetaRecurso: React.FC<TarjetaRecurso> = ({ recurso, recursoStats }) => {
+export const TarjetaRecurso: React.FC<TarjetaRecurso> = ({ recurso, recursoStats, tarea }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [horas , setHoras] = useState(0);
-
+    const [bloque, setBloque] = useState<BloqueDeTrabajo | undefined>(undefined);
+    console.log(tarea);
     // Esto abre el popup
     const togglePopup = () => {
         if (!isOpen)
@@ -29,17 +33,42 @@ export const TarjetaRecurso: React.FC<TarjetaRecurso> = ({ recurso, recursoStats
 
     // Evento del click del botón
     const handleClick = () => {
-        //
-        // TODO: Aca hay que llamar al endpoint
-        //
-        alert("Las horas cargadas son: " + horas);
+        console.log("TAREA: " + tarea);
+        console.log("ID PROYECT: " + tarea.id_project);
+        const bloque = {
+            codProyectoDeLaTarea: parseInt(tarea.id_project),
+            codTarea: parseInt(tarea.id_tarea),
+            legajo: recurso.legajo,
+            horasDelBloque: horas,
+            fecha: new Date(), // Agregar bloque laboral
+        };
+        axios
+    .post(RECURSOS_URL + "bloque_laboral", bloque)
+    .then(() => {
+      toast.success("Bloque asignado", {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: true,
+      });
+    })
+    .catch((e) => {
+      toast.error(
+        e.response?.data?.msg
+          ? "Hubo un error al crear el bloque: " + e.response?.data?.msg
+          : "Hubo un error al crear el bloque",
+        {
+          position: "top-right",
+          autoClose: 2000,
+          hideProgressBar: true,
+        }
+      );
+    });
     }
-
     return (
         <>
             <div onClick={togglePopup} className="d-flex flex-column border-2 border-dark rounded-2 mb-3 mt-3 mx-3">
                 <label className="my-3 ml-3">
-                    {recurso.nombre}
+                    {recurso.Nombre}
                 </label>
                 {
                     isOpen && <Popup
@@ -87,4 +116,4 @@ export const TarjetaRecurso: React.FC<TarjetaRecurso> = ({ recurso, recursoStats
             </div>
         </>
     )
-}
+};

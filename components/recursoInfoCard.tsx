@@ -17,8 +17,8 @@ const RecursoInfoCard = ({ recurso, onClick, selected }: Props) => {
       onClick={onClick}
     >
       <div className="d-flex flex-row justify-content-start align-items-center">
-        <div className="p-2 h4">{recurso.nombre}</div>
-        <div className="p-2 h4">{recurso.apellido}</div>
+        <div className="p-2 h4">{recurso.Nombre}</div>
+        <div className="p-2 h4">{recurso.Apellido}</div>
         <div className="p-2 h4">{recurso.legajo}</div>
       </div>
       <div className="d-flex flex-row justify-content-start align-items-center">

@@ -97,7 +97,7 @@ function TaskSideBar({ task, project_id, getTasksFunction }: TaskSideBarProps) {
           role="tabpanel"
           aria-labelledby="resources-tab"
         >
-          <RecursosDeTareasSideBar tarea= {selectedTask}/>
+          <RecursosDeTareasSideBar tarea= {selectedTask} project_id= {project_id}/>
         </div>
       </div>
       {mode === EDIT && (

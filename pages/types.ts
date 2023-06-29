@@ -58,7 +58,17 @@ export interface Ticket {
 }
 
 export interface Recurso {
-  nombre: string
-  apellido: string
+  Nombre: string
+  Apellido: string
   legajo: number
+}
+
+export interface BloqueDeTrabajo {
+  codBloqueLaboral: number
+  codProyectoDeLaTarea: number
+  codTarea: number
+  legajo: number
+  horasDelBloque: number
+  fecha: Date
+  tareaAsociada: Tarea | null
 }

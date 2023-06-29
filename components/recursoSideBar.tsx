@@ -29,7 +29,7 @@ function RecursoSideBar({ recurso }: RecursoSideBarProps) {
 
   const getTasks = () => {
     router.push({
-      pathname: `/recursos/${selectedRecurso?.nombre}/tareas`});
+      pathname: `/recursos/${selectedRecurso?.Nombre}/tareas`});
   }
 
   return (
