@@ -314,30 +314,30 @@ export const FormTicket: React.FC<{
   }, []);
 
   const validationInputPlus = () => {
-    if (parseInt(inputTicketValues.supportTime) <= 0) {
+    if (parseFloat(inputTicketValues.supportTime) <= 0) {
       console.log(
         "Cantidad de horas " + inputTicketValues.supportTime + " invalidas."
       );
       setnotificacionError(true);
-      return;
+      return false;
     }
 
     if (inputTicketValues.supportTime == " ") {
       console.log("Ingrese un valor valido para las horas.");
       setnotificacionError(true);
-      return;
+      return false;
     }
 
     if (inputTicketValues.supportTime == "") {
       console.log("Complete el campo de horas necesarias.");
       setnotificacionError(true);
-      return;
+      return false;
     }
 
     if (hasLetter(inputTicketValues.supportTime)) {
       console.log("Ingrese solo numeros.");
       setnotificacionError(true);
-      return;
+      return false;
     }
 
     if (
@@ -346,14 +346,15 @@ export const FormTicket: React.FC<{
     ) {
       console.log("Descripcion invalida.");
       setnotificacionError(true);
-      return;
+      return false;
     }
 
     if (inputTicketValues.title == "" || inputTicketValues.title == " ") {
       console.log("Titulo invalido.");
       setnotificacionError(true);
-      return;
+      return false;
     }
+    return true;
   };
 
   //userEffect para poder asignarle el timeStart cuando hace click en el boton submit
@@ -361,8 +362,7 @@ export const FormTicket: React.FC<{
     console.log("inputTicketValues");
     console.log(inputTicketValues);
 
-    if (validInputs() && clickSubmit) {
-      validationInputPlus();
+    if (validInputs() && clickSubmit && validationInputPlus()) {
       console.log(inputTicketValues);
       console.log("dentro del useEffect [inputTicketValues]-> POST ");
       if (idTicketRecv === -1) {
@@ -373,8 +373,10 @@ export const FormTicket: React.FC<{
         fetchPUTTicket();
       }
       setNotificacionOk(true);
+      console.log("Se mostro la notificaicon OK");
     }
-    if (!validInputs() && clickSubmit) {
+    if (!validInputs() && clickSubmit && !notificacionOk) {
+      console.log("Se mostro la notificaicon ERROR ENTRA AL IF !!----------");
       setnotificacionError(true);
     }
     setClickSubmit(false);
@@ -532,7 +534,7 @@ export const FormTicket: React.FC<{
           <NotificacionesDelTicket
             onClose={() => setnotificacionError(false)}
             tipo="ERROR"
-            mensaje="ERROR ! Falta ingresar datos por favor ingreselos"
+            mensaje="Error. Ingrese todos los datos"
           />
         )}
       </form>

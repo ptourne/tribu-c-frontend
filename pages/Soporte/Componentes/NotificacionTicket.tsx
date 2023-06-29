@@ -19,7 +19,7 @@ export const NotificacionesDelTicket: React.FC<Props> = ({
       <div id="NotificacionTicket">
         <span> {mensaje} </span>
         <p>
-          <RiCheckboxCircleLine size={140} />
+          <RiCheckboxCircleLine size={120} />
         </p>
         <button type="button" onClick={onClose}>
           Cerrar
@@ -31,7 +31,7 @@ export const NotificacionesDelTicket: React.FC<Props> = ({
       <div id="NotificacionTicket">
         <span> {mensaje} </span>
         <p>
-          <RiCloseCircleLine size={140} />
+          <RiCloseCircleLine size={120} />
         </p>
         <button type="button" onClick={onClose}>
           Cerrar

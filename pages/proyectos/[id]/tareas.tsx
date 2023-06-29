@@ -40,10 +40,10 @@ export default function Tareas() {
         .then((data) => {
           if (data.data.ok) {
             data.data.msg.forEach((task: Tarea) => {});
-            data.data.msg.forEach((task: Tarea) => {
-              task.estado = 1;
-            });
-            setTasks(data.data.msg);
+            const tasks = data.data.msg.sort(
+              (a: Tarea, b: Tarea) => a.id_tarea - b.id_tarea
+            );
+            setTasks(tasks);
             setLoading(false);
           }
         })

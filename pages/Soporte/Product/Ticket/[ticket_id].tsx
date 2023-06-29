@@ -1,6 +1,8 @@
+import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { FaEllipsisV } from "react-icons/fa";
+import { FormTicket } from "../../Componentes/FormTicket";
 
 interface Ticket {
   title: string;
@@ -58,8 +60,14 @@ interface Task {
 
 interface Assignment {
   task_id: number;
+  project_id: number;
   id: number;
   ticket_id: number;
+}
+
+interface DropdownItem {
+  label: string;
+  onClick: () => void;
 }
 
 const resourcesTest: Resource[] = [
@@ -85,13 +93,30 @@ const resourcesTest: Resource[] = [
   },
 ];
 
+const INITIALTICKET = {
+  title: "",
+  description: "",
+  severity: "",
+  priority: "",
+  state: "",
+  timeStart: "",
+  type: "",
+  supportTime: "",
+  project_id: 0,
+  id: 0,
+  product_id: 0,
+  client_id: 0,
+  responsible_id: 0,
+};
+
 function TicketPage() {
   const router = useRouter();
   const { ticket_id } = router.query;
   const [isOpen, setIsOpen] = useState(false);
-  const [ticket, setTicket] = useState<Ticket | null>(null);
+  const [ticket, setTicket] = useState<Ticket>(INITIALTICKET);
   const [product, setProduct] = useState<Product | null>(null);
   const [taskId, setTaskId] = useState<number>(0);
+  const [showForm, setShowForm] = useState(false);
 
   useEffect(() => {
     const fetchTicket = async () => {
@@ -109,7 +134,7 @@ function TicketPage() {
     if (ticket_id) {
       fetchTicket();
     }
-  }, [ticket_id]);
+  }, [ticket]);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -124,10 +149,10 @@ function TicketPage() {
       }
     };
 
-    if (ticket?.product_id) {
+    if (ticket.product_id) {
       fetchProduct();
     }
-  }, [ticket]);
+  }, [ticket, showForm]);
 
   const [projects, setProjects] = useState<Project[]>([]);
 
@@ -195,7 +220,7 @@ function TicketPage() {
       await fetch(`https://psa-soporte.eeoo.ar/tickets/${ticket?.id}`, {
         method: "DELETE",
       });
-      router.push(`/Soporte/Product/${ticket?.product_id}`);
+      router.push(`/Soporte/Product/${ticket.product_id}`);
     } catch (error) {
       console.error("Error deleting ticket:", error);
     }
@@ -231,8 +256,15 @@ function TicketPage() {
       }
     }
   };
+  const handleModificar = () => {
+    try {
+      setShowForm(true);
+    } catch (error) {
+      console.log(error + "Hubo error");
+    }
+  };
 
-  const handleUpdateResponsible = async () => {
+  /*const handleUpdateResponsible = async () => {
     if (ticket) {
       const updatedTicket = {
         ...ticket,
@@ -261,7 +293,7 @@ function TicketPage() {
         console.error("Error al cerrar el ticket:", error);
       }
     }
-  };
+  };*/
 
   const openModal = () => {
     setIsOpen(true);
@@ -288,9 +320,9 @@ function TicketPage() {
   };
 
   const createAssignment = async () => {
-
     const assignmentData = {
       task_id: taskId,
+      project_id: selectedProjectId,
     };
 
     try {
@@ -307,6 +339,15 @@ function TicketPage() {
 
       if (response.ok) {
         console.log("Asignacion ticket tarea creada exitosamente");
+        const data = await response.json();
+        // Actualizar el estado de las asignaciones
+        const newAssignment = {
+          task_id: taskId,
+          project_id: parseInt(data.project_id),
+          id: parseInt(data.id),
+          ticket_id: parseInt(data.ticket_id),
+        };
+        setAssignments([...assignments, newAssignment]);
       } else {
         console.error("Error al asignar la tarea:", response.status);
       }
@@ -317,9 +358,9 @@ function TicketPage() {
 
   const handleAssignment = async () => {
     const taskData = {
-      titulo: ticket?.title,
-      descripcion: ticket?.description,
-      tiempo_estimado_finalizacion: ticket?.supportTime,
+      titulo: ticket.title,
+      descripcion: ticket.description,
+      tiempo_estimado_finalizacion: parseInt(ticket.supportTime),
       legajo_responsable: selectedResourceId,
     };
 
@@ -339,7 +380,7 @@ function TicketPage() {
         console.log("Tarea asignada exitosamente");
         const data = await response.json();
         setTaskId(data.msg.id_tarea);
-        handleUpdateResponsible();
+        /*handleUpdateResponsible();*/
         createAssignment();
         closeModal();
       } else {
@@ -350,40 +391,50 @@ function TicketPage() {
     }
   };
 
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
+  const dropdownItems: DropdownItem[] = [
+    { label: "Modificar", onClick: handleModificar },
+    { label: "Eliminar", onClick: handleDelete },
+    { label: "Derivar", onClick: openModal },
+    { label: "Finalizar", onClick: handleUpdateState },
+  ];
+
   return (
     <div className="flex px-8 py-8">
-      <div className="card w-1/2 mr-2 bg-base-100 shadow-xl">
-        <div className="card-body">
+      <div className="w-1/2 mr-2 bg-white shadow-xl rounded-lg">
+        <div className="p-6">
           {ticket ? (
             <div>
               <div className="flex flex-row justify-between place-items-center">
-                <h1 className="card-title">Ticket</h1>
+                <h1 className="text-xl font-bold">Ticket</h1>
 
-                <div className="dropdown">
-                  <label tabIndex={0} className="m-1 btn">
-                    <FaEllipsisV />
-                  </label>
-                  <ul
+                <div className="relative">
+                  <button
                     tabIndex={0}
-                    className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52"
+                    className="m-1 btn"
+                    onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                   >
-                    <li>
-                      <a>Modificar</a>
-                    </li>
-                    <li onClick={handleDelete}>
-                      <a>Eliminar</a>
-                    </li>
-                    <li onClick={openModal}>
-                      <a>Derivar</a>
-                    </li>
-                    <li onClick={handleUpdateState}>
-                      <a>Finalizar</a>
-                    </li>
-                  </ul>
+                    <FaEllipsisV />
+                  </button>
+
+                  {isDropdownOpen && (
+                    <ul className="absolute z-10 w-52 p-2 bg-white shadow rounded">
+                      {dropdownItems.map((item) => (
+                        <li
+                          className="hover:bg-gray-300"
+                          key={item.label}
+                          onClick={item.onClick}
+                        >
+                          <a>{item.label}</a>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
                 </div>
               </div>
 
-              <h1 className="card-title">{ticket.title}</h1>
+              <h1 className="text-xl font-bold mb-4">{ticket.title}</h1>
 
               <p className="mb-2">Producto: {product?.name}</p>
               <p className="mb-2">Version: {product?.version}</p>
@@ -405,18 +456,44 @@ function TicketPage() {
         </div>
       </div>
 
-      <div className="card w-1/2 ml-2 bg-base-100 shadow-xl">
-        <div className="card-body">
-          <h2 className="card-title">Tareas</h2>
+      <div className="w-1/2 ml-2 bg-white shadow-xl rounded-lg">
+        <div className="p-6">
+          <h2 className="text-xl font-bold">Tareas</h2>
           {assignments.map((assignment) => (
-            <div key={assignment.id} className="card bg-base-100 shadow-xl">
-              <div className="card-body">
-                <p>{assignment.task_id}</p>
-              </div>
-            </div>
+            <button
+              key={assignment.id}
+              className="bg-gray-400 hover:bg-gray-300 rounded-lg p-2 w-full"
+              onClick={() =>
+                router.push(`/proyectos/${assignment.project_id}/tareas`)
+              }
+            >
+              Ver Tarea
+            </button>
           ))}
         </div>
       </div>
+
+      {showForm && (
+        <div
+          className="fixed inset-0 flex items-center justify-center z-50"
+          id="DivExternFormTicket"
+        >
+          <div className="bg-white p-8 rounded shadow-lg" id="modalContenido">
+            <FormTicket
+              productIdNumerico={ticket.product_id}
+              idTicketRecv={ticket.id}
+            />
+            <button
+              onClick={() => {
+                setShowForm(false);
+              }}
+              id="buttonOpcionTicket"
+            >
+              Cerrar
+            </button>
+          </div>
+        </div>
+      )}
 
       {isOpen && (
         <div className="fixed inset-0 flex items-center justify-center z-50">
@@ -424,7 +501,7 @@ function TicketPage() {
             <h2 className="text-xl font-bold mb-4">Derivar</h2>
 
             <select
-              className="select w-full max-w-xs my-1"
+              className="block w-full max-w-xs p-2 mt-1 bg-white border border-gray-300 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               onChange={handleResourceChange}
               value={selectedResourceId || ""}
             >
@@ -439,7 +516,7 @@ function TicketPage() {
             </select>
 
             <select
-              className="select w-full max-w-xs my-1"
+              className="block w-full max-w-xs p-2 mt-1 bg-white border border-gray-300 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               onChange={handleProjectChange}
               value={selectedProjectId || ""}
             >
@@ -453,17 +530,17 @@ function TicketPage() {
               ))}
             </select>
 
-            <div className="flex justify-between">
+            <div className="flex justify-between mt-4">
               <button
                 onClick={closeModal}
-                className="bg-gray-500 hover:bg-gray-400 text-white px-4 py-2 rounded mt-4"
+                className="bg-gray-500 hover:bg-gray-400 text-white px-4 py-2 rounded mt-4 mx-2"
               >
                 Cerrar
               </button>
 
               <button
                 onClick={handleAssignment}
-                className="bg-gray-500  hover:bg-gray-400 text-white px-4 py-2 rounded mt-4"
+                className="bg-gray-500  hover:bg-gray-400 text-white px-4 py-2 rounded mt-4 mx-2"
               >
                 Asignar
               </button>

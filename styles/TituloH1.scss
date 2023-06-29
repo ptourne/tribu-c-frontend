@@ -1,3 +1,8 @@
+#ContainerUrgentes{
+    display: flex;
+    flex-direction: row;
+}   
+
 #tituloH1{
     border-bottom: 2px solid #292727; //poner la linea  debajo del titulo            
     margin-right: 87%; //disminuyo la barra borden botton.
@@ -8,3 +13,18 @@
     color: white;
     text-align: center;
 }
+
+
+#tituloTicketUrgente{
+    margin: 20px 0px 10px 20px;
+    font-size: 50px;
+    border-bottom: 2px solid #ffffff; //poner la linea  debajo del titulo            
+
+}
+#tituloH1BlancoUrgene{
+    color: white;
+    text-align: center;
+    border-bottom: 2px solid #ffffff; //poner la linea  debajo del titulo            
+
+}
+

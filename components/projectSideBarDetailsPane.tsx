@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Proyecto } from "../pages/types";
+import { Cliente, Proyecto } from "../pages/types";
 import { AiOutlineCheck, AiOutlineCheckCircle } from "react-icons/ai";
 import { IoIosWarning } from "react-icons/io";
 import { MdDelete } from "react-icons/md";
@@ -23,41 +23,41 @@ const ADD = 0;
 const EDIT = 1;
 
 const productList = [
-    {
-      id: 10, 
-      name: "Producto 1", 
-      versions: [
-        {
-          name: "1.8", 
-          customizations: ["Custom FIUBA1"]
-        },
-        {
-          name: "1.9", 
-          customizations: ["Custom FIUBA2"]
-        }
-      ]
-    }, 
-    {
-      id: 20, 
-      name: "Producto 2", 
-      versions: [
-        {
-          name: "1.4", 
-          customizations: ["Custom FIUBA3"]
-        },
-        {
-          name: "1.5", 
-          customizations: ["Custom FIUBA4"]
-        }
-      ]
-    }
-  ]
+  {
+    id: 10,
+    name: "Producto 1",
+    versions: [
+      {
+        name: "1.8",
+        customizations: ["Custom FIUBA1"],
+      },
+      {
+        name: "1.9",
+        customizations: ["Custom FIUBA2"],
+      },
+    ],
+  },
+  {
+    id: 20,
+    name: "Producto 2",
+    versions: [
+      {
+        name: "1.4",
+        customizations: ["Custom FIUBA3"],
+      },
+      {
+        name: "1.5",
+        customizations: ["Custom FIUBA4"],
+      },
+    ],
+  },
+];
 
 function ProjectSideBarDetailsPane({
   project,
   getProjectsFunction,
 }: ProjectSideBarProps) {
-  const [clients, setClients] = useState([{id: 100, razon_social: "Cliente 1"},{id: 200, razon_social: "Cliente 2"}]);
+  const [clients, setClients] = useState<Cliente[]>([]);
   const [products, setProducts] = useState(productList);
   const [versions, setVersions] = useState([]);
   const [customizations, setCustomizations] = useState([]);
@@ -99,7 +99,10 @@ function ProjectSideBarDetailsPane({
       setEstimatedCost(project.costo_estimado.toString());
       if (versionsDict[project.id_producto]) {
         setVersions(versionsDict[project.id_producto].versions);
-        if (versionsDict[project.id_producto].customizations[project.version]) setCustomizations(versionsDict[project.id_producto].customizations[project.version]);
+        if (versionsDict[project.id_producto].customizations[project.version])
+          setCustomizations(
+            versionsDict[project.id_producto].customizations[project.version]
+          );
       }
       if (!lastProject) setLastProject(project);
     } else {
@@ -137,17 +140,27 @@ function ProjectSideBarDetailsPane({
 
   const getClients = async () => {
     axios
-      .get("endpoint de obtener clientes")
+      .get("https://psa-soporte.eeoo.ar/clients")
       .then((data) => {
-        if (data.data.ok) {
-          console.log(data);
-          //setClients(data.data.msg);
+        if (data.data) {
+          console.log(data.data);
+
+          const formattedClients = data.data.map((client: Cliente) => {
+            return {
+              id: client.id,
+              razon_social: client["razon social"], // Access the property using square brackets notation
+              CUIT: client.CUIT,
+            };
+          });
+          setClients(formattedClients);
+          console.log("clientes:", clients);
         }
       })
       .catch((err) => {
         toast.error(
           err.response?.data?.msg
-            ? "Hubo un error al obtener los clientes: " + err.response?.data?.msg
+            ? "Hubo un error al obtener los clientes: " +
+                err.response?.data?.msg
             : "Hubo un error al obtener los clientes",
           {
             position: "top-right",
@@ -156,7 +169,7 @@ function ProjectSideBarDetailsPane({
           }
         );
       });
-  }
+  };
 
   const getProducts = async () => {
     for (let producto of products) {
@@ -164,15 +177,21 @@ function ProjectSideBarDetailsPane({
       for (let version of producto.versions) {
         customizationsDict[version.name] = version.customizations;
       }
-      versionsDict[producto.id] = {versions: producto.versions, customizations: customizationsDict};
-      console.log(versionsDict);
+      versionsDict[producto.id] = {
+        versions: producto.versions,
+        customizations: customizationsDict,
+      };
+      //console.log(versionsDict);
       setVersionsDict(versionsDict);
     }
     if (project) {
       setVersions(versionsDict[project.id_producto].versions);
-      if (versionsDict[project.id_producto].customizations[project.version]) setCustomizations(versionsDict[project.id_producto].customizations[project.version]);
+      if (versionsDict[project.id_producto].customizations[project.version])
+        setCustomizations(
+          versionsDict[project.id_producto].customizations[project.version]
+        );
     }
-  }
+  };
 
   useEffect(() => {
     getClients();
@@ -185,12 +204,16 @@ function ProjectSideBarDetailsPane({
     setPendingChanges(true);
   };
 
-  const handleClientChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+  const handleClientChange = (
+    event: React.ChangeEvent<HTMLTextAreaElement>
+  ) => {
     setClient(parseInt(event.target.value));
     setPendingChanges(true);
   };
 
-  const handleProductChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+  const handleProductChange = (
+    event: React.ChangeEvent<HTMLTextAreaElement>
+  ) => {
     setProduct(parseInt(event.target.value));
     setVersions(versionsDict[parseInt(event.target.value)].versions);
     setPendingChanges(true);
@@ -198,7 +221,9 @@ function ProjectSideBarDetailsPane({
     setCustomization("");
   };
 
-  const handleVersionChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+  const handleVersionChange = (
+    event: React.ChangeEvent<HTMLTextAreaElement>
+  ) => {
     setVersion(event.target.value);
     setCustomizations(versionsDict[product].customizations[event.target.value]);
     setPendingChanges(true);
@@ -419,7 +444,7 @@ function ProjectSideBarDetailsPane({
                 <MdDelete />
               </button>
             )}
-          </div>          
+          </div>
           <div className="d-flex justify-content-between flex-col mt-1 mb-3">
             <div className="d-flex justify-content-between align-items-center flex-row">
               <div className="flex-grow-1 d-flex justify-content-between align-items-center flex-row">
@@ -435,9 +460,11 @@ function ProjectSideBarDetailsPane({
                     disabled={mode === EDIT}
                   >
                     <option value="">Seleccione una opci&oacute;n</option>
-                    {clients.map((client) => 
-                      <option key={client.id} value={client.id}>{client.razon_social}</option>
-                    )}
+                    {clients.map((client) => (
+                      <option key={client.id} value={client.id}>
+                        {client.razon_social}
+                      </option>
+                    ))}
                   </select>
                 </div>
               </div>
@@ -457,57 +484,63 @@ function ProjectSideBarDetailsPane({
                     disabled={mode === EDIT}
                   >
                     <option value="">Seleccione una opci&oacute;n</option>
-                    {products.map((product) => 
-                      <option key={product.id} value={product.id}>{product.name}</option>
-                    )}
+                    {products.map((product) => (
+                      <option key={product.id} value={product.id}>
+                        {product.name}
+                      </option>
+                    ))}
                   </select>
                 </div>
               </div>
               <UnsavedWarningIcon isSavePending={true} />
             </div>
             <div className="d-flex justify-content-between align-items-center flex-row">
-                <div className="flex-grow-1 d-flex justify-content-between align-items-center flex-row">
-                  <label htmlFor="version" className="col-md-6 form-label">
-                    Versi&oacute;n *
-                  </label>
-                  <div className="col-md-6">
-                    <select
-                      className="form-select border-0 border-bottom rounded-0 p-0"
-                      id="inputGroupSelect03"
-                      value={version}
-                      onChange={handleVersionChange}
-                      disabled={mode === EDIT || !product}
-                    >
-                      <option value="">Seleccione una opci&oacute;n</option>
-                      {versions.map((version) => 
-                        <option key={version.name} value={version.name}>{version.name}</option>
-                      )}
-                    </select>
-                  </div>
+              <div className="flex-grow-1 d-flex justify-content-between align-items-center flex-row">
+                <label htmlFor="version" className="col-md-6 form-label">
+                  Versi&oacute;n *
+                </label>
+                <div className="col-md-6">
+                  <select
+                    className="form-select border-0 border-bottom rounded-0 p-0"
+                    id="inputGroupSelect03"
+                    value={version}
+                    onChange={handleVersionChange}
+                    disabled={mode === EDIT || !product}
+                  >
+                    <option value="">Seleccione una opci&oacute;n</option>
+                    {versions.map((version) => (
+                      <option key={version.name} value={version.name}>
+                        {version.name}
+                      </option>
+                    ))}
+                  </select>
                 </div>
-                <UnsavedWarningIcon isSavePending={true} />
+              </div>
+              <UnsavedWarningIcon isSavePending={true} />
             </div>
             <div className="d-flex justify-content-between align-items-center flex-row">
-                <div className="flex-grow-1 d-flex justify-content-between align-items-center flex-row">
-                  <label htmlFor="customization" className="col-md-6 form-label">
-                    Customizaci&oacute;n *
-                  </label>
-                  <div className="col-md-6">
-                    <select
-                        className="form-select border-0 border-bottom rounded-0 p-0"
-                        id="inputGroupSelect04"
-                        value={customization}
-                        onChange={handleCustomizationChange}
-                        disabled={mode === EDIT || !version}
-                      >
-                        <option value="">Seleccione una opci&oacute;n</option>
-                        {customizations.map((customization) => 
-                          <option key={customization} value={customization}>{customization}</option>
-                        )}
-                      </select>
-                  </div>
+              <div className="flex-grow-1 d-flex justify-content-between align-items-center flex-row">
+                <label htmlFor="customization" className="col-md-6 form-label">
+                  Customizaci&oacute;n *
+                </label>
+                <div className="col-md-6">
+                  <select
+                    className="form-select border-0 border-bottom rounded-0 p-0"
+                    id="inputGroupSelect04"
+                    value={customization}
+                    onChange={handleCustomizationChange}
+                    disabled={mode === EDIT || !version}
+                  >
+                    <option value="">Seleccione una opci&oacute;n</option>
+                    {customizations.map((customization) => (
+                      <option key={customization} value={customization}>
+                        {customization}
+                      </option>
+                    ))}
+                  </select>
                 </div>
-                <UnsavedWarningIcon isSavePending={true} />
+              </div>
+              <UnsavedWarningIcon isSavePending={true} />
             </div>
             <div className="d-flex justify-content-between align-items-center flex-row">
               <div className="flex-grow-1 d-flex justify-content-between align-items-center flex-row">
@@ -530,7 +563,7 @@ function ProjectSideBarDetailsPane({
 
               <UnsavedWarningIcon isSavePending={stateSaved!} />
             </div>
-            
+
             <div className="d-flex justify-content-between align-items-center flex-row">
               <div className="flex-grow-1 d-flex justify-content-between align-items-center flex-row">
                 <label htmlFor="startDate" className="col-md-6 form-label">
@@ -572,7 +605,7 @@ function ProjectSideBarDetailsPane({
             <div className="d-flex justify-content-between align-items-center flex-row">
               <div className="flex-grow-1 d-flex justify-content-between align-items-center flex-row">
                 <label htmlFor="estimatedCost" className="col-md-6 form-label">
-                  Costo Estimado * 
+                  Costo Estimado *
                 </label>
                 <div className="col-md-6">
                   <input
@@ -592,7 +625,14 @@ function ProjectSideBarDetailsPane({
           <button
             type="button"
             className={
-              pendingChanges && name && client && product && version && customization && startDate && estimatedCost
+              pendingChanges &&
+              name &&
+              client &&
+              product &&
+              version &&
+              customization &&
+              startDate &&
+              estimatedCost
                 ? "btn btn-primary"
                 : "btn btn-primary disabled"
             }
