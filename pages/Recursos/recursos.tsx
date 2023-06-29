@@ -1,17 +1,15 @@
 import { Inter } from "next/font/google";
 import axios from 'axios'
-import { SERVER_NAME_PROYECTOS } from "../../../environments"
 import ProjectInfoCard from "@/components/projectInfoCard";
 import RecursoSideBar from "@/components/recursoSideBar";
 import React, { Fragment, useState, useEffect } from "react";
 import { MdAdd } from "react-icons/md";
 import { Typography, Tooltip } from "@mui/material";
 import CircularProgress from '@mui/material/CircularProgress';
-import { Recurso } from "../../types";
+import { Recurso } from "../types";
 import RecursoInfoCard from "@/components/recursoInfoCard";
-import Calendario from "./En Desuso/calendario";
 import { useRouter } from "next/router";
-
+import RECURSOS_URL from "./Components/recursosURL"
 const inter = Inter({ subsets: ["latin"] });
 
 export default function recurso() {
@@ -26,29 +24,17 @@ export default function recurso() {
   const router = useRouter();
 
   const getRecursos = async () => {
-    const recursos: Recurso[] = [
-        {
-          nombre: "Maria",
-          apellido: "De La Rosa",
-          legajo: 234, // March 1, 2023
-        
-        },
-        {
-            nombre: "Juan",
-            apellido: "Perez",
-            legajo: 556, // March 1, 2023
-        },
-         
-      ]; 
-    setRecursos(recursos);
-    setLoading(false);
-    
+    try {
+      const response = await fetch(
+        RECURSOS_URL + "recurso"
+      );
+      const data = await response.json();
+      setRecursos(data);
+      setLoading(false);
+    } catch (error) {
+      console.error("Error fetching ticket:", error);
+    }
   };
-
-  const addRecurso = () => {
-    setSelectedRecurso(undefined);
-    setSelectedIndex(-1);
-  }
 
   useEffect(() => {
     getRecursos();
@@ -64,17 +50,6 @@ export default function recurso() {
       <div className="flex flex-fill col-md-1 h-full flex-col p-4 bg-white w-30">
         <div className="flex">
           <h1 className="text-black mb-5 font-bold">Recursos</h1>
-          <Tooltip title={<Typography fontSize={15}>Nuevo Recurso</Typography>} placement="right">
-            <button
-              type="button"
-              className="btn btn-outline-primary d-flex align-items-center justify-content-center mb-5 ml-4 space-x-4"
-              onClick={() => {
-                addRecurso();
-              }}
-            >
-              <MdAdd />
-            </button>
-          </Tooltip> 
         </div>
         <div
           className={
@@ -87,7 +62,7 @@ export default function recurso() {
           {loading 
             ? <>
                 <CircularProgress></CircularProgress>
-                <p className="mt-3">Cargando Proyectos</p>
+                <p className="mt-3">Cargando Recursos</p>
               </>
             : (recursos.length > 0
                 ? recursos.map((recurso, index) => (
@@ -95,14 +70,13 @@ export default function recurso() {
                       key={index}
                       recurso={recurso}
                       onClick={() => {
-                        console.log("Se esta cliqueando");
                         // Redirigir al calendario
                         setSelectedIndex(index);
                         router.push({
                           pathname: `/Recursos/${recurso.legajo}`,
                           query: {
-                            nombreRecurso: recurso.nombre,
-                            apellidoRecurso: recurso.apellido,
+                            nombreRecurso: recurso.Nombre,
+                            apellidoRecurso: recurso.Apellido,
                             legajo: recurso.legajo
                           }
                         });
@@ -113,9 +87,6 @@ export default function recurso() {
                 : "Aún no hay proyectos creados. Seleccione agregar para crear uno nuevo")
           }
         </div>
-      </div>
-      <div className="col-md-6 flex flex-col h-full">
-        {<RecursoSideBar recurso={selectedRecurso} />}
       </div>
       </div>
   );
