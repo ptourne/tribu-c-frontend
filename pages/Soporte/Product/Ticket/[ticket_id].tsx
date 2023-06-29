@@ -45,6 +45,23 @@ interface Resource {
   Apellido: string;
 }
 
+interface Task {
+  descripcion: string;
+  estado: number;
+  horas_acumuladas: number;
+  id_proyecto: number;
+  id_tarea: number;
+  legajo_responsable: number;
+  tiempo_estimado_finalizacion: number;
+  titulo: string;
+}
+
+interface Assignment {
+  task_id: number;
+  id: number;
+  ticket_id: number;
+}
+
 const resourcesTest: Resource[] = [
   {
     legajo: 1,
@@ -74,6 +91,7 @@ function TicketPage() {
   const [isOpen, setIsOpen] = useState(false);
   const [ticket, setTicket] = useState<Ticket | null>(null);
   const [product, setProduct] = useState<Product | null>(null);
+  const [taskId, setTaskId] = useState<number>(0);
 
   useEffect(() => {
     const fetchTicket = async () => {
@@ -128,6 +146,29 @@ function TicketPage() {
     };
 
     fetchProjects();
+  }, [ticket]);
+
+  const [assignments, setAssignments] = useState<Assignment[]>([]);
+
+  useEffect(() => {
+    const fetchAssignments = async () => {
+      try {
+        const response = await fetch(
+          `https://psa-soporte.eeoo.ar/assignments/ticket/${ticket_id}`
+        );
+        const data = await response.json();
+
+        setAssignments(data);
+      } catch (error) {
+        console.error(
+          "Error al obtener las tareas asociadas al ticket:",
+          error
+        );
+      }
+    };
+    if (ticket_id) {
+      fetchAssignments();
+    }
   }, [ticket]);
 
   /*const [resources, setResources] = useState<Resource[]>([]);
@@ -246,6 +287,33 @@ function TicketPage() {
     setSelectedResourceId(selectedResourceId);
   };
 
+  const createAssignment = async () => {
+
+    const assignmentData = {
+      task_id: taskId,
+    };
+
+    try {
+      const response = await fetch(
+        `https://psa-soporte.eeoo.ar/assignments/ticket/${ticket_id}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(assignmentData),
+        }
+      );
+
+      if (response.ok) {
+        console.log("Asignacion ticket tarea creada exitosamente");
+      } else {
+        console.error("Error al asignar la tarea:", response.status);
+      }
+    } catch (error) {
+      console.error("Error al asignar la tarea:", error);
+    }
+  };
 
   const handleAssignment = async () => {
     const taskData = {
@@ -269,7 +337,10 @@ function TicketPage() {
 
       if (response.ok) {
         console.log("Tarea asignada exitosamente");
-        handleUpdateResponsible()
+        const data = await response.json();
+        setTaskId(data.msg.id_tarea);
+        handleUpdateResponsible();
+        createAssignment();
         closeModal();
       } else {
         console.error("Error al asignar la tarea:", response.status);
@@ -278,7 +349,6 @@ function TicketPage() {
       console.error("Error al asignar la tarea:", error);
     }
   };
-
 
   return (
     <div className="flex px-8 py-8">
@@ -338,7 +408,13 @@ function TicketPage() {
       <div className="card w-1/2 ml-2 bg-base-100 shadow-xl">
         <div className="card-body">
           <h2 className="card-title">Tareas</h2>
-          <p>Aca van las tareas asociadas al ticket</p>
+          {assignments.map((assignment) => (
+            <div key={assignment.id} className="card bg-base-100 shadow-xl">
+              <div className="card-body">
+                <p>{assignment.task_id}</p>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
 

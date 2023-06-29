@@ -81,7 +81,7 @@ function ProjectSideBarDetailsPane({
   const [startDateSaved, setStartDateSaved] = useState(true);
   const [finishDate, setFinishDate] = useState<Date | null>(null);
   const [finishDateSaved, setFinishDateSaved] = useState(true);
-  const [estimatedCost, setEstimatedCost] = useState("");
+  const [estimatedCost, setEstimatedCost] = useState(0);
   const [estimatedCostSaved, setEstimatedCostSaved] = useState(true);
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
 
@@ -112,7 +112,7 @@ function ProjectSideBarDetailsPane({
       setCustomization("");
       setStartDate(null);
       setFinishDate(null);
-      setEstimatedCost("0");
+      setEstimatedCost(0);
     }
     if (pendingChanges) {
       toast.warning(
@@ -137,7 +137,7 @@ function ProjectSideBarDetailsPane({
 
   const getClients = async () => {
     axios
-      .get("https://anypoint.mulesoft.com/mocking/api/v1/sources/exchange/assets/754f50e8-20d8-4223-bbdc-56d50131d0ae/clientes-psa/1.0.0/m/api/clientes")
+      .get("endpoint de obtener clientes")
       .then((data) => {
         if (data.data.ok) {
           console.log(data);
@@ -233,9 +233,12 @@ function ProjectSideBarDetailsPane({
   const handleEstimatedCostChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    setEstimatedCost(event.target.value);
-    if (mode === EDIT) setEstimatedCostSaved(false);
-    setPendingChanges(true);
+    const value = parseInt(event.target.value);
+    if (!isNaN(value) && estimatedCost != value) {
+      setEstimatedCost(value);
+      if (mode === EDIT) setEstimatedCostSaved(false);
+      setPendingChanges(true);
+    }
   };
 
   const handleSave = () => {
@@ -284,7 +287,7 @@ function ProjectSideBarDetailsPane({
         setState(0);
         setStartDate(null);
         setFinishDate(null);
-        setEstimatedCost("0");
+        setEstimatedCost(0);
       })
       .catch((e) => {
         toast.error(
@@ -361,7 +364,7 @@ function ProjectSideBarDetailsPane({
         setCustomization("");
         setStartDate(null);
         setFinishDate(null);
-        setEstimatedCost("0");
+        setEstimatedCost(0);
       })
       .catch((e) => {
         setShowDeleteConfirmation(false);
