@@ -71,7 +71,6 @@ const resourcesTest: Resource[] = [
 function TicketPage() {
   const router = useRouter();
   const { ticket_id } = router.query;
-
   const [isOpen, setIsOpen] = useState(false);
   const [ticket, setTicket] = useState<Ticket | null>(null);
   const [product, setProduct] = useState<Product | null>(null);

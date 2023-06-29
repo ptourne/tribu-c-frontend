@@ -137,6 +137,12 @@ export const FormTicket: React.FC<{
           console.log("Solicitud POST exitosa");
         } else console.log("Error en la solicitud POST");
       })
+      .then((data) => {
+        console.log(
+          "Respuesta de lo que devuelve el servidor luego de hacer un POST: @Ricardo "
+        );
+        console.log(data);
+      })
       .catch((error) => {
         console.log("Error en la solicitud POST", error);
       });
