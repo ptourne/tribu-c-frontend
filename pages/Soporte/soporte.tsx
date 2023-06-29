@@ -14,6 +14,14 @@ export default function Soporte() {
     );
   };
 
+  const handleReporte = () => {
+    console.log("Click en reporte.");
+    <div>
+      <img src={'/public/reportes.jpeg'} alt="Mi imagen" />
+    </div>
+  }
+  
+
   useEffect(() => {
     fetchProductos().then((productosFetch) => {
       setProducts(productosFetch);
@@ -23,7 +31,16 @@ export default function Soporte() {
   return (
     <>
       <h1 id="tituloH1"> Productos </h1>
+      <button
+            type="button"
+            onClick={handleReporte}
+            id="buttonReportes"
+          >
+            Reporte
+          </button>
       <ProductBar products={products} />
+      
     </>
+    
   );
 }
