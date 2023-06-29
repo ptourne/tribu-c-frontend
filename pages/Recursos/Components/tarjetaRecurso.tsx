@@ -86,12 +86,12 @@ export const TarjetaRecurso: React.FC<TarjetaRecurso> = ({ recurso, tareaActual 
             // console.log("Data[0]:" + data[0]);
             let horasTotalesEnTarea = 0;
             let horasTotalesEnProyecto = 0;
-            console.log("Recurso: L:" + recurso.legajo);
-            console.log("Tarea actual: P:" + tareaActual.id_proyecto + " T:" + tareaActual.id_tarea);
+            // console.log("Recurso: L:" + recurso.legajo);
+            // console.log("Tarea actual: P:" + tareaActual.id_proyecto + " T:" + tareaActual.id_tarea);
             data.forEach((bloqueDeTrabajo: BloqueDeTrabajo) => {
                 // No contabilizar horas futuras
                 // console.log(tareaActual.)
-                console.log("Bloque de trabajo: P:" + bloqueDeTrabajo.codProyectoDeLaTarea + " T:" + bloqueDeTrabajo.codTarea);
+                // console.log("Bloque de trabajo: P:" + bloqueDeTrabajo.codProyectoDeLaTarea + " T:" + bloqueDeTrabajo.codTarea);
                 if (recurso.legajo == bloqueDeTrabajo.legajo && bloqueDeTrabajo.codTarea.toString() == tareaActual.id_tarea && bloqueDeTrabajo.codProyectoDeLaTarea.toString() == tareaActual.id_proyecto) {
                     horasTotalesEnTarea += bloqueDeTrabajo.horasDelBloque;
                 } else if (recurso.legajo == bloqueDeTrabajo.legajo && bloqueDeTrabajo.codProyectoDeLaTarea.toString() == tareaActual.id_proyecto) {
@@ -133,7 +133,7 @@ export const TarjetaRecurso: React.FC<TarjetaRecurso> = ({ recurso, tareaActual 
                                         Horas consumidas en el proyecto: { horasDedicadasAProyecto }
                                     </label>
                                     <label className="col-md-6 form-label align-items-center">
-                                        Tareas finalizadas en el proyecto: { 10 }
+                                        Tareas finalizadas en el proyecto: { 0 }
                                     </label>
                                 <div className="flex-grow-1 d-flex flex-row">
                                     <label>
