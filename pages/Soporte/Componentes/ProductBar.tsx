@@ -27,17 +27,10 @@ export const ProductBar: React.FC<ProductBarProps> = ({ products }) => {
   };
 
   <button
-<<<<<<< HEAD
-            type="button"
-            onClick={handleOpenFormFiltro}
-            id="buttonFiltrarProductos"
-          ></button>
-=======
     type="button"
     onClick={handleOpenFormTicket}
     id="buttonAgregarTicket"
   ></button>;
->>>>>>> 61991e6003f162bc1020c2845b753cee363fe966
 
   // cuando funcione tendremos que ir y darle a cada boton su correspondiente handler depnde en cual haga click. posiblmente su objeto Ticket correspondiente.
   //Se pasa la ruta absoluta y no la relativa !! no usar "." .ACA hacemos el ruteo .
