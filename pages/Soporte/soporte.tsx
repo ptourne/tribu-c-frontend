@@ -19,6 +19,7 @@ export default function Soporte() {
   
   const handleReporte = () => {
     console.log("Click en reporte.");
+    
     const imagen = new Image();
     imagen.src = 'https://github.com/ptourne/tribu-c-frontend/blob/main/public/reportes.jpeg?raw=true';
     window.open(imagen.src);
