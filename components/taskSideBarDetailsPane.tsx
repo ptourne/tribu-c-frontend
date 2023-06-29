@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Proyecto, Tarea } from "../pages/types";
+import { Proyecto, Recurso, Tarea } from "../pages/types";
 import { AiOutlineCheck, AiOutlineCheckCircle } from "react-icons/ai";
 import { IoIosWarning } from "react-icons/io";
 import { MdDelete } from "react-icons/md";
@@ -28,8 +28,7 @@ function TaskSideBarDetailsPane({
   project_id,
   getTasksFunction,
 }: TaskSideBarProps) {
-  const [resources, setResources] = useState([{legajo: 1, Nombre: "Juan", Apellido: "Perez"}, {legajo: 2, Nombre: "Maria", Apellido: "Lopez"}]);
-
+  const [resources, setResources] = useState<Recurso[]>([]);
   const [mode, setMode] = useState(EDIT);
   const [lastTask, setLastTask] = useState<Tarea | undefined>(undefined);
   const [pendingChanges, setPendingChanges] = useState(false);
@@ -48,7 +47,6 @@ function TaskSideBarDetailsPane({
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
 
   useEffect(() => {
-    console.log(task)
     if (task) {
       setMode(EDIT);
       setTitulo(task.titulo || "");
@@ -90,18 +88,22 @@ function TaskSideBarDetailsPane({
   }, [task]);
 
   const getResources = async () => {
+    console.log("Fetching resources");
     axios
       .get("https://psa-recursos.eeoo.ar/recurso")
       .then((data) => {
-        if (data.data.ok) {
-          console.log(data);
-          //setResources(data.data.msg);
-        }
+        console.log("recursos", data);
+        data.data.forEach((resource: Recurso) => {});
+        const resources = data.data.sort(
+          (a: Recurso, b: Recurso) => a.legajo - b.legajo
+        );
+        setResources(resources);
       })
       .catch((err) => {
         toast.error(
           err.response?.data?.msg
-            ? "Hubo un error al obtener los responsables: " + err.response?.data?.msg
+            ? "Hubo un error al obtener los responsables: " +
+                err.response?.data?.msg
             : "Hubo un error al obtener los responsables",
           {
             position: "top-right",
@@ -110,7 +112,7 @@ function TaskSideBarDetailsPane({
           }
         );
       });
-  }
+  };
 
   useEffect(() => {
     getResources();
@@ -122,7 +124,9 @@ function TaskSideBarDetailsPane({
     setPendingChanges(true);
   };
 
-  const handleResponsibleChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+  const handleResponsibleChange = (
+    event: React.ChangeEvent<HTMLTextAreaElement>
+  ) => {
     setResponsible(event.target.value);
     if (mode === EDIT) setResponsibleSaved(false);
     setPendingChanges(true);
@@ -171,7 +175,6 @@ function TaskSideBarDetailsPane({
       estado: state,
       legajo_responsable: responsible,
     };
-    console.log(taskToSave);
 
     // Make an API request to save the changes
     if (mode === ADD) saveTask(taskToSave);
@@ -186,7 +189,6 @@ function TaskSideBarDetailsPane({
       )
       .then((response) => {
         const responseData = response.data;
-        console.log("Datos devueltos por el servidor:", responseData);
         toast.success("Tarea guardado correctamente!", {
           position: "top-right",
           autoClose: 2000,
@@ -228,7 +230,14 @@ function TaskSideBarDetailsPane({
 
   const updateTask = (taskToSave: Tarea) => {
     axios
-      .put(SERVER_NAME_PROYECTOS + "projects/" + project_id + "/tasks/" + task?.id_tarea, taskToSave)
+      .put(
+        SERVER_NAME_PROYECTOS +
+          "projects/" +
+          project_id +
+          "/tasks/" +
+          task?.id_tarea,
+        taskToSave
+      )
       .then(() => {
         toast.success("Cambios guardados correctamente!", {
           position: "top-right",
@@ -371,25 +380,27 @@ function TaskSideBarDetailsPane({
             </div>
           </div>
           <div className="d-flex justify-content-between align-items-center flex-row">
-              <div className="flex-grow-1 d-flex justify-content-between align-items-center flex-row">
-                <label htmlFor="state" className="col-md-6 form-label">
-                  Responsable Asignado *
-                </label>
-                <div className="col-md-6">
-                  <select
-                    className="form-select border-0 border-bottom rounded-0 p-0"
-                    id="inputGroupSelect01"
-                    value={responsible}
-                    onChange={handleResponsibleChange}
-                  >
-                    <option value="">Seleccione una opci&oacute;n</option>
-                    {resources.map((resource) => 
-                      <option key={resource.legajo} value={resource.legajo}>{resource.Nombre + ' ' + resource.Apellido}</option>
-                    )}
-                  </select>
-                </div>
+            <div className="flex-grow-1 d-flex justify-content-between align-items-center flex-row">
+              <label htmlFor="state" className="col-md-6 form-label">
+                Responsable Asignado *
+              </label>
+              <div className="col-md-6">
+                <select
+                  className="form-select border-0 border-bottom rounded-0 p-0"
+                  id="inputGroupSelect01"
+                  value={responsible}
+                  onChange={handleResponsibleChange}
+                >
+                  <option value="">Seleccione una opci&oacute;n</option>
+                  {resources.map((resource) => (
+                    <option key={resource.legajo} value={resource.legajo}>
+                      {resource.Nombre + " " + resource.Apellido}
+                    </option>
+                  ))}
+                </select>
               </div>
-              <UnsavedWarningIcon isSavePending={responsibleSaved} />
+            </div>
+            <UnsavedWarningIcon isSavePending={responsibleSaved} />
           </div>
           <div className="d-flex justify-content-between align-items-center flex-row">
             <div className="d-flex my-1 flex-fill justify-content-between align-items-center flex-row">
