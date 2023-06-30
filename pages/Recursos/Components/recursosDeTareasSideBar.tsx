@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { Recurso, Tarea } from "../../types";
-import RECURSOS_URL from "./recursosURL";
 import { TarjetaRecurso } from "./tarjetaRecurso";
 import { CircularProgress } from "@mui/material";
+import { RECURSOS_URL } from "@/environments";
 
 interface RecursosDeTareasSideBar {
     tarea: Tarea;
@@ -11,7 +11,7 @@ interface RecursosDeTareasSideBar {
 
 export const RecursosDeTareasSideBar: React.FC<RecursosDeTareasSideBar> = ({ tarea, project_id}) => {
   if (tarea) {
-    tarea.id_project = project_id;
+    tarea.id_proyecto = project_id;
   }
   const [recursos, setRecursos] = useState<Recurso[]>([]);
   const [loading, setLoading] = useState(true);

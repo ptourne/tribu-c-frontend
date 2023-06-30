@@ -3,12 +3,11 @@ import { BloqueDeTrabajo, Recurso, Tarea } from "../../types";
 import Popup from "./popup";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import RECURSOS_URL from "./recursosURL";
 import { toast } from "react-toastify";
-import DatePicker from "react-datepicker";
-import { SERVER_NAME_PROYECTOS } from "@/environments";
-import { RiContactsBookLine } from "react-icons/ri";
+import { RECURSOS_URL, SERVER_NAME_PROYECTOS } from "@/environments";
 import { CircularProgress } from "@mui/material";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 interface TarjetaRecurso {
     recurso: Recurso;
@@ -49,7 +48,7 @@ export const TarjetaRecurso: React.FC<TarjetaRecurso> = ({ recurso, tareaActual 
     // Evento del click del botón
     const handleClick = () => {
         const bloque = {
-            codProyectoDeLaTarea: parseInt(tareaActual.id_project),
+            codProyectoDeLaTarea: parseInt(tareaActual.id_proyecto),
             codTarea: parseInt(tareaActual.id_tarea),
             legajo: recurso.legajo,
             horasDelBloque: horas,

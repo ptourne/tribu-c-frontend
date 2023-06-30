@@ -4,9 +4,8 @@ import { Tarea } from "../../types";
  
 import {   FaSistrix,FaSearchengin,FaPencilAlt, FaUserClock } from "react-icons/fa";
 import { BloqueDeTrabajo } from "@/pages/types";
-import { SERVER_NAME_PROYECTOS } from "@/environments";
+import { RECURSOS_URL, SERVER_NAME_PROYECTOS } from "@/environments";
 import axios from "axios";
-import RECURSOS_URL from "./recursosURL";
 import { toast } from "react-toastify";
 interface TarjetaTarea {
   bloqueDeTrabajo: BloqueDeTrabajo,
@@ -17,13 +16,13 @@ export const TarjetaTarea: React.FC<TarjetaTarea> = ({ bloqueDeTrabajo }) => {
   const [horas , setHoras] = useState(bloqueDeTrabajo.horasDelBloque);
   const [tareaAsociada, setTareaAsociada] = useState<Tarea>({
     id_tarea: "",
-    id_project: "",
+    id_proyecto: "",
     titulo: "",
     descripcion: "",
-    tiempo_estimado_fin: 0,
+    tiempo_estimado_finalizacion: 0,
     horas_acumuladas: 0,
     estado: 0,
-    responsable: ""
+    legajo_responsable: ""
   });
   const [classNameDiv, setClassNameDiv] = useState("");
   const [classNameInput, setClassNameInput] = useState("");

@@ -9,17 +9,13 @@ import CircularProgress from '@mui/material/CircularProgress';
 import { Recurso } from "../types";
 import RecursoInfoCard from "@/components/recursoInfoCard";
 import { useRouter } from "next/router";
-import RECURSOS_URL from "./Components/recursosURL"
+import { RECURSOS_URL } from "@/environments";
 const inter = Inter({ subsets: ["latin"] });
 
-export default function recurso() {
+export default function Recurso() {
   const [loading, setLoading] = useState(true);
   const [recursos, setRecursos] = useState<Recurso[]>([]);
-  const [getProjectsError, setGetProjectsError] = useState('')
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const [selectedRecurso, setSelectedRecurso] = useState<Recurso | undefined>(
-    undefined
-  );
 
   const router = useRouter();
 
@@ -39,11 +35,6 @@ export default function recurso() {
   useEffect(() => {
     getRecursos();
   }, []);
-
-  useEffect(() => {
-    // Se redirige al calendario
-    setSelectedRecurso(recursos[selectedIndex]);
-  }, [recursos, selectedIndex]);
 
   return (
     <div className="flex flex-row h-full">

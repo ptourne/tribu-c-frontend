@@ -26,7 +26,7 @@ export interface Proyecto {
 
 export interface Tarea {
   id_tarea: string;
-  id_project: string;
+  id_proyecto: string;
   titulo: string;
   descripcion: string;
   tiempo_estimado_finalizacion: number;
