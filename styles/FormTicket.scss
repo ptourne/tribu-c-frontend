@@ -2,12 +2,13 @@
     display: flex;
     flex-direction: column;
     padding: 10px 10px 10px 10px;
-    //margin-right: 900px; // aca mas grande el valor mas se achica todo el div del form. 
+    ///margin-right: 10px; // aca mas grande el valor mas se achica todo el div del form. 
     background-color: rgb(255, 255, 255);
     margin-left: 35px; //segun dylan es 5px para el
     border: 4px solid #f7f7f7;
     #divPrincipal{
         background-color: rgb(255, 255, 255);
+    
     }
 
     #divTitulo{
@@ -18,7 +19,7 @@
         input{
             border: 4px solid rgb(255, 255, 255);
             background-color: rgb(255, 255, 255);
-            font-size: 35px; //  afecta diretamente el tamanio del imput
+            font-size: 45px; //  afecta diretamente el tamanio del imput
             border-bottom: 2px solid #ccc; //poner la linea  debajo del titulo            
         }
 

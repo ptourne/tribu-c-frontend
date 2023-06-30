@@ -57,15 +57,17 @@ export default function Ticket() {
   const productID: string =
     typeof product_id === "string" ? product_id : "VACIO";
 
-  const fetchGetProductosById = (): Promise<Producto> => {
-    //1) Llamanda al backend hacemos un GET de productos los id van en number recuerda !
-    return fetch(`https://psa-soporte.eeoo.ar/product/${parseInt(productID)}`, {
-      method: "GET",
-      headers: {},
-    }).then((res) => res.json());
-  };
-
   useEffect(() => {
+    const fetchGetProductosById = (): Promise<Producto> => {
+      //1) Llamanda al backend hacemos un GET de productos los id van en number recuerda !
+      return fetch(
+        `https://psa-soporte.eeoo.ar/product/${parseInt(productID)}`,
+        {
+          method: "GET",
+          headers: {},
+        }
+      ).then((res) => res.json());
+    };
     fetchGetProductosById().then((unProducto) => {
       setProductoSelect(unProducto);
     });
@@ -89,102 +91,88 @@ export default function Ticket() {
   //Cuando creamos el ticket vamos a pasar idTicket = -1.
   return (
     <>
-      <div>
-        <h1
-          style={{ fontSize: "2.2em", marginLeft: "30px", marginTop: "10px" }}
-        >
-          {productoSelect?.name}
-        </h1>
-        <h1
-          style={{ fontSize: "1.8em", marginLeft: "30px", marginTop: "-20px" }}
-        >
-          Versión: {productoSelect?.version}
-          <button
-            type="button"
-            onClick={handleOpenFormTicket}
-            id="buttonAgregarTicket"
-          >
-            +
-          </button>
-          <button
-            type="button"
-            onClick={() =>
-              router.push(`/Soporte/Product/TicketsUrgente/${productID}`)
-            }
-            id="buttonTicketUrgente"
-          >
-            Tickets Urgentes
-          </button>
-        </h1>
-        <div style={{ position: "absolute", left: "800px" }}>
+      <div id="divTicketsPreviayCreacion">
+        <div id="DivButonesAgregarYUrgente">
+          <h1>{productoSelect?.name}</h1>
+          <h1> Versión: {productoSelect?.version} </h1>
+          <div id="divBotonesAgregarYUrgente">
+            <button
+              type="button"
+              onClick={handleOpenFormTicket}
+              id="buttonAgregarTicket"
+            >
+              +
+            </button>
+            <button
+              type="button"
+              onClick={() =>
+                router.push(`/Soporte/Product/TicketsUrgente/${productID}`)
+              }
+              id="buttonTicketUrgente"
+            >
+              Tickets Urgentes
+            </button>
+          </div>
+        </div>
+
+        <div id="TicketsPrevia">
+          <ul>
+            {tickets.map((unTicket) => (
+              <li key={unTicket.id} id="LiTicketForAProduct">
+                <div>
+                  <h2 id="tituloH1Blanco">{unTicket.title}</h2>
+                  <p>
+                    <strong>Descripción:</strong> {unTicket.description}
+                  </p>
+                  <p>
+                    <strong>Severidad:</strong> {unTicket.severity}
+                  </p>
+                  <p>
+                    <strong>Prioridad:</strong> {unTicket.priority}
+                  </p>
+                  <p>
+                    <strong>Estado:</strong> {unTicket.state}
+                  </p>
+                  <p>
+                    <strong>Inicio:</strong> {unTicket.timeStart}
+                  </p>
+                  <p>
+                    <strong>Tipo:</strong> {unTicket.type}
+                  </p>
+                  <p>
+                    <strong>Horas Restantes:</strong> {unTicket.supportTime}
+                  </p>
+                  <p>
+                    <strong>Cliente:</strong>{" "}
+                    {obtenerNombreCliente(unTicket.client_id)}
+                  </p>
+                  <p>
+                    <strong>Responsable:</strong>{" "}
+                    {obtenerNombreRecurso(unTicket.responsible_id)}
+                  </p>
+                </div>
+                <div>
+                  <button
+                    className="btn btn-primary"
+                    onClick={() =>
+                      router.push(`/Soporte/Product/Ticket/${unTicket.id}`)
+                    }
+                  >
+                    Ver ticket
+                  </button>
+                </div>
+              </li>
+            ))}
+          </ul>
           {showFormFilter && (
-            <FormTicket
-              productIdNumerico={parseInt(productID)}
-              idTicketRecv={-1}
-            />
+            <div id="FormEnCreacionTicket">
+              <FormTicket
+                productIdNumerico={parseInt(productID)}
+                idTicketRecv={-1}
+              />
+            </div>
           )}
         </div>
-        <ul style={{ marginTop: "30px", width: "800px" }}>
-          {tickets.map((unTicket) => (
-            <li
-              key={unTicket.id}
-              id="LiTicketForAProduct"
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-              }}
-            >
-              <div style={{ marginBottom: "10px" }}>
-                <h2 id="tituloH1Blanco">{unTicket.title}</h2>
-                <p>
-                  <strong>Descripción:</strong> {unTicket.description}
-                </p>
-                <p>
-                  <strong>Severidad:</strong> {unTicket.severity}
-                </p>
-                <p>
-                  <strong>Prioridad:</strong> {unTicket.priority}
-                </p>
-                <p>
-                  <strong>Estado:</strong> {unTicket.state}
-                </p>
-                <p>
-                  <strong>Inicio:</strong> {unTicket.timeStart}
-                </p>
-                <p>
-                  <strong>Tipo:</strong> {unTicket.type}
-                </p>
-                <p>
-                  <strong>Horas Restantes:</strong> {unTicket.supportTime}
-                </p>
-                <p>
-                  <strong>Cliente:</strong>{" "}
-                  {obtenerNombreCliente(unTicket.client_id)}
-                </p>
-                <p>
-                  <strong>Responsable:</strong>{" "}
-                  {obtenerNombreRecurso(unTicket.responsible_id)}
-                </p>
-              </div>
-              <div
-                style={{
-                  position: "absolute",
-                  marginLeft: "300px",
-                  marginTop: "0px",
-                }}
-              >
-                <button
-                  className="btn btn-primary"
-                  onClick={() =>
-                    router.push(`/Soporte/Product/Ticket/${unTicket.id}`)
-                  }
-                >
-                  Ver ticket
-                </button>
-              </div>
-            </li>
-          ))}
-        </ul>
       </div>
     </>
   );

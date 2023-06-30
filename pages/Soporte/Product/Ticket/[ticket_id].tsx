@@ -121,7 +121,7 @@ function TicketPage() {
     if (ticket_id) {
       fetchTicket();
     }
-  }, [ticket]);
+  }, [ticket_id]);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -181,7 +181,7 @@ function TicketPage() {
     if (ticket_id) {
       fetchAssignments();
     }
-  }, [ticket]);
+  }, [ticket_id]);
 
   const handleDelete = async () => {
     try {
@@ -328,15 +328,6 @@ function TicketPage() {
     }
   };
 
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-
-  const dropdownItems: DropdownItem[] = [
-    { label: "Modificar", onClick: handleModificar },
-    { label: "Eliminar", onClick: handleDelete },
-    { label: "Derivar", onClick: openModal },
-    { label: "Finalizar", onClick: handleUpdateState },
-  ];
-
   return (
     <div className="flex px-8 py-8">
       <div className="w-1/2 mr-2 bg-blue-400 shadow-xl rounded-lg">
@@ -345,53 +336,55 @@ function TicketPage() {
             <div>
               <div className="flex flex-row justify-between place-items-center">
                 <h1 className="text-xl text-black font-bold">Ticket</h1>
-
-                <div className="relative">
-                  <button
-                    tabIndex={0}
-                    className="m-1 btn"
-                    onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                  >
-                    <FaEllipsisV />
-                  </button>
-
-                  {isDropdownOpen && (
-                    <ul className="absolute z-10 w-52 p-2 bg-white shadow rounded">
-                      {dropdownItems.map((item) => (
-                        <li
-                          className="hover:bg-blue-500 hover:text-white"
-                          key={item.label}
-                          onClick={item.onClick}
-                        >
-                          <a>{item.label}</a>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                </div>
               </div>
 
               <h1 className="text-xl text-white font-bold mb-4">
                 {ticket.title}
               </h1>
 
-              <p className="mb-2 text-white">Producto: {product?.name}</p>
-              <p className="mb-2 text-white">Version: {product?.version}</p>
-              <p className="mb-2 text-white">
-                Descripcion: {ticket.description}
+              <p className="mb-2 text-white text-lg">
+                Producto: {product?.name}
               </p>
-              <p className="mb-2 text-white">Severidad: {ticket.severity}</p>
-              <p className="mb-2 text-white">Prioridad: {ticket.priority}</p>
-              <p className="mb-2 text-white">Estado: {ticket.state}</p>
-              <p className="mb-2 text-white">Inicio: {ticket.timeStart}</p>
-              <p className="mb-2 text-white">Tipo: {ticket.type}</p>
-              <p className="mb-2 text-white">
-                Horas restantes: {ticket.supportTime}
+              <p className="mb-2 text-white text-lg">
+                Versión: {product?.version}
               </p>
-              <p className="mb-2 text-white">Client ID: {ticket.client_id}</p>
-              <p className="mb-2 text-white">
+              <p className="mb-2 text-white text-lg">
+                Descripción: {ticket.description}
+              </p>
+              <p className="mb-2 text-white text-lg">
+                Severidad: {ticket.severity}
+              </p>
+              <p className="mb-2 text-white text-lg">
+                Prioridad: {ticket.priority}
+              </p>
+              <p className="mb-2 text-white text-lg">Estado: {ticket.state}</p>
+              <p className="mb-2 text-white text-lg">
+                Inicio: {ticket.timeStart}
+              </p>
+              <p className="mb-2 text-white text-lg">Tipo: {ticket.type}</p>
+              <p className="mb-2 text-white text-lg">
+                Tiempo para Resolución: {ticket.supportTime}
+              </p>
+              <p className="mb-2 text-white text-lg">
+                Client ID: {ticket.client_id}
+              </p>
+              <p className="mb-2 text-white text-lg">
                 Responsible ID: {ticket.responsible_id}
               </p>
+              <div className="flex justify-center">
+                <button className="px-4 py-2 m-2 text-white bg-blue-500 hover:bg-blue-600 rounded-lg" onClick={handleModificar}>
+                  Modificar
+                </button>
+                <button className="px-4 py-2 m-2 text-white bg-blue-500 hover:bg-blue-600 rounded-lg" onClick={handleDelete}>
+                  Eliminar
+                </button>
+                <button className="px-4 py-2 m-2 text-white bg-blue-500 hover:bg-blue-600 rounded-lg" onClick={openModal}>
+                  Derivar
+                </button>
+                <button className="px-4 py-2 m-2 text-white bg-blue-500 hover:bg-blue-600 rounded-lg" onClick={handleUpdateState}>
+                  Finalizar
+                </button>
+              </div>
             </div>
           ) : (
             <p>Cargando ticket...</p>
@@ -405,7 +398,7 @@ function TicketPage() {
           {assignments.map((assignment) => (
             <button
               key={assignment.id}
-              className="bg-blue-500 hover:bg-blue-400 text-white font-bold rounded-lg p-2 w-full"
+              className="text-white bg-blue-500 hover:bg-blue-600 font-bold rounded-lg p-2 w-full mb-2"
               onClick={() =>
                 router.push(`/proyectos/${assignment.project_id}/tareas`)
               }
