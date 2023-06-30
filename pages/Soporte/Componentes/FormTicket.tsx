@@ -202,29 +202,32 @@ export const FormTicket: React.FC<{
     };
 
     if (idTicketRecv === -1) {
-      fetchTickets().then((ticketsFetch) => {
-        setTickets(ticketsFetch);
-      });
-      setInputTicketValues({
-        ...inputTicketValues,
-        id: getMaxIdTicket(tickets) + 1,
-        product_id: productIdNumerico,
-      });
+      if (tickets.length == 0) {
+        fetchTickets().then((ticketsFetch) => {
+          setTickets(ticketsFetch);
+        });
+        setInputTicketValues({
+          ...inputTicketValues,
+          id: getMaxIdTicket(tickets) + 1,
+          product_id: productIdNumerico,
+        });
+      }
     } else {
       //caso edicion ya recibimos el id como argumento lo usamos recopilamos el id
       //aca debemos hacer el fetch de tiket por el id que recibimos
       setShowCliente(false);
-      console.log("Entramos al else estamos en el EDITAR !!------");
-      //.then((unTicket: Ticket) => unTicket.timeStart)
-      getTicketByTicketID().then((unTicket) => {
-        setInputTicketValues({
-          ...inputTicketValues,
-          timeStart: unTicket.timeStart,
-          product_id: productIdNumerico,
-          id: idTicketRecv,
-          client_id: unTicket.client_id,
+      console.log("Entramos al else estamos en el EDITAR !!------"); //.then((unTicket: Ticket) => unTicket.timeStart)
+      if (tickets.length == 0) {
+        getTicketByTicketID().then((unTicket) => {
+          setInputTicketValues({
+            ...inputTicketValues,
+            timeStart: unTicket.timeStart,
+            product_id: productIdNumerico,
+            id: idTicketRecv,
+            client_id: unTicket.client_id,
+          });
         });
-      });
+      }
     }
   }, [idTicketRecv, inputTicketValues, productIdNumerico, tickets]);
 
@@ -360,19 +363,16 @@ export const FormTicket: React.FC<{
 
     if (validInputs() && clickSubmit && validationInputPlus()) {
       console.log(inputTicketValues);
-      console.log("dentro del useEffect [inputTicketValues]-> POST ");
       if (idTicketRecv === -1) {
         fetchPOSTTicket();
       } else {
         console.log(inputTicketValues);
-        console.log("dentro del useEffect [inputTicketValues]-> PUT ");
         fetchPUTTicket();
       }
       setNotificacionOk(true);
       console.log("Se mostro la notificaicon OK");
     }
     if (!validInputs() && clickSubmit && !notificacionOk) {
-      console.log("Se mostro la notificaicon ERROR ENTRA AL IF !!----------");
       setnotificacionError(true);
     }
     setClickSubmit(false);
