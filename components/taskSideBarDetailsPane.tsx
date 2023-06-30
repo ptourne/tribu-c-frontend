@@ -290,7 +290,7 @@ function TaskSideBarDetailsPane({
         setResponsible("");
         setState(task?.estado || 0);
         setDescription(task?.descripcion || "");
-        setEstimatedDuration(task?.tiempo_estimado_fin || 0);
+        setEstimatedDuration(task?.tiempo_estimado_finalizacion || 0);
         setAccumulatedHours(task?.horas_acumuladas || 0);
         setPendingChanges(false);
       })

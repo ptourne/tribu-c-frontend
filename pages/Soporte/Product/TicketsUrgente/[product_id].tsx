@@ -15,6 +15,8 @@ function TicketUrgente() {
   const [tickets, setTickets] = useState<Array<Ticket>>([]);
   const [recursos, setRecurso] = useState<Array<Recurso>>(INITIAL_RECURSO);
   const [clientes, setClientes] = useState<Array<Cliente>>(ARRAY_CLIENTES);
+  const [ticketProxVencer, setTicketProxVencer] = useState<Array<Ticket>>([]);
+  const [ticketsVencidos, setTicketsVencidos] = useState<Array<Ticket>>([]);
 
   const obtenerNombreCliente = (idCliente: number): string => {
     const unCliente = clientes.find((unCliente) => unCliente.id == idCliente);
@@ -46,15 +48,200 @@ function TicketUrgente() {
     );
   };
 
+  // devuelve true si fecha1 es mas grande que fecha2
+  function compararFechas(fecha1: string, fecha2: string): boolean {
+    const formato = "DD/MM/YYYY HH:mm:ss";
+    const partesFecha1 = fecha1.split(/[/: ]/);
+    const partesFecha2 = fecha2.split(/[/: ]/);
+
+    // Crear objetos Date a partir de las partes de fecha
+    const date1 = new Date(
+      parseInt(partesFecha1[2]),
+      parseInt(partesFecha1[1]) - 1,
+      parseInt(partesFecha1[0]),
+      parseInt(partesFecha1[3]),
+      parseInt(partesFecha1[4]),
+      parseInt(partesFecha1[5])
+    );
+    const date2 = new Date(
+      parseInt(partesFecha2[2]),
+      parseInt(partesFecha2[1]) - 1,
+      parseInt(partesFecha2[0]),
+      parseInt(partesFecha2[3]),
+      parseInt(partesFecha2[4]),
+      parseInt(partesFecha2[5])
+    );
+
+    if (isNaN(date1.getTime()) || isNaN(date2.getTime())) {
+      return false;
+    }
+
+    if (date1 < date2) {
+      return false;
+    } else if (date1 > date2) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  function convertirFecha(fechaString: string): string {
+    const fecha = new Date(fechaString);
+
+    // Obtener los componentes de fecha y hora
+    const dia = fecha.getDate();
+    const mes = fecha.getMonth() + 1;
+    const anio = fecha.getFullYear();
+    const horas = fecha.getHours();
+    const minutos = fecha.getMinutes();
+    const segundos = fecha.getSeconds();
+
+    // Formatear la fecha en el formato deseado
+    const fechaFormateada = `${dia.toString().padStart(2, "0")}/${mes
+      .toString()
+      .padStart(2, "0")}/${anio} ${horas.toString().padStart(2, "0")}:${minutos
+      .toString()
+      .padStart(2, "0")}:${segundos.toString().padStart(2, "0")}`;
+
+    return fechaFormateada;
+  }
+
+  function sumarHoras(hora: string, horasASumar: number): string {
+    const fechaHora = hora.split(" ");
+    const fecha = fechaHora[0];
+    const horaActual = fechaHora[1];
+
+    const fechaPartes = fecha.split("/");
+    const dia = parseInt(fechaPartes[0]);
+    const mes = parseInt(fechaPartes[1]);
+    const anio = parseInt(fechaPartes[2]);
+
+    const horaPartes = horaActual.split(":");
+    const horas = parseInt(horaPartes[0]);
+    const minutos = parseInt(horaPartes[1]);
+    const segundos = parseInt(horaPartes[2]);
+
+    let sumaHoras = horas + horasASumar;
+    let sumaDias = 0;
+
+    if (sumaHoras >= 24) {
+      sumaDias = Math.floor(sumaHoras / 24);
+      sumaHoras %= 24;
+    }
+
+    const nuevaFecha = new Date(anio, mes - 1, dia + sumaDias);
+    const nuevoDia = nuevaFecha.getDate();
+    const nuevoMes = nuevaFecha.getMonth() + 1;
+    const nuevoAnio = nuevaFecha.getFullYear();
+
+    const horaSumada = `${nuevoDia.toString().padStart(2, "0")}/${nuevoMes
+      .toString()
+      .padStart(2, "0")}/${nuevoAnio} ${sumaHoras
+      .toString()
+      .padStart(2, "0")}:${minutos.toString().padStart(2, "0")}:${segundos
+      .toString()
+      .padStart(2, "0")}`;
+
+    return horaSumada;
+  }
+  function calcularDiferenciaHoras(
+    horaMenor: string,
+    horaMayor: string
+  ): number {
+    const partesMenor = horaMenor.split(" ");
+    const fechaMenor = partesMenor[0];
+    const tiempoMenor = partesMenor[1];
+
+    const partesMayor = horaMayor.split(" ");
+    const fechaMayor = partesMayor[0];
+    const tiempoMayor = partesMayor[1];
+
+    const fechaPartesMenor = fechaMenor.split("/");
+    const diaMenor = parseInt(fechaPartesMenor[0], 10);
+    const mesMenor = parseInt(fechaPartesMenor[1], 10);
+    const anioMenor = parseInt(fechaPartesMenor[2], 10);
+
+    const fechaPartesMayor = fechaMayor.split("/");
+    const diaMayor = parseInt(fechaPartesMayor[0], 10);
+    const mesMayor = parseInt(fechaPartesMayor[1], 10);
+    const anioMayor = parseInt(fechaPartesMayor[2], 10);
+
+    const tiempoPartesMenor = tiempoMenor.split(":");
+    const horasMenor = parseInt(tiempoPartesMenor[0], 10);
+    const minutosMenor = parseInt(tiempoPartesMenor[1], 10);
+    const segundosMenor = parseInt(tiempoPartesMenor[2], 10);
+
+    const tiempoPartesMayor = tiempoMayor.split(":");
+    const horasMayor = parseInt(tiempoPartesMayor[0], 10);
+    const minutosMayor = parseInt(tiempoPartesMayor[1], 10);
+    const segundosMayor = parseInt(tiempoPartesMayor[2], 10);
+
+    const totalHorasMenor =
+      anioMenor * 365 * 24 +
+      mesMenor * 30 * 24 +
+      diaMenor * 24 +
+      horasMenor +
+      minutosMenor / 60 +
+      segundosMenor / 3600;
+    const totalHorasMayor =
+      anioMayor * 365 * 24 +
+      mesMayor * 30 * 24 +
+      diaMayor * 24 +
+      horasMayor +
+      minutosMayor / 60 +
+      segundosMayor / 3600;
+
+    const diferenciaHoras = totalHorasMayor - totalHorasMenor;
+
+    return diferenciaHoras;
+  }
+
+  const filtrarTicketsProximosAVencer = (unTicket: Ticket) => {
+    const tiempoSumado = sumarHoras(
+      unTicket.timeStart,
+      parseInt(unTicket.supportTime)
+    );
+    const horaActual = convertirFecha(new Date().toString());
+
+    //si la horaActual ej 15 + 2 , es mayor a tiempo sumado entonces esta prox a vencer el ticket
+    const prox2Horas = compararFechas(sumarHoras(horaActual, 2), tiempoSumado);
+    const yaSeVencioTicket = compararFechas(horaActual, tiempoSumado);
+
+    return prox2Horas && !yaSeVencioTicket;
+  };
+
+  const filtrarTickesVencidos = (unTicket: Ticket) => {
+    const tiempoSumado = sumarHoras(
+      unTicket.timeStart,
+      parseInt(unTicket.supportTime)
+    );
+    const horaActual = convertirFecha(new Date().toString());
+
+    //si la horaActual ej 15 + 2 , es mayor a tiempo sumado entonces esta prox a vencer el ticket
+    console.log(`TIEMPoInicio : ${unTicket.timeStart}`);
+    console.log(`horaActual : ${horaActual}`);
+    console.log(`tiempoSumado: ${tiempoSumado}`);
+    const yaSeVencioTicket = compararFechas(horaActual, tiempoSumado);
+    console.log(`RESULTADO: -${yaSeVencioTicket}- `);
+    return yaSeVencioTicket;
+  };
+
   // por primera vez entra aca
+  // para saber que no es tipo de undefined.
   useEffect(() => {
-    fetchTicketsByID().then((ticketsFetch) => {
-      const ticketsFiltroPorHoraMin = ticketsFetch.filter(
-        (unTicket) => parseInt(unTicket.supportTime) <= 2
-      );
-      setTickets(ticketsFiltroPorHoraMin);
-    });
-  }, []);
+    if (typeof product_id !== "undefined") {
+      console.log(`product_id : que carjaos if ${product_id}`);
+      fetchTicketsByID().then((ticketsFetch) => {
+        const ticketsProx2Horas = ticketsFetch.filter(
+          filtrarTicketsProximosAVencer
+        );
+        const ticketsVencidosFetch = ticketsFetch.filter(filtrarTickesVencidos);
+
+        setTicketProxVencer(ticketsProx2Horas);
+        setTicketsVencidos(ticketsVencidosFetch);
+      });
+    }
+  }, [product_id]);
 
   return (
     <>
@@ -63,7 +250,7 @@ function TicketUrgente() {
           <h1 id="tituloTicketUrgente">Tickets proximos a vencer: </h1>
 
           <ul style={{ marginTop: "30px", width: "800px" }}>
-            {tickets.map((unTicket) => (
+            {ticketProxVencer.map((unTicket) => (
               <li
                 key={unTicket.id}
                 id="LiTicketForAProductUrgent"
@@ -107,9 +294,57 @@ function TicketUrgente() {
             ))}
           </ul>
         </div>
+
         <div id="divTicketsVencidos">
           <h1 id="tituloTicketUrgente"> Tickets vencidos </h1>
-          <h2> Tickets vencidos hemos perdido dinero: </h2>
+          <ul style={{ marginTop: "30px", width: "800px" }}>
+            {ticketsVencidos.map((unTicket) => (
+              <li
+                key={unTicket.id}
+                id="LiTicketForAProductUrgent"
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                }}
+              >
+                <div style={{ marginBottom: "10px" }}>
+                  <h1 id="tituloH1BlancoUrgene">{unTicket.title}</h1>
+                  <p id="LetraGrande">
+                    <strong>
+                      Hora que finalizo:
+                      {sumarHoras(
+                        unTicket.timeStart,
+                        parseInt(unTicket.supportTime)
+                      )}
+                      horas
+                    </strong>
+                  </p>
+
+                  <p>
+                    <strong>Descripción:</strong> {unTicket.description}
+                  </p>
+                  <p>
+                    <strong>Inicio:</strong> {unTicket.timeStart}
+                  </p>
+                  <p>
+                    <strong>Cliente:</strong>{" "}
+                    {obtenerNombreCliente(unTicket.client_id)}
+                  </p>
+                  <p>
+                    <strong>Responsable:</strong>{" "}
+                    {obtenerNombreRecurso(unTicket.responsible_id)}
+                  </p>
+                </div>
+                <div
+                  style={{
+                    position: "absolute",
+                    marginLeft: "300px",
+                    marginTop: "0px",
+                  }}
+                ></div>
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
     </>

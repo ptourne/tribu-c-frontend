@@ -24,30 +24,46 @@ const EDIT = 1;
 
 const productList = [
   {
-    id: 10,
-    name: "Producto 1",
+    id: 1,
+    name: "Siu Guarani",
     versions: [
       {
-        name: "1.8",
+        name: "1.0.0",
         customizations: ["Custom FIUBA1"],
       },
       {
-        name: "1.9",
+        name: "2.0.0",
         customizations: ["Custom FIUBA2"],
       },
     ],
   },
   {
-    id: 20,
-    name: "Producto 2",
+    id: 3,
+    name: "Gestión de Inventario",
     versions: [
       {
-        name: "1.4",
+        name: "1.0.0",
         customizations: ["Custom FIUBA3"],
       },
+    ],
+  },
+  {
+    id: 4,
+    name: "Sistema de Tickets",
+    versions: [
       {
-        name: "1.5",
+        name: "1.0.0",
         customizations: ["Custom FIUBA4"],
+      },
+    ],
+  },
+  {
+    id: 5,
+    name: "Sistema de Molinetes",
+    versions: [
+      {
+        name: "1.0.0",
+        customizations: ["Custom FIUBA5"],
       },
     ],
   },

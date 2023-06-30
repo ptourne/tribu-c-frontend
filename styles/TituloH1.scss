@@ -28,3 +28,35 @@
 
 }
 
+
+#containerInicio{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+
+}
+
+#tituloInicioContainer{
+    display: flex;
+    margin: 25px 0px 5px 10px;
+    h1{
+        border-bottom: 2px solid #292727; //poner la linea  debajo del titulo            
+        text-align: center;
+    }
+    button{
+        margin-left: 30px;
+    }
+}
+#BloqueProductBarEImagen{
+    display: flex;
+    img{
+        margin-left: 100px;
+        width: 1000px;
+        height: 800px;
+    }
+
+}
+
+
+
+
