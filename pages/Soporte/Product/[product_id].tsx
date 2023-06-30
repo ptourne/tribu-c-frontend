@@ -57,15 +57,17 @@ export default function Ticket() {
   const productID: string =
     typeof product_id === "string" ? product_id : "VACIO";
 
-  const fetchGetProductosById = (): Promise<Producto> => {
-    //1) Llamanda al backend hacemos un GET de productos los id van en number recuerda !
-    return fetch(`https://psa-soporte.eeoo.ar/product/${parseInt(productID)}`, {
-      method: "GET",
-      headers: {},
-    }).then((res) => res.json());
-  };
-
   useEffect(() => {
+    const fetchGetProductosById = (): Promise<Producto> => {
+      //1) Llamanda al backend hacemos un GET de productos los id van en number recuerda !
+      return fetch(
+        `https://psa-soporte.eeoo.ar/product/${parseInt(productID)}`,
+        {
+          method: "GET",
+          headers: {},
+        }
+      ).then((res) => res.json());
+    };
     fetchGetProductosById().then((unProducto) => {
       setProductoSelect(unProducto);
     });
@@ -92,7 +94,7 @@ export default function Ticket() {
       <div id="divTicketsPreviayCreacion">
         <div id="DivButonesAgregarYUrgente">
           <h1>{productoSelect?.name}</h1>
-          <h1>Versión: {productoSelect?.version} </h1>
+          <h1> Versión: {productoSelect?.version} </h1>
           <div id="divBotonesAgregarYUrgente">
             <button
               type="button"

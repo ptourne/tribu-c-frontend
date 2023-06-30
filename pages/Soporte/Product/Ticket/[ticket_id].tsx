@@ -3,6 +3,8 @@ import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { FaEllipsisV } from "react-icons/fa";
 import { FormTicket } from "../../Componentes/FormTicket";
+import { ARRAY_CLIENTES } from "../../Componentes/Constantes";
+import { Cliente } from "@/pages/types";
 
 interface Ticket {
   title: string;
@@ -104,6 +106,25 @@ function TicketPage() {
   const [product, setProduct] = useState<Product | null>(null);
   const [taskId, setTaskId] = useState<number>(0);
   const [showForm, setShowForm] = useState(false);
+  const [recursos, setRecurso] = useState<Array<Resource>>(resourcesTest);
+  const [clientes, setClientes] = useState<Array<Cliente>>(ARRAY_CLIENTES);
+  const [ticketEstadoInicial, setTicketEstadoInicial] = useState<boolean>(true);
+
+  const obtenerNombreCliente = (idCliente: number): string => {
+    const unCliente = clientes.find((unCliente) => unCliente.id == idCliente);
+    if (unCliente) {
+      return unCliente.razon_social;
+    }
+    return "CLIENTE-DESCONOCIDO";
+  };
+
+  const obtenerNombreRecurso = (idRecurso: number): string => {
+    const recurso = recursos.find((unRecurso) => unRecurso.legajo == idRecurso);
+    if (recurso) {
+      return `${recurso.Nombre}  ${recurso.Apellido}`;
+    }
+    return "LEGAJO - DESCONOCIDO";
+  };
 
   useEffect(() => {
     const fetchTicket = async () => {
@@ -121,7 +142,7 @@ function TicketPage() {
     if (ticket_id) {
       fetchTicket();
     }
-  }, [ticket]);
+  }, [ticket, ticket_id]);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -181,7 +202,7 @@ function TicketPage() {
     if (ticket_id) {
       fetchAssignments();
     }
-  }, [ticket]);
+  }, [ticket, ticket_id]);
 
   const handleDelete = async () => {
     try {
@@ -195,6 +216,7 @@ function TicketPage() {
   };
 
   const handleUpdateState = async () => {
+    setTicketEstadoInicial(false);
     if (ticket) {
       const updatedTicket = {
         ...ticket,
@@ -344,8 +366,7 @@ function TicketPage() {
           {ticket ? (
             <div>
               <div className="flex flex-row justify-between place-items-center">
-                <h1 className="text-xl text-black font-bold">Ticket</h1>
-
+                <h1 className="text-xl text-black font-bold"></h1>
                 <div className="relative">
                   <button
                     tabIndex={0}
@@ -370,27 +391,46 @@ function TicketPage() {
                   )}
                 </div>
               </div>
-
-              <h1 className="text-xl text-white font-bold mb-4">
-                {ticket.title}
-              </h1>
-
-              <p className="mb-2 text-white">Producto: {product?.name}</p>
-              <p className="mb-2 text-white">Version: {product?.version}</p>
-              <p className="mb-2 text-white">
-                Descripcion: {ticket.description}
+              <h1 id="tituloH1Blanco">{ticket.title}</h1>
+              <p id="itemTicketTarea">
+                <strong>Producto: </strong> {product?.name}
               </p>
-              <p className="mb-2 text-white">Severidad: {ticket.severity}</p>
-              <p className="mb-2 text-white">Prioridad: {ticket.priority}</p>
-              <p className="mb-2 text-white">Estado: {ticket.state}</p>
-              <p className="mb-2 text-white">Inicio: {ticket.timeStart}</p>
-              <p className="mb-2 text-white">Tipo: {ticket.type}</p>
-              <p className="mb-2 text-white">
-                Horas restantes: {ticket.supportTime}
+              <p id="itemTicketTarea">
+                <strong>Version: </strong>
+                {product?.version}
               </p>
-              <p className="mb-2 text-white">Client ID: {ticket.client_id}</p>
-              <p className="mb-2 text-white">
-                Responsible ID: {ticket.responsible_id}
+              <p id="itemTicketTarea">
+                <strong>Descripcion:</strong> {ticket.description}
+              </p>
+              <p id="itemTicketTarea">
+                <strong>Severidad:</strong> {ticket.severity}
+              </p>
+              <p id="itemTicketTarea">
+                <strong>Prioridad:</strong> {ticket.priority}
+              </p>
+              <p id="itemTicketTarea">
+                <strong>Estado:</strong>{" "}
+                {ticketEstadoInicial && <span>{ticket.state} </span>}
+                {!ticketEstadoInicial && (
+                  <span id="ticketEstadoCerrado"> {ticket.state} </span>
+                )}
+              </p>
+              <p id="itemTicketTarea">
+                <strong>Inicio:</strong> {ticket.timeStart}
+              </p>
+              <p id="itemTicketTarea">
+                <strong>Tipo:</strong> {ticket.type}
+              </p>
+              <p id="itemTicketTarea">
+                <strong>Horas restantes:</strong> {ticket.supportTime}
+              </p>
+              <p id="itemTicketTarea">
+                <strong>Client ID:</strong>{" "}
+                {obtenerNombreCliente(ticket.client_id)}
+              </p>
+              <p id="itemTicketTarea">
+                <strong>Responsible ID:</strong>{" "}
+                {obtenerNombreRecurso(ticket.responsible_id)}
               </p>
             </div>
           ) : (
