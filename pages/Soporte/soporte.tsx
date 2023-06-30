@@ -6,6 +6,7 @@ import { Modal } from "react-bootstrap";
 
 export default function Soporte() {
   //Usado similiar al constructor inicia con INITIAL_STATE
+  const [verImagen, setVerImagen] = useState<boolean>(false);
   const [products, setProducts] = useState<Array<Producto>>([]);
   const fetchProductos = (): Promise<Array<Producto>> => {
     //1) Llamanda al backend hacemos un GET de productos.
@@ -15,16 +16,13 @@ export default function Soporte() {
     );
   };
 
-
-  
   const handleReporte = () => {
-    console.log("Click en reporte.");
-    
-    const imagen = new Image();
-    imagen.src = 'https://github.com/ptourne/tribu-c-frontend/blob/main/public/reportes.jpeg?raw=true';
-    window.open(imagen.src);
-  }
-  
+    if (!verImagen) {
+      setVerImagen(true);
+    } else {
+      setVerImagen(false);
+    }
+  };
 
   useEffect(() => {
     fetchProductos().then((productosFetch) => {
@@ -34,18 +32,20 @@ export default function Soporte() {
 
   return (
     <>
-    
-      <h1 id="tituloH1"> Productos </h1>
-      <button
-            type="button"
-            onClick={handleReporte}
-            id="buttonReportes"
-          >
+      <div id="containerInicio">
+        <div id="tituloInicioContainer">
+          <h1 id="TituloH1Inicio"> Productos </h1>
+          <button type="button" onClick={handleReporte} id="buttonReportes">
             Reporte de Tickets
           </button>
-      <ProductBar products={products} />
-      
+        </div>
+        <div id="BloqueProductBarEImagen">
+          <ProductBar products={products} />
+          {verImagen && (
+            <img src="https://github.com/ptourne/tribu-c-frontend/blob/main/public/reportes.jpeg?raw=true" />
+          )}
+        </div>
+      </div>
     </>
-    
   );
 }

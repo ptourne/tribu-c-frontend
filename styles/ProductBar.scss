@@ -3,20 +3,25 @@
     border-radius: 10px;
     border: 1px solid rgb(221, 221, 221);
     list-style: none;
-    margin-bottom: 10px;
-    max-width: 320px;
+    margin-bottom: 25px;
+    max-width: 300px;
+    max-height: 300px;
     padding: 8px 32px;
     text-align: center;
-    background-color:#cfe2ff;
+
+    background-color: #61a1fe;
+    
     p{
-        color: #0f2b5e;
-        font-size: 15px;
+        color: #ffffff;
+        font-size: 20px;
     }
     button{
-        border-radius: 10px;
-        background-color: #61a1fe;
-        color: azure;
-        width: 60px;
+        border-radius: 5px;          //en radius no tiene sentido pasarle color o tipo borde
+        padding: 1px 10px 1px 10px;
+        border: 4px solid #0c6efc; //solo aca le pasamos tipo borden y color 
+        background-color: #0c6efc;
+        color: #ffffff;
+        font-size: 25px;
 
     }
 
