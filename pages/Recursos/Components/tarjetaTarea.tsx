@@ -9,9 +9,8 @@ import {
   FaUserClock,
 } from "react-icons/fa";
 import { BloqueDeTrabajo } from "@/pages/types";
-import { SERVER_NAME_PROYECTOS } from "@/environments";
+import { RECURSOS_URL, SERVER_NAME_PROYECTOS } from "@/environments";
 import axios from "axios";
-import RECURSOS_URL from "./recursosURL";
 import { toast } from "react-toastify";
 interface TarjetaTarea {
   bloqueDeTrabajo: BloqueDeTrabajo;

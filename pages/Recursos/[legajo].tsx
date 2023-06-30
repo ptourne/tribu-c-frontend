@@ -1,11 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { ColumnaDia } from "./Components/columnaDia";
-// import { Tarea } from "./Components/types";
 import { BsArrowLeftShort, BsArrowRightShort } from "react-icons/bs";
-import RECURSOS_URL from "./Components/recursosURL";
 import { BloqueDeTrabajo, Proyecto, Tarea } from "../types";
-import { SERVER_NAME_PROYECTOS } from "@/environments";
+import { RECURSOS_URL, SERVER_NAME_PROYECTOS } from "@/environments";
 const estilos = {
   calendario: {
     width: "100%"
@@ -141,21 +139,4 @@ function getBloquesDelDia(legajo: string | number | string[] | undefined, fecha:
     }
   })
   return bloques_filtrados;
-}
-
-function asignarTareaABloque(bloques: Array<BloqueDeTrabajo>, tareas: Map<number, Map<string, Tarea>>) {
-  bloques.forEach((bloque) => {
-    let diccionarioDeProyectos = tareas.get(bloque.codProyectoDeLaTarea);
-    if (diccionarioDeProyectos === undefined){
-      bloque.tareaAsociada = null;
-      return;
-    }
-    let tareaAsociada = diccionarioDeProyectos.get(bloque.codTarea.toString())
-    if (tareaAsociada === undefined) {
-      bloque.tareaAsociada = null;
-      return;
-    }
-    bloque.tareaAsociada = tareaAsociada;
-  });
-  return bloques;
 }

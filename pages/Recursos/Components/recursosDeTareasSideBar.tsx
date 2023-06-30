@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { Recurso, Tarea } from "../../types";
-import RECURSOS_URL from "./recursosURL";
 import { TarjetaRecurso } from "./tarjetaRecurso";
 import { CircularProgress } from "@mui/material";
+import { RECURSOS_URL } from "@/environments";
 
 interface RecursosDeTareasSideBar {
   tarea: Tarea;
