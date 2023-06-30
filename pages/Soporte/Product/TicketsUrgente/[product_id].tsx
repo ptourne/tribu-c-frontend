@@ -39,15 +39,6 @@ function TicketUrgente() {
   const productID: string = typeof product_id === "string" ? product_id : "-1";
   console.log(`productID : ${productID} `);
 
-  const fetchTicketsByID = (): Promise<Array<Ticket>> => {
-    const URLGetTickesById = `https://psa-soporte.eeoo.ar/tickets/product/${parseInt(
-      productID
-    )}`;
-    return fetch(URLGetTickesById, { method: "GET", headers: {} }).then(
-      (response) => response.json()
-    );
-  };
-
   // devuelve true si fecha1 es mas grande que fecha2
   function compararFechas(fecha1: string, fecha2: string): boolean {
     const formato = "DD/MM/YYYY HH:mm:ss";
@@ -144,91 +135,50 @@ function TicketUrgente() {
 
     return horaSumada;
   }
-  function calcularDiferenciaHoras(
-    horaMenor: string,
-    horaMayor: string
-  ): number {
-    const partesMenor = horaMenor.split(" ");
-    const fechaMenor = partesMenor[0];
-    const tiempoMenor = partesMenor[1];
-
-    const partesMayor = horaMayor.split(" ");
-    const fechaMayor = partesMayor[0];
-    const tiempoMayor = partesMayor[1];
-
-    const fechaPartesMenor = fechaMenor.split("/");
-    const diaMenor = parseInt(fechaPartesMenor[0], 10);
-    const mesMenor = parseInt(fechaPartesMenor[1], 10);
-    const anioMenor = parseInt(fechaPartesMenor[2], 10);
-
-    const fechaPartesMayor = fechaMayor.split("/");
-    const diaMayor = parseInt(fechaPartesMayor[0], 10);
-    const mesMayor = parseInt(fechaPartesMayor[1], 10);
-    const anioMayor = parseInt(fechaPartesMayor[2], 10);
-
-    const tiempoPartesMenor = tiempoMenor.split(":");
-    const horasMenor = parseInt(tiempoPartesMenor[0], 10);
-    const minutosMenor = parseInt(tiempoPartesMenor[1], 10);
-    const segundosMenor = parseInt(tiempoPartesMenor[2], 10);
-
-    const tiempoPartesMayor = tiempoMayor.split(":");
-    const horasMayor = parseInt(tiempoPartesMayor[0], 10);
-    const minutosMayor = parseInt(tiempoPartesMayor[1], 10);
-    const segundosMayor = parseInt(tiempoPartesMayor[2], 10);
-
-    const totalHorasMenor =
-      anioMenor * 365 * 24 +
-      mesMenor * 30 * 24 +
-      diaMenor * 24 +
-      horasMenor +
-      minutosMenor / 60 +
-      segundosMenor / 3600;
-    const totalHorasMayor =
-      anioMayor * 365 * 24 +
-      mesMayor * 30 * 24 +
-      diaMayor * 24 +
-      horasMayor +
-      minutosMayor / 60 +
-      segundosMayor / 3600;
-
-    const diferenciaHoras = totalHorasMayor - totalHorasMenor;
-
-    return diferenciaHoras;
-  }
-
-  const filtrarTicketsProximosAVencer = (unTicket: Ticket) => {
-    const tiempoSumado = sumarHoras(
-      unTicket.timeStart,
-      parseInt(unTicket.supportTime)
-    );
-    const horaActual = convertirFecha(new Date().toString());
-
-    //si la horaActual ej 15 + 2 , es mayor a tiempo sumado entonces esta prox a vencer el ticket
-    const prox2Horas = compararFechas(sumarHoras(horaActual, 2), tiempoSumado);
-    const yaSeVencioTicket = compararFechas(horaActual, tiempoSumado);
-
-    return prox2Horas && !yaSeVencioTicket;
-  };
-
-  const filtrarTickesVencidos = (unTicket: Ticket) => {
-    const tiempoSumado = sumarHoras(
-      unTicket.timeStart,
-      parseInt(unTicket.supportTime)
-    );
-    const horaActual = convertirFecha(new Date().toString());
-
-    //si la horaActual ej 15 + 2 , es mayor a tiempo sumado entonces esta prox a vencer el ticket
-    console.log(`TIEMPoInicio : ${unTicket.timeStart}`);
-    console.log(`horaActual : ${horaActual}`);
-    console.log(`tiempoSumado: ${tiempoSumado}`);
-    const yaSeVencioTicket = compararFechas(horaActual, tiempoSumado);
-    console.log(`RESULTADO: -${yaSeVencioTicket}- `);
-    return yaSeVencioTicket;
-  };
 
   // por primera vez entra aca
   // para saber que no es tipo de undefined.
   useEffect(() => {
+    const filtrarTickesVencidos = (unTicket: Ticket) => {
+      const tiempoSumado = sumarHoras(
+        unTicket.timeStart,
+        parseInt(unTicket.supportTime)
+      );
+      const horaActual = convertirFecha(new Date().toString());
+
+      //si la horaActual ej 15 + 2 , es mayor a tiempo sumado entonces esta prox a vencer el ticket
+      console.log(`TIEMPoInicio : ${unTicket.timeStart}`);
+      console.log(`horaActual : ${horaActual}`);
+      console.log(`tiempoSumado: ${tiempoSumado}`);
+      const yaSeVencioTicket = compararFechas(horaActual, tiempoSumado);
+      console.log(`RESULTADO: -${yaSeVencioTicket}- `);
+      return yaSeVencioTicket;
+    };
+    const filtrarTicketsProximosAVencer = (unTicket: Ticket) => {
+      const tiempoSumado = sumarHoras(
+        unTicket.timeStart,
+        parseInt(unTicket.supportTime)
+      );
+      const horaActual = convertirFecha(new Date().toString());
+
+      //si la horaActual ej 15 + 2 , es mayor a tiempo sumado entonces esta prox a vencer el ticket
+      const prox2Horas = compararFechas(
+        sumarHoras(horaActual, 2),
+        tiempoSumado
+      );
+      const yaSeVencioTicket = compararFechas(horaActual, tiempoSumado);
+
+      return prox2Horas && !yaSeVencioTicket;
+    };
+    const fetchTicketsByID = (): Promise<Array<Ticket>> => {
+      const URLGetTickesById = `https://psa-soporte.eeoo.ar/tickets/product/${parseInt(
+        productID
+      )}`;
+      return fetch(URLGetTickesById, { method: "GET", headers: {} }).then(
+        (response) => response.json()
+      );
+    };
+
     if (typeof product_id !== "undefined") {
       console.log(`product_id : que carjaos if ${product_id}`);
       fetchTicketsByID().then((ticketsFetch) => {
@@ -241,7 +191,7 @@ function TicketUrgente() {
         setTicketsVencidos(ticketsVencidosFetch);
       });
     }
-  }, [product_id]);
+  }, [product_id, productID]);
 
   return (
     <>
@@ -316,7 +266,7 @@ function TicketUrgente() {
                         unTicket.timeStart,
                         parseInt(unTicket.supportTime)
                       )}
-                      horas
+                      {"     "}horas
                     </strong>
                   </p>
 

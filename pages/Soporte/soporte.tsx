@@ -3,11 +3,13 @@ import React, { useState, useEffect } from "react";
 import { Producto, Ticket } from "../types";
 import { ProductBar } from "./Componentes/ProductBar";
 import { Modal } from "react-bootstrap";
+import Image from "next/image";
 
 export default function Soporte() {
   //Usado similiar al constructor inicia con INITIAL_STATE
   const [verImagen, setVerImagen] = useState<boolean>(false);
   const [products, setProducts] = useState<Array<Producto>>([]);
+
   const fetchProductos = (): Promise<Array<Producto>> => {
     //1) Llamanda al backend hacemos un GET de productos.
     console.log("products SON:----- ");
@@ -42,7 +44,14 @@ export default function Soporte() {
         <div id="BloqueProductBarEImagen">
           <ProductBar products={products} />
           {verImagen && (
-            <img src="https://github.com/ptourne/tribu-c-frontend/blob/main/public/reportes.jpeg?raw=true" />
+            <Image
+              src="https://github.com/ptourne/tribu-c-frontend/blob/main/public/reportes.jpeg?raw=true"
+              alt={
+                "Bar plot de los productos con la cantida de tickets pendientes/solucionado Harcodeado"
+              }
+              width={500}
+              height={300}
+            />
           )}
         </div>
       </div>

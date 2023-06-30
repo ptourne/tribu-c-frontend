@@ -71,12 +71,6 @@ export const FormTicket: React.FC<{
     return maxId;
   };
 
-  const getTicketByTicketID = (): Promise<Ticket> => {
-    return fetch(`https://psa-soporte.eeoo.ar/ticket/${idTicketRecv}`).then(
-      (res) => res.json()
-    );
-  };
-
   const [notificacion, setNotificacion] = useState<boolean>(false);
 
   const formatDateTime = (dateTime: Date): string => {
@@ -91,19 +85,6 @@ export const FormTicket: React.FC<{
   const [notificacionOk, setNotificacionOk] = useState(false);
   var [notificacionError, setnotificacionError] = useState(false);
 
-  const validInputs = (): boolean => {
-    return (
-      inputTicketValues.title !== "Nuevo Titulo" &&
-      inputTicketValues.description !== "Nueva Descripcion" &&
-      inputTicketValues.severity !== "" &&
-      inputTicketValues.priority !== "" &&
-      inputTicketValues.timeStart !== "" &&
-      inputTicketValues.type !== "" &&
-      inputTicketValues.supportTime !== "" &&
-      inputTicketValues.client_id !== 0 &&
-      inputTicketValues.responsible_id !== 0
-    );
-  };
   const limpiezaDeCamposDelForm = () => {
     setInputTicketValues(INITIAL_STATE);
     setSelectedClientOption("");
@@ -115,73 +96,6 @@ export const FormTicket: React.FC<{
 
   const [inputTicketValues, setInputTicketValues] =
     useState<formTicketState["inputValuesTicket"]>(INITIAL_STATE);
-
-  //Funcion para crear un ticket
-  const fetchPOSTTicket = () => {
-    const URLParaPOST = `https://psa-soporte.eeoo.ar/ticket/product/${inputTicketValues.product_id}/client/${inputTicketValues.client_id}/responsible/${inputTicketValues.responsible_id}`;
-    console.log(URLParaPOST);
-
-    const cuerpoMensaje = JSON.stringify(inputTicketValues);
-    console.log("cuerpoMensaje-POST");
-    console.log(cuerpoMensaje);
-    fetch(URLParaPOST, {
-      method: "POST",
-      headers: {
-        "Content-type": "application/json",
-      },
-      body: cuerpoMensaje,
-    })
-      .then((response) => {
-        if (response.ok) {
-          console.log("Solicitud POST exitosa");
-        } else console.log("Error en la solicitud POST");
-      })
-      .then((data) => {
-        console.log(
-          "Respuesta de lo que devuelve el servidor luego de hacer un POST: @Ricardo "
-        );
-        console.log(data);
-      })
-      .catch((error) => {
-        console.log("Error en la solicitud POST", error);
-      });
-
-    //asi reseteamos todo tanto inputText, como botones!!
-    limpiezaDeCamposDelForm();
-  };
-
-  const fetchPUTTicket = () => {
-    const URLParaPUT = `https://psa-soporte.eeoo.ar/tickets/${idTicketRecv}`;
-    const objetoAEnviar = {
-      title: inputTicketValues.title,
-      description: inputTicketValues.description,
-      severity: inputTicketValues.severity,
-      priority: inputTicketValues.priority,
-      state: inputTicketValues.state,
-      timeStart: inputTicketValues.timeStart,
-      type: inputTicketValues.type,
-      supportTime: inputTicketValues.supportTime,
-    };
-    const cuerpoMensaje = JSON.stringify(objetoAEnviar);
-    console.log("cuerpoMensaje-PUT");
-    console.log(cuerpoMensaje);
-    fetch(URLParaPUT, {
-      method: "PUT",
-      headers: {
-        "Content-type": "application/json",
-      },
-      body: cuerpoMensaje,
-    })
-      .then((response) => {
-        if (response.ok) {
-          console.log("Solicitud PUT exitosa");
-        } else console.log("Error en la solicitud PUT");
-      })
-      .catch((error) => {
-        console.log("Error en la solicitud PUT", error);
-      });
-    limpiezaDeCamposDelForm();
-  };
 
   function hasLetter(input: string): boolean {
     return /[a-zA-Z]/.test(input);
@@ -281,106 +195,188 @@ export const FormTicket: React.FC<{
 
   //UserEffect para obtener el maxId de ticket le sumamos 1 , lo neceistamos para hacer un post del nuevo ticket.
   useEffect(() => {
-    //Caso de crear Ticket necesitamos un id y el productID
-    //fetchClientes().then((clientesFetch) => {
-    //  setClientes(clientesFetch);
-    //});
+    const getTicketByTicketID = (): Promise<Ticket> => {
+      return fetch(`https://psa-soporte.eeoo.ar/ticket/${idTicketRecv}`).then(
+        (res) => res.json()
+      );
+    };
 
     if (idTicketRecv === -1) {
-      fetchTickets().then((ticketsFetch) => {
-        setTickets(ticketsFetch);
-      });
-      setInputTicketValues({
-        ...inputTicketValues,
-        id: getMaxIdTicket(tickets) + 1,
-        product_id: productIdNumerico,
-      });
+      if (tickets.length == 0) {
+        fetchTickets().then((ticketsFetch) => {
+          setTickets(ticketsFetch);
+        });
+        setInputTicketValues({
+          ...inputTicketValues,
+          id: getMaxIdTicket(tickets) + 1,
+          product_id: productIdNumerico,
+        });
+      }
     } else {
       //caso edicion ya recibimos el id como argumento lo usamos recopilamos el id
       //aca debemos hacer el fetch de tiket por el id que recibimos
       setShowCliente(false);
-      console.log("Entramos al else estamos en el EDITAR !!------");
-      //.then((unTicket: Ticket) => unTicket.timeStart)
-      getTicketByTicketID().then((unTicket) => {
-        setInputTicketValues({
-          ...inputTicketValues,
-          timeStart: unTicket.timeStart,
-          product_id: productIdNumerico,
-          id: idTicketRecv,
-          client_id: unTicket.client_id,
+      console.log("Entramos al else estamos en el EDITAR !!------"); //.then((unTicket: Ticket) => unTicket.timeStart)
+      if (tickets.length == 0) {
+        getTicketByTicketID().then((unTicket) => {
+          setInputTicketValues({
+            ...inputTicketValues,
+            timeStart: unTicket.timeStart,
+            product_id: productIdNumerico,
+            id: idTicketRecv,
+            client_id: unTicket.client_id,
+          });
         });
-      });
+      }
     }
-  }, []);
-
-  const validationInputPlus = () => {
-    if (parseInt(inputTicketValues.supportTime) <= 0 || parseInt(inputTicketValues.supportTime) >= 10000) {
-      console.log(
-        "Cantidad de horas " + inputTicketValues.supportTime + " invalidas."
-      );
-      setnotificacionError(true);
-      return false;
-    }
-
-    if (inputTicketValues.supportTime == " ") {
-      console.log("Ingrese un valor valido para las horas.");
-      setnotificacionError(true);
-      return false;
-    }
-
-    if (inputTicketValues.supportTime == "") {
-      console.log("Complete el campo de horas necesarias.");
-      setnotificacionError(true);
-      return false;
-    }
-
-    if (hasLetter(inputTicketValues.supportTime)) {
-      console.log("Ingrese solo numeros.");
-      setnotificacionError(true);
-      return false;
-    }
-
-    if (
-      inputTicketValues.description == " " ||
-      inputTicketValues.description == ""
-    ) {
-      console.log("Descripcion invalida.");
-      setnotificacionError(true);
-      return false;
-    }
-
-    if (inputTicketValues.title == "" || inputTicketValues.title == " ") {
-      console.log("Titulo invalido.");
-      setnotificacionError(true);
-      return false;
-    }
-    return true;
-  };
+  }, [idTicketRecv, inputTicketValues, productIdNumerico, tickets]);
 
   //userEffect para poder asignarle el timeStart cuando hace click en el boton submit
   useEffect(() => {
+    //Funcion para crear un ticket
+    const fetchPOSTTicket = () => {
+      const URLParaPOST = `https://psa-soporte.eeoo.ar/ticket/product/${inputTicketValues.product_id}/client/${inputTicketValues.client_id}/responsible/${inputTicketValues.responsible_id}`;
+      console.log(URLParaPOST);
+
+      const cuerpoMensaje = JSON.stringify(inputTicketValues);
+      console.log("cuerpoMensaje-POST");
+      console.log(cuerpoMensaje);
+      fetch(URLParaPOST, {
+        method: "POST",
+        headers: {
+          "Content-type": "application/json",
+        },
+        body: cuerpoMensaje,
+      })
+        .then((response) => {
+          if (response.ok) {
+            console.log("Solicitud POST exitosa");
+          } else console.log("Error en la solicitud POST");
+        })
+        .then((data) => {
+          console.log(
+            "Respuesta de lo que devuelve el servidor luego de hacer un POST: @Ricardo "
+          );
+          console.log(data);
+        })
+        .catch((error) => {
+          console.log("Error en la solicitud POST", error);
+        });
+
+      //asi reseteamos todo tanto inputText, como botones!!
+      limpiezaDeCamposDelForm();
+    };
+    const validInputs = (): boolean => {
+      return (
+        inputTicketValues.title !== "Nuevo Titulo" &&
+        inputTicketValues.description !== "Nueva Descripcion" &&
+        inputTicketValues.severity !== "" &&
+        inputTicketValues.priority !== "" &&
+        inputTicketValues.timeStart !== "" &&
+        inputTicketValues.type !== "" &&
+        inputTicketValues.supportTime !== "" &&
+        inputTicketValues.client_id !== 0 &&
+        inputTicketValues.responsible_id !== 0
+      );
+    };
+    const fetchPUTTicket = () => {
+      const URLParaPUT = `https://psa-soporte.eeoo.ar/tickets/${idTicketRecv}`;
+      const objetoAEnviar = {
+        title: inputTicketValues.title,
+        description: inputTicketValues.description,
+        severity: inputTicketValues.severity,
+        priority: inputTicketValues.priority,
+        state: inputTicketValues.state,
+        timeStart: inputTicketValues.timeStart,
+        type: inputTicketValues.type,
+        supportTime: inputTicketValues.supportTime,
+      };
+      const cuerpoMensaje = JSON.stringify(objetoAEnviar);
+      console.log("cuerpoMensaje-PUT");
+      console.log(cuerpoMensaje);
+      fetch(URLParaPUT, {
+        method: "PUT",
+        headers: {
+          "Content-type": "application/json",
+        },
+        body: cuerpoMensaje,
+      })
+        .then((response) => {
+          if (response.ok) {
+            console.log("Solicitud PUT exitosa");
+          } else console.log("Error en la solicitud PUT");
+        })
+        .catch((error) => {
+          console.log("Error en la solicitud PUT", error);
+        });
+      limpiezaDeCamposDelForm();
+    };
+    const validationInputPlus = () => {
+      if (
+        parseInt(inputTicketValues.supportTime) <= 0 ||
+        parseInt(inputTicketValues.supportTime) >= 10000
+      ) {
+        console.log(
+          "Cantidad de horas " + inputTicketValues.supportTime + " invalidas."
+        );
+        setnotificacionError(true);
+        return false;
+      }
+
+      if (inputTicketValues.supportTime == " ") {
+        console.log("Ingrese un valor valido para las horas.");
+        setnotificacionError(true);
+        return false;
+      }
+
+      if (inputTicketValues.supportTime == "") {
+        console.log("Complete el campo de horas necesarias.");
+        setnotificacionError(true);
+        return false;
+      }
+
+      if (hasLetter(inputTicketValues.supportTime)) {
+        console.log("Ingrese solo numeros.");
+        setnotificacionError(true);
+        return false;
+      }
+
+      if (
+        inputTicketValues.description == " " ||
+        inputTicketValues.description == ""
+      ) {
+        console.log("Descripcion invalida.");
+        setnotificacionError(true);
+        return false;
+      }
+
+      if (inputTicketValues.title == "" || inputTicketValues.title == " ") {
+        console.log("Titulo invalido.");
+        setnotificacionError(true);
+        return false;
+      }
+      return true;
+    };
+
     console.log("inputTicketValues");
     console.log(inputTicketValues);
 
     if (validInputs() && clickSubmit && validationInputPlus()) {
       console.log(inputTicketValues);
-      console.log("dentro del useEffect [inputTicketValues]-> POST ");
       if (idTicketRecv === -1) {
         fetchPOSTTicket();
       } else {
         console.log(inputTicketValues);
-        console.log("dentro del useEffect [inputTicketValues]-> PUT ");
         fetchPUTTicket();
       }
       setNotificacionOk(true);
       console.log("Se mostro la notificaicon OK");
     }
     if (!validInputs() && clickSubmit && !notificacionOk) {
-      console.log("Se mostro la notificaicon ERROR ENTRA AL IF !!----------");
       setnotificacionError(true);
     }
     setClickSubmit(false);
-  }, [inputTicketValues, clickSubmit]);
+  }, [inputTicketValues, clickSubmit, idTicketRecv, notificacionOk]);
 
   return (
     <>
