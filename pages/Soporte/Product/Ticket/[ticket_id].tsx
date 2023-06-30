@@ -121,7 +121,7 @@ function TicketPage() {
     if (ticket_id) {
       fetchTicket();
     }
-  }, [ticket]);
+  }, [ticket_id]);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -181,7 +181,7 @@ function TicketPage() {
     if (ticket_id) {
       fetchAssignments();
     }
-  }, [ticket]);
+  }, [ticket_id]);
 
   const handleDelete = async () => {
     try {
@@ -398,7 +398,7 @@ function TicketPage() {
           {assignments.map((assignment) => (
             <button
               key={assignment.id}
-              className="text-white bg-blue-500 hover:bg-blue-600 font-bold rounded-lg p-2 w-full"
+              className="text-white bg-blue-500 hover:bg-blue-600 font-bold rounded-lg p-2 w-full mb-2"
               onClick={() =>
                 router.push(`/proyectos/${assignment.project_id}/tareas`)
               }
