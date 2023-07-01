@@ -140,7 +140,10 @@ function TicketPage() {
     if (ticket_id) {
       fetchTicket();
     }
-  }, [ticket_id]);
+    if (ticket.state == "Cerrado") {
+      setEstadoCerrado(true);
+    }
+  }, [ticket_id, ticket.state, ticket.title]);
 
   useEffect(() => {
     const fetchProduct = async () => {
