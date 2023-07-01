@@ -1,0 +1,8 @@
+version: '3.9'
+
+services:
+  frontend-psa:
+    image: psa-frontend-dockerimage
+    restart: unless-stopped
+    ports:
+      - 3010:3000
