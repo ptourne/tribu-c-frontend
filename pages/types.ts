@@ -10,6 +10,7 @@ export interface Cliente {
   CUIT: string
 }
 
+
 export interface Proyecto {
   codigo?: number;
   costo_estimado: number;
@@ -25,7 +26,7 @@ export interface Proyecto {
 }
 
 export interface Tarea {
-  id_tarea: string;
+  id_tarea: string | undefined;
   id_proyecto: string;
   titulo: string;
   descripcion: string;

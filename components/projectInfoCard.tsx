@@ -7,7 +7,7 @@ interface Props {
   selected: boolean;
 }
 
-const statesDict = {0: "No iniciado", 1: "En curso", 2: "Finalizado"};
+const statesList = ["No iniciado", "En curso", "Finalizado"];
 
 const ProjectInfoCard = ({ project, onClick, selected }: Props) => {
   return (
@@ -23,7 +23,7 @@ const ProjectInfoCard = ({ project, onClick, selected }: Props) => {
         <div className="p-2 h4">{project.nombre}</div>
       </div>
       <div className="d-flex flex-row justify-content-start align-items-center">
-        <div className="p-2">Estado: {statesDict[project.estado]}</div>
+        <div className="p-2">Estado: {statesList[project.estado]}</div>
       </div>
     </div>
   );

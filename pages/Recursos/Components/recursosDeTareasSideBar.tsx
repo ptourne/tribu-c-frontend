@@ -5,7 +5,7 @@ import { CircularProgress } from "@mui/material";
 import { RECURSOS_URL } from "@/environments";
 
 interface RecursosDeTareasSideBar {
-  tarea: Tarea;
+  tarea: Tarea | undefined;
   project_id: string;
 }
 
