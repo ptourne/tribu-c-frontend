@@ -130,6 +130,10 @@ export const TarjetaRecurso: React.FC<TarjetaRecurso> = ({
                           className="form-control border-0 border-bottom rounded-0 p-0"
                           dateFormat="dd/MM/yyyy"
                           placeholderText="Seleccione una fecha"
+                          filterDate={(fechaDelBloque) => {
+                            const day = fechaDelBloque.getDay();
+                            return day !== 0 && day !== 6;
+                          } }
                         />
                       </div>
                     </div>
