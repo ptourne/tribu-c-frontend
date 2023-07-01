@@ -391,7 +391,6 @@ function TicketPage() {
                   )}
                 </div>
               </div>
-<<<<<<< HEAD
               <h1 id="tituloH1Blanco">{ticket.title}</h1>
               <p id="itemTicketTarea">
                 <strong>Producto: </strong> {product?.name}
@@ -432,41 +431,6 @@ function TicketPage() {
               <p id="itemTicketTarea">
                 <strong>Responsible ID:</strong>{" "}
                 {obtenerNombreRecurso(ticket.responsible_id)}
-=======
-
-              <h1 className="text-xl text-white font-bold mb-4">
-                {ticket.title}
-              </h1>
-
-              <p className="mb-2 text-white text-lg">
-                Producto: {product?.name}
-              </p>
-              <p className="mb-2 text-white text-lg">
-                Versión: {product?.version}
-              </p>
-              <p className="mb-2 text-white text-lg">
-                Descripción: {ticket.description}
-              </p>
-              <p className="mb-2 text-white text-lg">
-                Severidad: {ticket.severity}
-              </p>
-              <p className="mb-2 text-white text-lg">
-                Prioridad: {ticket.priority}
-              </p>
-              <p className="mb-2 text-white text-lg">Estado: {ticket.state}</p>
-              <p className="mb-2 text-white text-lg">
-                Inicio: {ticket.timeStart}
-              </p>
-              <p className="mb-2 text-white text-lg">Tipo: {ticket.type}</p>
-              <p className="mb-2 text-white text-lg">
-                Tiempo para Resolución: {ticket.supportTime}
-              </p>
-              <p className="mb-2 text-white text-lg">
-                Client ID: {ticket.client_id}
-              </p>
-              <p className="mb-2 text-white text-lg">
-                Responsible ID: {ticket.responsible_id}
->>>>>>> fa915ca32a46632d7289820e5e6a2bb7fbb71510
               </p>
             </div>
           ) : (
