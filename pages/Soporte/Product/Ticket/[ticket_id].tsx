@@ -367,9 +367,19 @@ function TicketPage() {
               <p className="mb-2 text-white text-lg">
                 Client ID: {ticket.client_id}
               </p>
-              <p className="mb-2 text-white text-lg">
-                Responsible ID: {ticket.responsible_id}
-              </p>
+              {resourcesTest.map((resource) => {
+                if (resource.legajo === 4) {
+                  return (
+                    <div key={resource.legajo}>
+                      <p className="mb-2 text-white text-lg">
+                        Responsable: {resource.Nombre} {resource.Apellido}
+                      </p>
+                    </div>
+                  );
+                } else {
+                  return null;
+                }
+              })}
               <div className="flex justify-center">
                 <button
                   className="px-4 py-2 m-2 text-white bg-blue-500 hover:bg-blue-600 rounded-lg"
