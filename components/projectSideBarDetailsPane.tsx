@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Cliente, Proyecto } from "../pages/types";
+import { Cliente, Proyecto } from "./types";
 import { AiOutlineCheck, AiOutlineCheckCircle } from "react-icons/ai";
 import { IoIosWarning } from "react-icons/io";
 import { MdDelete } from "react-icons/md";
@@ -17,6 +17,17 @@ import UnsavedWarningIcon from "./unsavedWarningIcon";
 interface ProjectSideBarProps {
   project: Proyecto | undefined;
   getProjectsFunction: Function;
+}
+
+type VersionDict = {
+  versions: { name: string; customizations: string[] }[];
+  customizations: { [version: string]: string[] };
+};
+
+interface ClienteAPI {
+  id: number;
+  "razon social": string;
+  CUIT: string;
 }
 
 const ADD = 0;
@@ -75,9 +86,16 @@ function ProjectSideBarDetailsPane({
 }: ProjectSideBarProps) {
   const [clients, setClients] = useState<Cliente[]>([]);
   const [products, setProducts] = useState(productList);
-  const [versions, setVersions] = useState([]);
-  const [customizations, setCustomizations] = useState([]);
-  const [versionsDict, setVersionsDict] = useState({});
+  //const [versions, setVersions] = useState([]);
+  //const [customizations, setCustomizations] = useState([]);
+  const [versions, setVersions] = useState<
+    { name: string; customizations: string[] }[]
+  >([]);
+  const [customizations, setCustomizations] = useState<string[]>([]);
+
+  const [versionsDict, setVersionsDict] = useState<{
+    [productId: number]: VersionDict;
+  }>({});
 
   const [mode, setMode] = useState(EDIT);
 
@@ -87,10 +105,11 @@ function ProjectSideBarDetailsPane({
   const [pendingChanges, setPendingChanges] = useState(false);
   const [name, setName] = useState("");
   const [nameSaved, setNameSaved] = useState(true);
-  const [client, setClient] = useState<number | string>("");
-  const [product, setProduct] = useState<number | string>("");
+  const [client, setClient] = useState<number>(-1);
+  const [product, setProduct] = useState<number>(-1);
   const [version, setVersion] = useState("");
   const [customization, setCustomization] = useState("");
+
   const [state, setState] = useState(0);
   const [stateSaved, setStateSaved] = useState(true);
   const [startDate, setStartDate] = useState<Date | null>(null);
@@ -125,8 +144,8 @@ function ProjectSideBarDetailsPane({
       setMode(ADD);
       setName("Nuevo Proyecto");
       setState(0);
-      setClient("");
-      setProduct("");
+      setClient(-1);
+      setProduct(-1);
       setVersion("");
       setCustomization("");
       setStartDate(null);
@@ -161,13 +180,15 @@ function ProjectSideBarDetailsPane({
         if (data.data) {
           console.log(data.data);
 
-          const formattedClients = data.data.map((client: Cliente) => {
-            return {
-              id: client.id,
-              razon_social: client["razon social"], // Access the property using square brackets notation
-              CUIT: client.CUIT,
-            };
-          });
+          const formattedClients = data.data.map(
+            (client_preformated: ClienteAPI) => {
+              return {
+                id: client_preformated.id,
+                razon_social: client_preformated["razon social"],
+                CUIT: client_preformated.CUIT,
+              };
+            }
+          );
           setClients(formattedClients);
           console.log("clientes:", clients);
         }
@@ -189,7 +210,7 @@ function ProjectSideBarDetailsPane({
 
   const getProducts = async () => {
     for (let producto of products) {
-      let customizationsDict = {};
+      let customizationsDict: { [key: string]: string[] } = {};
       for (let version of producto.versions) {
         customizationsDict[version.name] = version.customizations;
       }
@@ -220,40 +241,39 @@ function ProjectSideBarDetailsPane({
     setPendingChanges(true);
   };
 
-  const handleClientChange = (
-    event: React.ChangeEvent<HTMLTextAreaElement>
-  ) => {
+  const handleClientChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setClient(parseInt(event.target.value));
     setPendingChanges(true);
   };
 
-  const handleProductChange = (
-    event: React.ChangeEvent<HTMLTextAreaElement>
-  ) => {
-    setProduct(parseInt(event.target.value));
-    setVersions(versionsDict[parseInt(event.target.value)].versions);
-    setPendingChanges(true);
+  const handleProductChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    if (event.target.value == "") {
+      setProduct(-1);
+    } else {
+      setProduct(parseInt(event.target.value));
+      setVersions(versionsDict[parseInt(event.target.value)].versions);
+    }
+
     setVersion("");
     setCustomization("");
+    setPendingChanges(true);
   };
 
-  const handleVersionChange = (
-    event: React.ChangeEvent<HTMLTextAreaElement>
-  ) => {
+  const handleVersionChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setVersion(event.target.value);
+    setCustomization("");
     setCustomizations(versionsDict[product].customizations[event.target.value]);
     setPendingChanges(true);
-    setCustomization("");
   };
 
   const handleCustomizationChange = (
-    event: React.ChangeEvent<HTMLInputElement>
+    event: React.ChangeEvent<HTMLSelectElement>
   ) => {
     setCustomization(event.target.value);
     setPendingChanges(true);
   };
 
-  const handleStateChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+  const handleStateChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setState(parseInt(event.target.value));
     if (mode === EDIT) setStateSaved(false);
     setPendingChanges(true);
@@ -287,7 +307,7 @@ function ProjectSideBarDetailsPane({
     const projectToSave: Proyecto = {
       nombre: name,
       estado: state,
-      costo_estimado: parseInt(estimatedCost),
+      costo_estimado: estimatedCost,
       fecha_inicio: startDate,
       fecha_fin_estimada: finishDate,
       customizacion: customization,
@@ -315,8 +335,8 @@ function ProjectSideBarDetailsPane({
         getProjectsFunction();
         setNameSaved(true);
         setStateSaved(true);
-        setClient("");
-        setProduct("");
+        setClient(-1);
+        setProduct(-1);
         setVersion("");
         setCustomization("");
         setStartDateSaved(true);
@@ -399,8 +419,8 @@ function ProjectSideBarDetailsPane({
 
         setName("Nuevo Proyecto");
         setState(0);
-        setClient("");
-        setProduct("");
+        setClient(-1);
+        setProduct(-1);
         setVersion("");
         setCustomization("");
         setStartDate(null);
@@ -644,7 +664,9 @@ function ProjectSideBarDetailsPane({
               pendingChanges &&
               name &&
               client &&
+              client != -1 &&
               product &&
+              product != -1 &&
               version &&
               customization &&
               startDate &&

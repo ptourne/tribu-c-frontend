@@ -7,7 +7,7 @@ import React, { Fragment, useState, useEffect } from "react";
 import { MdAdd } from "react-icons/md";
 import { Typography, Tooltip } from "@mui/material";
 import CircularProgress from "@mui/material/CircularProgress";
-import { Proyecto } from "./types";
+import { Proyecto } from "../components/types";
 
 const inter = Inter({ subsets: ["latin"] });
 

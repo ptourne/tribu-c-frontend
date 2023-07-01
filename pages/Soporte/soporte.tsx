@@ -1,7 +1,7 @@
 //Necesario para usar Hooks.
 import React, { useState, useEffect } from "react";
-import { Producto, Ticket } from "../types";
-import { ProductBar } from "./Componentes/ProductBar";
+import { Producto, Ticket } from "../../components/types";
+import { ProductBar } from "../../components/soporte/ProductBar";
 import { Modal } from "react-bootstrap";
 import Image from "next/image";
 

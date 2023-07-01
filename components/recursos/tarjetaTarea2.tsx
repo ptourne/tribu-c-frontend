@@ -1,6 +1,6 @@
 import { SetStateAction, useEffect, useState } from "react";
-import Popup from "./popup";
-import { Tarea } from "../../types";
+import Popup from "@/components/recursos/popup";
+import { Tarea } from "../types";
 
 import {
   FaSistrix,
@@ -8,10 +8,9 @@ import {
   FaPencilAlt,
   FaUserClock,
 } from "react-icons/fa";
-import { BloqueDeTrabajo } from "@/pages/types";
-import { SERVER_NAME_PROYECTOS } from "@/environments";
+import { BloqueDeTrabajo } from "@/components/types";
+import { RECURSOS_URL, SERVER_NAME_PROYECTOS } from "@/environments";
 import axios from "axios";
-import RECURSOS_URL from "./recursosURL";
 import { toast } from "react-toastify";
 interface TarjetaTarea {
   bloqueDeTrabajo: BloqueDeTrabajo;

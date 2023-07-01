@@ -2,7 +2,11 @@ import React from "react";
 import { Typography, Tooltip } from "@mui/material";
 import { IoIosWarning } from "react-icons/io";
 
-const UnsavedWarningIcon = ({ isSavePending }) => {
+interface UnsavedWarningIconProps {
+  isSavePending: boolean;
+}
+
+const UnsavedWarningIcon = ({ isSavePending }: UnsavedWarningIconProps) => {
   return (
     <div className="d-flex align-items-center justify-content-center flex-shrink-0 w-10">
       {isSavePending || (

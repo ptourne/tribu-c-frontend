@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import ProjectSideBarDetailsPane from "./projectSideBarDetailsPane";
 import { useRouter } from "next/router";
-import { Proyecto } from "../pages/types";
+import { Proyecto } from "./types";
 
 interface ProjectSideBarProps {
   project: Proyecto | undefined;
