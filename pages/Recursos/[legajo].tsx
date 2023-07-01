@@ -30,7 +30,6 @@ export default function Calendario() {
   const [bloquesDeTrabajo, setBloquesDeTrabajo] = useState<BloqueDeTrabajo[]>(
     []
   );
-  // const [numeroDeProyectos, setNumeroDeProyectos] = useState(0);
   const [loading, setLoading] = useState(true);
   const [tareasMap, setTareasMap] = useState<Map<number, Map<number, Tarea>>>(new Map<number, Map<number, Tarea>>)
   const [tareaCorrespondienteABloqueMap, setTareaCorrespondienteABloqueMap] = useState<Map<number, Tarea>>(new Map<number, Tarea>);
@@ -80,15 +79,6 @@ export default function Calendario() {
             map.set(parse(tarea.id_tarea), tarea);
           });
         proyectosMap.set(proyecto_id, map);
-        // map.forEach((value, key) => {
-        //   console.log(`Key: ${key} Value: ${value.titulo} :)`);
-        // });
-      })
-      proyectosMap.forEach((value, key) => {
-        console.log("Mapa: " + key);
-        value.forEach((tarea, keytr) => {
-          console.log(`   Key: ${keytr} Value: ${tarea.titulo} :)`);
-        });
       })
       setTareasMap(proyectosMap);
     })
@@ -103,11 +93,6 @@ export default function Calendario() {
       let tarea = proyecto?.get(bloque.codTarea);
       map.set(bloque.codBloqueLaboral, parseTask(tarea));
     }
-
-    console.log("Hashmap de bloques");
-    map.forEach((value, key) => {
-      console.log(`Key: ${key} Value: ${value.titulo} :)`);
-    });
     setTareaCorrespondienteABloqueMap(map);
   };
   useEffect(() => {
@@ -138,10 +123,10 @@ export default function Calendario() {
   return (
     <>
     {loading ? (
-            <>
+            <div className="d-flex justify-content-center align-items-center flex-column mt-8">
               <CircularProgress></CircularProgress>
               <p className="mt-3">Cargando Recursos</p>
-            </>
+            </div>
           ) : (
             <div
         style={estilos.calendario}
@@ -284,7 +269,6 @@ function getBloquesDelDia(
 }
 function parse(id: string | undefined): number {
   if (id == undefined){
-    console.log("Misma wea 1");
     return 0;
   } else {
     return parseInt(id)
@@ -292,7 +276,6 @@ function parse(id: string | undefined): number {
 }
 function parseTask(task: Tarea | undefined): Tarea {
   if (task == undefined) {
-    console.log("Misma wea 2");
     return ({
       id_tarea: "",
       id_proyecto: "",

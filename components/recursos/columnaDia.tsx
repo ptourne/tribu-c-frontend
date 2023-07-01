@@ -56,7 +56,6 @@ const estilos = {
 };
 function parseTask(task: Tarea | undefined): Tarea {
   if (task == undefined) {
-    console.log("Misma wea 3");
     return ({
       id_tarea: "",
       id_proyecto: "",
