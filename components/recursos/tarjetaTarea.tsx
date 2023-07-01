@@ -1,6 +1,5 @@
 import { SetStateAction, useEffect, useState } from "react";
 import Popup from "./popup";
-
 import {
   FaSistrix,
   FaSearchengin,
@@ -11,65 +10,26 @@ import { BloqueDeTrabajo, Tarea } from "@/components/types";
 import { RECURSOS_URL, SERVER_NAME_PROYECTOS } from "@/environments";
 import axios from "axios";
 import { toast } from "react-toastify";
+
 interface TarjetaTarea {
   bloqueDeTrabajo: BloqueDeTrabajo;
+  tareaAsociada: Tarea;
 }
-export const TarjetaTarea: React.FC<TarjetaTarea> = ({ bloqueDeTrabajo }) => {
+export const TarjetaTarea: React.FC<TarjetaTarea> = ({ bloqueDeTrabajo,tareaAsociada }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [tipoBoton, setTipoBoton] = useState("guardar");
+  const [esEliminada, setEsEliminada] = useState(false);
   const [horas, setHoras] = useState(bloqueDeTrabajo.horasDelBloque);
-  const [tareaAsociada, setTareaAsociada] = useState<Tarea>({
-    id_tarea: "",
-    id_proyecto: "",
-    titulo: "",
-    descripcion: "",
-    tiempo_estimado_finalizacion: 0,
-    horas_acumuladas: 0,
-    estado: 0,
-    legajo_responsable: "",
-  });
-  const [classNameDiv, setClassNameDiv] = useState("");
-  const [classNameInput, setClassNameInput] = useState("");
-
-  // Esto abre el popup
+  const classNameDiv = "d-flex flex-column  border-2 border-dark rounded-2 bd-highlight mb-3 align-items-center " + colorDeTarea(tareaAsociada.estado);
+  const classNameInput = "form-control border-0 rounded-0 p-1 " + colorDeTarea(tareaAsociada.estado);
+  
   const togglePopup = () => {
     if (!isOpen) setIsOpen(true);
   };
+
   const ocultarClick = () => {
     if (isOpen) setIsOpen(false);
   };
-  const getTareasDeProyecto = async () => {
-    try {
-      const response = await fetch(
-        SERVER_NAME_PROYECTOS +
-          "projects/" +
-          bloqueDeTrabajo.codProyectoDeLaTarea +
-          "/tasks"
-      );
 
-      response.json().then((data) => {
-        data.msg.forEach((tarea: Tarea) => {
-          if (
-            tarea.id_tarea == bloqueDeTrabajo.codTarea.toString() &&
-            tarea.id_proyecto == bloqueDeTrabajo.codProyectoDeLaTarea.toString()
-          ) {
-            setTareaAsociada(tarea);
-            setClassNameDiv(
-              "d-flex flex-column  border-2 border-dark rounded-2 bd-highlight mb-3 align-items-center " +
-                colorDeTarea(tareaAsociada.estado)
-            );
-            setClassNameInput(
-              "form-control border-0 rounded-0 p-1 " +
-                colorDeTarea(tareaAsociada.estado)
-            );
-          }
-        });
-      });
-    } catch (error) {
-      console.error("Error fetching ticket:", error);
-    }
-  };
-  // Esto es para cargar en la variable horas el input del user
   const handleCambioDeHoras = (event: React.ChangeEvent<HTMLInputElement>) => {
     let number = parseInt(event.target.value);
     if (isNaN(number)) {
@@ -78,7 +38,6 @@ export const TarjetaTarea: React.FC<TarjetaTarea> = ({ bloqueDeTrabajo }) => {
     setHoras(number);
   };
 
-  // Evento del click del botón
   const guardarClick = () => {
     const bloque = {
       codBloqueLaboral: bloqueDeTrabajo.codBloqueLaboral,
@@ -118,8 +77,7 @@ export const TarjetaTarea: React.FC<TarjetaTarea> = ({ bloqueDeTrabajo }) => {
   };
 
   const eliminarClick = async () => {
-    axios
-      .delete(RECURSOS_URL + bloqueDeTrabajo.codBloqueLaboral.toString())
+      axios.delete(RECURSOS_URL + "{bloque_laboral}?codBloqueLaboral=" + bloqueDeTrabajo.codBloqueLaboral.toString())
       .then(() => {
         toast.success("Bloque eliminado", {
           position: "top-right",
@@ -127,7 +85,7 @@ export const TarjetaTarea: React.FC<TarjetaTarea> = ({ bloqueDeTrabajo }) => {
           hideProgressBar: true,
         });
         setIsOpen(false);
-        setHoras(0);
+        setEsEliminada(true);
       })
       .catch((e) => {
         toast.error(
@@ -143,13 +101,9 @@ export const TarjetaTarea: React.FC<TarjetaTarea> = ({ bloqueDeTrabajo }) => {
       });
   };
 
-  useEffect(() => {
-    getTareasDeProyecto();
-  }, []);
-
   return (
     <div>
-      {horas != 0 ? (
+      {!esEliminada ? (
         <div
           onClick={togglePopup}
           className={classNameDiv}
@@ -210,9 +164,9 @@ export const TarjetaTarea: React.FC<TarjetaTarea> = ({ bloqueDeTrabajo }) => {
 function colorDeTarea(estadoTarea: number) {
   switch (estadoTarea) {
     case 0:
-      return "bg-warning";
-    case 1:
       return "bg-info";
+    case 1:
+      return "bg-warning";
     case 2:
       return "bg-success";
     default:
