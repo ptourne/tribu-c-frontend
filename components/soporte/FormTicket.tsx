@@ -1,4 +1,4 @@
-import { Ticket, Cliente } from "@/pages/types";
+import { Ticket, Cliente } from "@/components/types";
 import { headers } from "next/dist/client/components/headers";
 import { useEffect, useState } from "react";
 import { NotificacionesDelTicket } from "./NotificacionTicket";

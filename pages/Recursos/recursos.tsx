@@ -1,12 +1,12 @@
 import { Inter } from "next/font/google";
-import axios from 'axios'
+import axios from "axios";
 import ProjectInfoCard from "@/components/projectInfoCard";
 import RecursoSideBar from "@/components/recursoSideBar";
 import React, { Fragment, useState, useEffect } from "react";
 import { MdAdd } from "react-icons/md";
 import { Typography, Tooltip } from "@mui/material";
-import CircularProgress from '@mui/material/CircularProgress';
-import { Recurso } from "../types";
+import CircularProgress from "@mui/material/CircularProgress";
+import { Recurso } from "../../components/types";
 import RecursoInfoCard from "@/components/recursoInfoCard";
 import { useRouter } from "next/router";
 import { RECURSOS_URL } from "@/environments";
@@ -21,9 +21,7 @@ export default function Recurso() {
 
   const getRecursos = async () => {
     try {
-      const response = await fetch(
-        RECURSOS_URL + "recurso"
-      );
+      const response = await fetch(RECURSOS_URL + "recurso");
       const data = await response.json();
       setRecursos(data);
       setLoading(false);
@@ -44,41 +42,43 @@ export default function Recurso() {
         </div>
         <div
           className={
-            loading ? "flex justify-content-center align-items-center flex-column"
-            : (recursos.length > 0
+            loading
+              ? "flex justify-content-center align-items-center flex-column"
+              : recursos.length > 0
               ? "flex h-full flex-col space-y-4 text-black"
-              : "text-black")
+              : "text-black"
           }
         >
-          {loading 
-            ? <>
-                <CircularProgress></CircularProgress>
-                <p className="mt-3">Cargando Recursos</p>
-              </>
-            : (recursos.length > 0
-                ? recursos.map((recurso, index) => (
-                    <RecursoInfoCard
-                      key={index}
-                      recurso={recurso}
-                      onClick={() => {
-                        // Redirigir al calendario
-                        setSelectedIndex(index);
-                        router.push({
-                          pathname: `/Recursos/${recurso.legajo}`,
-                          query: {
-                            nombreRecurso: recurso.Nombre,
-                            apellidoRecurso: recurso.Apellido,
-                            legajo: recurso.legajo
-                          }
-                        });
-                      }}
-                      selected={selectedIndex === index}
-                    />
-                  ))
-                : "Aún no hay proyectos creados. Seleccione agregar para crear uno nuevo")
-          }
+          {loading ? (
+            <>
+              <CircularProgress></CircularProgress>
+              <p className="mt-3">Cargando Recursos</p>
+            </>
+          ) : recursos.length > 0 ? (
+            recursos.map((recurso, index) => (
+              <RecursoInfoCard
+                key={index}
+                recurso={recurso}
+                onClick={() => {
+                  // Redirigir al calendario
+                  setSelectedIndex(index);
+                  router.push({
+                    pathname: `/Recursos/${recurso.legajo}`,
+                    query: {
+                      nombreRecurso: recurso.Nombre,
+                      apellidoRecurso: recurso.Apellido,
+                      legajo: recurso.legajo,
+                    },
+                  });
+                }}
+                selected={selectedIndex === index}
+              />
+            ))
+          ) : (
+            "Aún no hay proyectos creados. Seleccione agregar para crear uno nuevo"
+          )}
         </div>
       </div>
-      </div>
+    </div>
   );
 }

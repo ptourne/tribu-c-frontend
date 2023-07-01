@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import ProjectSideBarDetailsPane from "./projectSideBarDetailsPane";
-import { useRouter } from 'next/router'
-import { Recurso } from "../pages/types";
+import { useRouter } from "next/router";
+import { Recurso } from "./types";
 
 interface RecursoSideBarProps {
   recurso: Recurso | undefined;
@@ -29,8 +29,9 @@ function RecursoSideBar({ recurso }: RecursoSideBarProps) {
 
   const getTasks = () => {
     router.push({
-      pathname: `/recursos/${selectedRecurso?.Nombre}/tareas`});
-  }
+      pathname: `/recursos/${selectedRecurso?.Nombre}/tareas`,
+    });
+  };
 
   return (
     <div className="d-flex flex-column flex-fill justify-content-start border rounded-3 m-3 p-3">
@@ -49,7 +50,7 @@ function RecursoSideBar({ recurso }: RecursoSideBarProps) {
             Detalles
           </a>
         </li>
-        { mode === EDIT &&
+        {mode === EDIT && (
           <li
             className="nav-item"
             onClick={() => {
@@ -63,7 +64,7 @@ function RecursoSideBar({ recurso }: RecursoSideBarProps) {
               Equipo
             </a>
           </li>
-        }
+        )}
       </ul>
       <div className="tab-content" id="myTabContent">
         <div
@@ -75,9 +76,7 @@ function RecursoSideBar({ recurso }: RecursoSideBarProps) {
           id="details-tab-pane"
           role="tabpanel"
           aria-labelledby="details-tab"
-        >
-          
-        </div>
+        ></div>
         <div
           className={
             selectedTab === 1
@@ -91,14 +90,15 @@ function RecursoSideBar({ recurso }: RecursoSideBarProps) {
           {2}
         </div>
       </div>
-      { mode === EDIT &&
-      <button
-        type="button"
-        className="btn btn-primary mt-auto p-2"
-        onClick={getTasks}
-      >
-        Ver Tareas
-      </button>}
+      {mode === EDIT && (
+        <button
+          type="button"
+          className="btn btn-primary mt-auto p-2"
+          onClick={getTasks}
+        >
+          Ver Tareas
+        </button>
+      )}
     </div>
   );
 }

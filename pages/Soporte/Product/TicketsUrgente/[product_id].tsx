@@ -1,7 +1,7 @@
 import { Cliente, Recurso, Ticket } from "@/pages/types";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { ARRAY_CLIENTES } from "../../Componentes/Constantes";
+import { ARRAY_CLIENTES } from "../../../../components/soporte/Constantes";
 
 const INITIAL_RECURSO = [
   { legajo: 1, Nombre: "Mario", Apellido: "Mendoza" },

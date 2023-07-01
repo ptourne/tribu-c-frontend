@@ -2,7 +2,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { FaEllipsisV } from "react-icons/fa";
-import { FormTicket } from "../../Componentes/FormTicket";
+import { FormTicket } from "../../../../components/soporte/FormTicket";
 
 interface Ticket {
   title: string;
@@ -372,16 +372,28 @@ function TicketPage() {
                 Responsible ID: {ticket.responsible_id}
               </p>
               <div className="flex justify-center">
-                <button className="px-4 py-2 m-2 text-white bg-blue-500 hover:bg-blue-600 rounded-lg" onClick={handleModificar}>
+                <button
+                  className="px-4 py-2 m-2 text-white bg-blue-500 hover:bg-blue-600 rounded-lg"
+                  onClick={handleModificar}
+                >
                   Modificar
                 </button>
-                <button className="px-4 py-2 m-2 text-white bg-blue-500 hover:bg-blue-600 rounded-lg" onClick={handleDelete}>
+                <button
+                  className="px-4 py-2 m-2 text-white bg-blue-500 hover:bg-blue-600 rounded-lg"
+                  onClick={handleDelete}
+                >
                   Eliminar
                 </button>
-                <button className="px-4 py-2 m-2 text-white bg-blue-500 hover:bg-blue-600 rounded-lg" onClick={openModal}>
+                <button
+                  className="px-4 py-2 m-2 text-white bg-blue-500 hover:bg-blue-600 rounded-lg"
+                  onClick={openModal}
+                >
                   Derivar
                 </button>
-                <button className="px-4 py-2 m-2 text-white bg-blue-500 hover:bg-blue-600 rounded-lg" onClick={handleUpdateState}>
+                <button
+                  className="px-4 py-2 m-2 text-white bg-blue-500 hover:bg-blue-600 rounded-lg"
+                  onClick={handleUpdateState}
+                >
                   Finalizar
                 </button>
               </div>
