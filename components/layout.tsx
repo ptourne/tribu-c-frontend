@@ -1,11 +1,12 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
 import SideBarItem from "./SidebarItem";
-import { ISidebarItem } from "./types";
+import { IconType } from "react-icons";
 import { FaFolder, FaHome, FaUserClock } from "react-icons/fa";
 import { BsFillKanbanFill, BsFillTicketDetailedFill } from "react-icons/bs";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { ISidebarItem } from "./types";
 
 // Esto es el navabar que aparece siempre !!!! .
 export default function Layout({ children }: { children: any }) {

@@ -2,11 +2,11 @@ import { Cliente, Producto, Ticket } from "@/pages/types";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { useState } from "react";
-import { ARRAY_CLIENTES } from "../Componentes/Constantes";
+import { ARRAY_CLIENTES } from "../../../components/soporte/Constantes";
 import TicketActions, {
   TicketActionsProps,
-} from "@/pages/Soporte/Componentes/TicketActions";
-import { FormTicket } from "../Componentes/FormTicket";
+} from "@/components/soporte/TicketActions";
+import { FormTicket } from "../../../components/soporte/FormTicket";
 
 interface Recurso {
   Nombre: string;

@@ -9,7 +9,7 @@ import ProjectSideBar from "@/components/projectSideBar";
 import { MdAdd } from "react-icons/md";
 import { Typography, Tooltip } from "@mui/material";
 import CircularProgress from "@mui/material/CircularProgress";
-import { Proyecto } from "../../types";
+import { Proyecto } from "../../../components/types";
 import TaskInfoCard from "@/components/taskInfoCard";
 import TaskSideBar from "@/components/taskSideBar";
 import { BsArrowLeftShort } from "react-icons/bs";

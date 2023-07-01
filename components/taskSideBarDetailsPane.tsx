@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Proyecto, Recurso, Tarea } from "../pages/types";
+import { Proyecto, Recurso, Tarea } from "./types";
 import { AiOutlineCheck, AiOutlineCheckCircle } from "react-icons/ai";
 import { IoIosWarning } from "react-icons/io";
 import { MdDelete } from "react-icons/md";
@@ -125,7 +125,7 @@ function TaskSideBarDetailsPane({
   };
 
   const handleResponsibleChange = (
-    event: React.ChangeEvent<HTMLTextAreaElement>
+    event: React.ChangeEvent<HTMLSelectElement>
   ) => {
     setResponsible(event.target.value);
     if (mode === EDIT) setResponsibleSaved(false);
@@ -168,6 +168,7 @@ function TaskSideBarDetailsPane({
     // Create an object with the updated values
     const taskToSave: Tarea = {
       id_tarea: task?.id_tarea,
+      id_proyecto: project_id,
       titulo: titulo,
       descripcion: description,
       tiempo_estimado_finalizacion: estimatedDuration,
