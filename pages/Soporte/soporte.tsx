@@ -7,7 +7,6 @@ import Image from "next/image";
 
 export default function Soporte() {
   //Usado similiar al constructor inicia con INITIAL_STATE
-  const [verImagen, setVerImagen] = useState<boolean>(false);
   const [products, setProducts] = useState<Array<Producto>>([]);
 
   const fetchProductos = (): Promise<Array<Producto>> => {
@@ -16,14 +15,6 @@ export default function Soporte() {
     return fetch("https://psa-soporte.eeoo.ar/products").then((res) =>
       res.json()
     );
-  };
-
-  const handleReporte = () => {
-    if (!verImagen) {
-      setVerImagen(true);
-    } else {
-      setVerImagen(false);
-    }
   };
 
   useEffect(() => {
@@ -37,22 +28,9 @@ export default function Soporte() {
       <div id="containerInicio">
         <div id="tituloInicioContainer">
           <h1 id="TituloH1Inicio"> Productos </h1>
-          <button type="button" onClick={handleReporte} id="buttonReportes">
-            Reporte de Tickets
-          </button>
         </div>
         <div id="BloqueProductBarEImagen">
           <ProductBar products={products} />
-          {verImagen && (
-            <Image
-              src="https://github.com/ptourne/tribu-c-frontend/blob/main/public/reportes.jpeg?raw=true"
-              alt={
-                "Bar plot de los productos con la cantida de tickets pendientes/solucionado Harcodeado"
-              }
-              width={500}
-              height={300}
-            />
-          )}
         </div>
       </div>
     </>
