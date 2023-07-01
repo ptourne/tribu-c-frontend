@@ -3,7 +3,8 @@ import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { FaEllipsisV } from "react-icons/fa";
 import { FormTicket } from "../../../../components/soporte/FormTicket";
-
+import { Cliente } from "@/components/types";
+import { ARRAY_CLIENTES } from "@/components/soporte/Constantes";
 interface Ticket {
   title: string;
   description: string;
@@ -104,7 +105,24 @@ function TicketPage() {
   const [product, setProduct] = useState<Product | null>(null);
   const [taskId, setTaskId] = useState<number>(0);
   const [showForm, setShowForm] = useState(false);
+  const [recursos, setRecurso] = useState<Array<Resource>>(resourcesTest);
+  const [clientes, setClientes] = useState<Array<Cliente>>(ARRAY_CLIENTES);
 
+  const obtenerNombreCliente = (idCliente: number): string => {
+    const unCliente = clientes.find((unCliente) => unCliente.id == idCliente);
+    if (unCliente) {
+      return unCliente.razon_social;
+    }
+    return "CLIENTE-DESCONOCIDO";
+  };
+
+  const obtenerNombreRecurso = (idRecurso: number): string => {
+    const recurso = recursos.find((unRecurso) => unRecurso.legajo == idRecurso);
+    if (recurso) {
+      return `${recurso.Nombre}  ${recurso.Apellido}`;
+    }
+    return "LEGAJO - DESCONOCIDO";
+  };
   useEffect(() => {
     const fetchTicket = async () => {
       try {
@@ -365,10 +383,10 @@ function TicketPage() {
                 Tiempo para Resolución: {ticket.supportTime}
               </p>
               <p className="mb-2 text-white text-lg">
-                Client ID: {ticket.client_id}
+                Client ID: {obtenerNombreCliente(ticket.client_id)}
               </p>
               <p className="mb-2 text-white text-lg">
-                Responsible ID: {ticket.responsible_id}
+                Responsible ID: {obtenerNombreRecurso(ticket.responsible_id)}
               </p>
               <div className="flex justify-center">
                 <button
