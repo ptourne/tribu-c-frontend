@@ -1,13 +1,16 @@
-import { BloqueDeTrabajo } from "@/pages/types";
+import { BloqueDeTrabajo, Tarea } from "@/components/types";
 import { TarjetaTarea } from "./tarjetaTarea";
+import { useEffect } from "react";
 
 interface ColumnaDia {
     nombreDia: string;
     numeroDia: number;
     bloquesDeTrabajo: Array<BloqueDeTrabajo>;
+    mapaDeTareas:Map<number, Tarea>;
+
 }
 
-export const ColumnaDia: React.FC<ColumnaDia> = ({ nombreDia, numeroDia, bloquesDeTrabajo }) => {
+export const ColumnaDia: React.FC<ColumnaDia> = ({ nombreDia, numeroDia, bloquesDeTrabajo, mapaDeTareas }) => {
     return (
         <>
             <div className="flex-column diasSemana-contenido" style={estilos.dia}>
@@ -20,7 +23,7 @@ export const ColumnaDia: React.FC<ColumnaDia> = ({ nombreDia, numeroDia, bloques
                 <div className="d-flex flex-column  border-2 border-dark rounded-2 bd-highlight mb-3" style={estilos.columnas}>
                     {
                         bloquesDeTrabajo.map(bloqueDeTrabajo =>
-                            <TarjetaTarea bloqueDeTrabajo={bloqueDeTrabajo} key={bloqueDeTrabajo.codBloqueLaboral}/>
+                            <TarjetaTarea bloqueDeTrabajo={bloqueDeTrabajo} key={bloqueDeTrabajo.codBloqueLaboral} tareaAsociada={parseTask(mapaDeTareas.get(bloqueDeTrabajo.codBloqueLaboral))}/>
                             )
                     }
                 </div>
@@ -51,3 +54,20 @@ const estilos = {
   }
 
 };
+function parseTask(task: Tarea | undefined): Tarea {
+  if (task == undefined) {
+    console.log("Misma wea 3");
+    return ({
+      id_tarea: "",
+      id_proyecto: "",
+      titulo: "",
+      descripcion: "",
+      tiempo_estimado_finalizacion: 0,
+      horas_acumuladas: 0,
+      estado: 0,
+      legajo_responsable: "",
+    })
+  } else {
+    return task
+  }
+}

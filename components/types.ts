@@ -75,6 +75,12 @@ export interface BloqueDeTrabajo {
   fecha: Date
 }
 
+export interface RecursoStats {
+  horasInvertidasEnTarea: number,
+  horasInvertidasEnProyecto: number,
+  horasDisponiblesEnSemana: number,
+}
+
 export interface ISidebarItem {
   href: string;
   title?: string;
