@@ -31,6 +31,7 @@ export const RecursosDeTareasSideBar: React.FC<RecursosDeTareasSideBar> = ({
   const [loading, setLoading] = useState(true);
   const [bloques, setBloques] = useState<BloqueDeTrabajo[]>([]);
   const [recursosMap, setRecursosMap] = useState<Map<number, RecursoStats>>(new Map<number, RecursoStats>());
+  const [bloqueDeTrabajoResponse, setBloqueDeTrabajoResponse] = useState(false);
   const getRecursos = async () => {
     try {
       const response = await fetch(RECURSOS_URL + "recurso");
@@ -45,6 +46,7 @@ export const RecursosDeTareasSideBar: React.FC<RecursosDeTareasSideBar> = ({
       const response = await fetch(RECURSOS_URL + "bloque_laboral");
       response.json().then((data: Array<BloqueDeTrabajo>) => {
         setBloques(data);
+        setBloqueDeTrabajoResponse(true);
       });
     } catch (error) {
       console.error("Error fetching ticket:", error);
@@ -73,11 +75,11 @@ export const RecursosDeTareasSideBar: React.FC<RecursosDeTareasSideBar> = ({
   }, [recursos])
 
   useEffect(() => {
-    if (bloques.length > 0) {
+    if (bloqueDeTrabajoResponse) {
       getRecursosMap();
       setLoading(false);
     }
-  }, [bloques])
+  }, [bloqueDeTrabajoResponse])
 
 
   return (

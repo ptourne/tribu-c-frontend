@@ -34,6 +34,8 @@ export default function Calendario() {
   const [tareasMap, setTareasMap] = useState<Map<number, Map<number, Tarea>>>(new Map<number, Map<number, Tarea>>)
   const [tareaCorrespondienteABloqueMap, setTareaCorrespondienteABloqueMap] = useState<Map<number, Tarea>>(new Map<number, Tarea>);
   
+  const [bloqueDeTrabajoResponse, setBloqueDeTrabajoResponse] = useState(false);
+
   const getProyectos = async () => {
     axios
       .get(SERVER_NAME_PROYECTOS + "projects")
@@ -58,6 +60,7 @@ export default function Calendario() {
       const response = await fetch(RECURSOS_URL + "bloque_laboral");
       let data = await response.json();
       setBloquesDeTrabajo(data);
+      setBloqueDeTrabajoResponse(true);
     } catch (error) {
       console.error("Error fetching ticket:", error);
     }
@@ -104,10 +107,10 @@ export default function Calendario() {
     }
   }, [proyectos]);
   useEffect(() => {
-    if (bloquesDeTrabajo.length > 0) {
+    if (bloqueDeTrabajoResponse) {
       getTareas();
     }
-  }, [bloquesDeTrabajo]);
+  }, [bloqueDeTrabajoResponse]);
   useEffect(() => {
     if (tareasMap.size == proyectos.length && tareasMap.size != 0) {
       getTareaCorrespondienteABloqueMap();
