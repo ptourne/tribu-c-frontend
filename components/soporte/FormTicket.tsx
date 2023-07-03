@@ -45,16 +45,21 @@ export const FormTicket: React.FC<{
   const [clickSubmit, setClickSubmit] = useState<Boolean>(false);
   const [tickets, setTickets] = useState<Array<Ticket>>([]);
   const [showCient, setShowCliente] = useState<Boolean>(true);
-  const [clientes, setClientes] = useState<Cliente[]>(ARRAY_CLIENTES);
+  const [clientes, setClientes] = useState<Cliente[]>([]);
 
-  /*
-  const fetchClientes = (): Promise<Array<Cliente>> => {
-    return fetch(
-      `https://abrahamosco.github.io/prueba.github.io/clientes.html`,
-      { method: "GET", headers: {} }
-    ).then((res) => res.json());
+  const obtenerNombreCliente = (idCliente: number): string => {
+    const unCliente = clientes.find((unCliente) => unCliente.id == idCliente);
+    if (unCliente) {
+      return unCliente["razon social"];
+    }
+    return "CLIENTE-DESCONOCIDO";
   };
-  */
+  const fetchClientes = (): Promise<Array<Cliente>> => {
+    //2) Llamanda al backend Necesitamos obtener todos los tickets.
+    return fetch("https://psa-soporte.eeoo.ar/clients").then((res) =>
+      res.json()
+    );
+  };
 
   const fetchTickets = (): Promise<Array<Ticket>> => {
     //2) Llamanda al backend Necesitamos obtener todos los tickets.
@@ -200,9 +205,15 @@ export const FormTicket: React.FC<{
         (res) => res.json()
       );
     };
+    console.log("Clientes:");
+    console.log(clientes);
+    fetchClientes().then((clientesFetch) => {
+      setClientes(clientesFetch);
+    });
 
     if (idTicketRecv === -1) {
       console.log("ENtro aca en el crear DEL PRIMER UE");
+
       fetchTickets().then((ticketsFetch) => {
         setTickets(ticketsFetch);
       });
@@ -212,7 +223,6 @@ export const FormTicket: React.FC<{
         product_id: productIdNumerico,
       });
     } else {
-      console.log("ENtro aca en el editar");
       console.log("Entramos al else estamos en el EDITAR !!------"); //.then((unTicket: Ticket) => unTicket.timeStart)
 
       //caso edicion ya recibimos el id como argumento lo usamos recopilamos el id
@@ -232,8 +242,9 @@ export const FormTicket: React.FC<{
 
   //userEffect para poder asignarle el timeStart cuando hace click en el boton submit
   useEffect(() => {
-    console.log("ENtro aca En el 2DO UE");
-
+    fetchTickets().then((ticketsFetch) => {
+      setTickets(ticketsFetch);
+    });
     //Funcion para crear un ticket
     const fetchPOSTTicket = () => {
       const URLParaPOST = `https://psa-soporte.eeoo.ar/ticket/product/${inputTicketValues.product_id}/client/${inputTicketValues.client_id}/responsible/${inputTicketValues.responsible_id}`;
@@ -477,10 +488,18 @@ export const FormTicket: React.FC<{
                 <option value=""> Seleccione... </option>
                 {clientes.map((unCliente) => (
                   <option key={unCliente.id}>
-                    {unCliente["razon_social"]}
+                    {unCliente["razon social"]}
                   </option>
                 ))}
               </select>
+              {clientes.length === 0 && (
+                <span id="CargandoClientes">
+                  Cargando clientes, por favor espere
+                </span>
+              )}
+              {clientes.length !== 0 && (
+                <span id="ClientesCargados">Clientes cargados !</span>
+              )}
             </div>
           )}
           <div id="divListBox">

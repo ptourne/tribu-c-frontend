@@ -106,15 +106,21 @@ function TicketPage() {
   const [taskId, setTaskId] = useState<number>(0);
   const [showForm, setShowForm] = useState(false);
   const [recursos, setRecurso] = useState<Array<Resource>>(resourcesTest);
-  const [clientes, setClientes] = useState<Array<Cliente>>(ARRAY_CLIENTES);
   const [estadoCerrado, setEstadoCerrado] = useState<boolean>(false);
+  const [clientes, setClientes] = useState<Cliente[]>([]);
 
   const obtenerNombreCliente = (idCliente: number): string => {
     const unCliente = clientes.find((unCliente) => unCliente.id == idCliente);
     if (unCliente) {
-      return unCliente.razon_social;
+      return unCliente["razon social"];
     }
     return "CLIENTE-DESCONOCIDO";
+  };
+  const fetchClientes = (): Promise<Array<Cliente>> => {
+    //2) Llamanda al backend Necesitamos obtener todos los tickets.
+    return fetch("https://psa-soporte.eeoo.ar/clients").then((res) =>
+      res.json()
+    );
   };
 
   const obtenerNombreRecurso = (idRecurso: number): string => {
@@ -136,6 +142,9 @@ function TicketPage() {
         console.error("Error fetching ticket:", error);
       }
     };
+    fetchClientes().then((clientesFetch) => {
+      setClientes(clientesFetch);
+    });
 
     if (ticket_id) {
       fetchTicket();

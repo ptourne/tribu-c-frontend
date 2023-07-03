@@ -8,7 +8,7 @@ export interface Usuario {
 
 export interface Cliente {
   id: number
-  razon_social: string
+  "razon social": string
   CUIT: string
 }
 
