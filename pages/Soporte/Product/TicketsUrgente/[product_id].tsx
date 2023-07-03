@@ -1,4 +1,4 @@
-import { Cliente, Recurso, Ticket } from "@/pages/types";
+import { Cliente, Recurso, Ticket } from "@/components/types";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { ARRAY_CLIENTES } from "../../../../components/soporte/Constantes";
@@ -14,16 +14,22 @@ function TicketUrgente() {
   //El product_id este argumento generico tiene que concindir con el tsx que creamos dentro de la carpeta TicketsUrgente.
   const [tickets, setTickets] = useState<Array<Ticket>>([]);
   const [recursos, setRecurso] = useState<Array<Recurso>>(INITIAL_RECURSO);
-  const [clientes, setClientes] = useState<Array<Cliente>>(ARRAY_CLIENTES);
   const [ticketProxVencer, setTicketProxVencer] = useState<Array<Ticket>>([]);
   const [ticketsVencidos, setTicketsVencidos] = useState<Array<Ticket>>([]);
+  const [clientes, setClientes] = useState<Array<Cliente>>([]);
 
   const obtenerNombreCliente = (idCliente: number): string => {
     const unCliente = clientes.find((unCliente) => unCliente.id == idCliente);
     if (unCliente) {
-      return unCliente.razon_social;
+      return unCliente["razon social"];
     }
     return "CLIENTE-DESCONOCIDO";
+  };
+  const fetchClientes = (): Promise<Array<Cliente>> => {
+    //2) Llamanda al backend Necesitamos obtener todos los tickets.
+    return fetch("https://psa-soporte.eeoo.ar/clients").then((res) =>
+      res.json()
+    );
   };
 
   const obtenerNombreRecurso = (idRecurso: number): string => {
@@ -181,14 +187,21 @@ function TicketUrgente() {
 
     if (typeof product_id !== "undefined") {
       console.log(`product_id : que carjaos if ${product_id}`);
+      fetchClientes().then((clientesFetch) => {
+        setClientes(clientesFetch);
+      });
       fetchTicketsByID().then((ticketsFetch) => {
-        const ticketsProx2Horas = ticketsFetch.filter(
-          filtrarTicketsProximosAVencer
-        );
-        const ticketsVencidosFetch = ticketsFetch.filter(filtrarTickesVencidos);
+        if (ticketsFetch.length > 0) {
+          const ticketsProx2Horas = ticketsFetch.filter(
+            filtrarTicketsProximosAVencer
+          );
+          const ticketsVencidosFetch = ticketsFetch.filter(
+            filtrarTickesVencidos
+          );
 
-        setTicketProxVencer(ticketsProx2Horas);
-        setTicketsVencidos(ticketsVencidosFetch);
+          setTicketProxVencer(ticketsProx2Horas);
+          setTicketsVencidos(ticketsVencidosFetch);
+        }
       });
     }
   }, [product_id, productID]);

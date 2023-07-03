@@ -1,11 +1,8 @@
-import { Cliente, Producto, Ticket } from "@/pages/types";
+import { Cliente, Producto, Ticket } from "../../../components/types";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { useState } from "react";
 import { ARRAY_CLIENTES } from "../../../components/soporte/Constantes";
-import TicketActions, {
-  TicketActionsProps,
-} from "@/components/soporte/TicketActions";
 import { FormTicket } from "../../../components/soporte/FormTicket";
 
 interface Recurso {
@@ -25,14 +22,20 @@ export default function Ticket() {
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const [productoSelect, setProductoSelect] = useState<Producto>();
   const [recursos, setRecurso] = useState<Array<Recurso>>(INITIAL_RECURSO);
-  const [clientes, setClientes] = useState<Array<Cliente>>(ARRAY_CLIENTES);
+  const [clientes, setClientes] = useState<Array<Cliente>>([]);
 
   const obtenerNombreCliente = (idCliente: number): string => {
     const unCliente = clientes.find((unCliente) => unCliente.id == idCliente);
     if (unCliente) {
-      return unCliente.razon_social;
+      return unCliente["razon social"];
     }
     return "CLIENTE-DESCONOCIDO";
+  };
+  const fetchClientes = (): Promise<Array<Cliente>> => {
+    //2) Llamanda al backend Necesitamos obtener todos los tickets.
+    return fetch("https://psa-soporte.eeoo.ar/clients").then((res) =>
+      res.json()
+    );
   };
 
   const obtenerNombreRecurso = (idRecurso: number): string => {
@@ -58,6 +61,7 @@ export default function Ticket() {
     typeof product_id === "string" ? product_id : "VACIO";
 
   useEffect(() => {
+    console.log("Entro al unico userEffect de [product_id].tsx");
     const fetchGetProductosById = (): Promise<Producto> => {
       //1) Llamanda al backend hacemos un GET de productos los id van en number recuerda !
       return fetch(
@@ -68,16 +72,22 @@ export default function Ticket() {
         }
       ).then((res) => res.json());
     };
+
+    fetchClientes().then((clientesFetch) => {
+      setClientes(clientesFetch);
+    });
+
     fetchGetProductosById().then((unProducto) => {
       setProductoSelect(unProducto);
     });
+
     fetchTickets().then((ticketsFetch) => {
       const ticketsFiltradoById = ticketsFetch.filter(
         (ticket) => ticket.product_id == parseInt(productID)
       );
       setTickets(ticketsFiltradoById);
     });
-  }, [product_id, productID, tickets]); //el product_id cambia muchas veces asi que hacemos un UE por esa variable.
+  }, [tickets]); //el product_id cambia muchas veces asi que hacemos un UE por esa variable.
 
   const [showFormFilter, setShowFormFilter] = useState(false); // Nuevo estado para controlar la visibilidad del formulario
   const handleOpenFormTicket = () => {
