@@ -59,29 +59,6 @@ interface DropdownItem {
   onClick: () => void;
 }
 
-const resourcesTest: Resource[] = [
-  {
-    legajo: 1,
-    Nombre: "Mario",
-    Apellido: "Mendoza",
-  },
-  {
-    legajo: 2,
-    Nombre: "Maria",
-    Apellido: "Perez",
-  },
-  {
-    legajo: 3,
-    Nombre: "Patricia",
-    Apellido: "Gaona",
-  },
-  {
-    legajo: 4,
-    Nombre: "Marcos",
-    Apellido: "Rivero",
-  },
-];
-
 const INITIALTICKET = {
   title: "",
   description: "",
@@ -105,8 +82,28 @@ function TicketPage() {
   const [product, setProduct] = useState<Product | null>(null);
   const [taskId, setTaskId] = useState<number>(0);
   const [showForm, setShowForm] = useState(false);
-  const [recursos, setRecurso] = useState<Array<Resource>>(resourcesTest);
   const [clientes, setClientes] = useState<Array<Cliente>>(ARRAY_CLIENTES);
+
+
+  const [resources, setResources] = useState<Resource[]>([]);
+
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        const response = await fetch(
+          "https://psa-recursos.eeoo.ar/recurso"
+        );
+        const data = await response.json();
+
+        setResources(data);
+      } catch (error) {
+        console.error("Error al obtener los proyectos:", error);
+      }
+    };
+
+    fetchProjects();
+  }, [ticket]);
+
 
   const obtenerNombreCliente = (idCliente: number): string => {
     const unCliente = clientes.find((unCliente) => unCliente.id == idCliente);
@@ -117,7 +114,7 @@ function TicketPage() {
   };
 
   const obtenerNombreRecurso = (idRecurso: number): string => {
-    const recurso = recursos.find((unRecurso) => unRecurso.legajo == idRecurso);
+    const recurso = resources.find((unRecurso) => unRecurso.legajo == idRecurso);
     if (recurso) {
       return `${recurso.Nombre}  ${recurso.Apellido}`;
     }
@@ -385,7 +382,7 @@ function TicketPage() {
               <p className="mb-2 text-white text-lg">
                 Client ID: {obtenerNombreCliente(ticket.client_id)}
               </p>
-              {resourcesTest.map((resource) => {
+              {resources.map((resource) => {
                 if (resource.legajo === 4) {
                   return (
                     <div key={resource.legajo}>
@@ -483,7 +480,7 @@ function TicketPage() {
               <option disabled value="">
                 Seleccionar Recurso
               </option>
-              {resourcesTest.map((resource) => (
+              {resources.map((resource) => (
                 <option key={resource.legajo} value={resource.legajo}>
                   {resource.Nombre}, {resource.Apellido}
                 </option>
