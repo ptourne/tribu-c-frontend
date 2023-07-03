@@ -202,37 +202,38 @@ export const FormTicket: React.FC<{
     };
 
     if (idTicketRecv === -1) {
-      if (tickets.length == 0) {
-        fetchTickets().then((ticketsFetch) => {
-          setTickets(ticketsFetch);
-        });
-        setInputTicketValues({
-          ...inputTicketValues,
-          id: getMaxIdTicket(tickets) + 1,
-          product_id: productIdNumerico,
-        });
-      }
+      console.log("ENtro aca en el crear DEL PRIMER UE");
+      fetchTickets().then((ticketsFetch) => {
+        setTickets(ticketsFetch);
+      });
+      setInputTicketValues({
+        ...inputTicketValues,
+        id: getMaxIdTicket(tickets) + 1,
+        product_id: productIdNumerico,
+      });
     } else {
+      console.log("ENtro aca en el editar");
+      console.log("Entramos al else estamos en el EDITAR !!------"); //.then((unTicket: Ticket) => unTicket.timeStart)
+
       //caso edicion ya recibimos el id como argumento lo usamos recopilamos el id
       //aca debemos hacer el fetch de tiket por el id que recibimos
       setShowCliente(false);
-      console.log("Entramos al else estamos en el EDITAR !!------"); //.then((unTicket: Ticket) => unTicket.timeStart)
-      if (tickets.length == 0) {
-        getTicketByTicketID().then((unTicket) => {
-          setInputTicketValues({
-            ...inputTicketValues,
-            timeStart: unTicket.timeStart,
-            product_id: productIdNumerico,
-            id: idTicketRecv,
-            client_id: unTicket.client_id,
-          });
+      getTicketByTicketID().then((unTicket) => {
+        setInputTicketValues({
+          ...inputTicketValues,
+          timeStart: unTicket.timeStart,
+          product_id: productIdNumerico,
+          id: idTicketRecv,
+          client_id: unTicket.client_id,
         });
-      }
+      });
     }
-  }, [idTicketRecv, inputTicketValues, productIdNumerico, tickets]);
+  }, [idTicketRecv, productIdNumerico, tickets]);
 
   //userEffect para poder asignarle el timeStart cuando hace click en el boton submit
   useEffect(() => {
+    console.log("ENtro aca En el 2DO UE");
+
     //Funcion para crear un ticket
     const fetchPOSTTicket = () => {
       const URLParaPOST = `https://psa-soporte.eeoo.ar/ticket/product/${inputTicketValues.product_id}/client/${inputTicketValues.client_id}/responsible/${inputTicketValues.responsible_id}`;
@@ -376,7 +377,7 @@ export const FormTicket: React.FC<{
       setnotificacionError(true);
     }
     setClickSubmit(false);
-  }, [inputTicketValues, clickSubmit, idTicketRecv, notificacionOk]);
+  }, [clickSubmit, idTicketRecv, notificacionOk]);
 
   return (
     <>

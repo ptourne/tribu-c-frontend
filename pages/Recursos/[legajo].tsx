@@ -4,6 +4,8 @@ import { ColumnaDia } from "@/components/recursos/columnaDia";
 import { BsArrowLeftShort, BsArrowRightShort } from "react-icons/bs";
 import { BloqueDeTrabajo, Proyecto, Tarea } from "../../components/types";
 import { RECURSOS_URL, SERVER_NAME_PROYECTOS } from "@/environments";
+import axios from "axios";
+import { CircularProgress } from "@mui/material";
 const estilos = {
   calendario: {
     width: "100%",
@@ -21,30 +23,100 @@ const estilos = {
   },
 };
 export default function Calendario() {
-  //fecha guarda fecha actual
   const [fecha, setDate] = useState(new Date());
   const router = useRouter();
   const { nombreRecurso, apellidoRecurso, legajo } = router.query;
+  const [proyectos, setProyetos] = useState<Proyecto[]>([])
   const [bloquesDeTrabajo, setBloquesDeTrabajo] = useState<BloqueDeTrabajo[]>(
     []
   );
   const [loading, setLoading] = useState(true);
-  const [proyectos, setProyectos] = useState<Proyecto[]>([]);
+  const [tareasMap, setTareasMap] = useState<Map<number, Map<number, Tarea>>>(new Map<number, Map<number, Tarea>>)
+  const [tareaCorrespondienteABloqueMap, setTareaCorrespondienteABloqueMap] = useState<Map<number, Tarea>>(new Map<number, Tarea>);
+  
+  const [bloqueDeTrabajoResponse, setBloqueDeTrabajoResponse] = useState(false);
 
+  const getProyectos = async () => {
+    axios
+      .get(SERVER_NAME_PROYECTOS + "projects")
+      .then((data) => {
+        if (data.data.ok) {
+          let cantidad = 0;
+          data.data.msg.forEach((project: Proyecto) => {
+            cantidad += 1;
+          });
+          setProyetos(data.data.msg);
+        }
+      })
+      .catch((err) => {
+        if (err.response?.data?.msg) {
+          console.log(err.response.data.msg);
+        }
+      });
+  };
+  
   const getBloquesDeTareas = async () => {
     try {
       const response = await fetch(RECURSOS_URL + "bloque_laboral");
       let data = await response.json();
       setBloquesDeTrabajo(data);
-      setLoading(false);
+      setBloqueDeTrabajoResponse(true);
     } catch (error) {
       console.error("Error fetching ticket:", error);
     }
   };
-
+  const getTareas = async () => {
+    try {
+      let proyectosMap = new Map<number, Map<number, Tarea>>();
+      fetchProyectos(proyectos).then((responses) => Promise.all(responses.map(response => {
+        if(response.ok) return response.json();
+      })))
+      .then((data) => {
+        data.forEach(response => {
+          let proyecto_id = 0;
+          let map = new Map<number, Tarea>();
+          response.msg.forEach((tarea: Tarea) => {
+            if (proyecto_id == 0) {
+              proyecto_id = parse(tarea.id_proyecto);
+            }
+            map.set(parse(tarea.id_tarea), tarea);
+          });
+        proyectosMap.set(proyecto_id, map);
+      })
+      setTareasMap(proyectosMap);
+    })
+    } catch (error) {
+      console.error("Error fetching ticket:", error);
+    }
+  }
+  const getTareaCorrespondienteABloqueMap = () => {
+    let map = new Map<number, Tarea>();
+    for (let bloque of bloquesDeTrabajo) {
+      let proyecto = tareasMap.get(bloque.codProyectoDeLaTarea);
+      let tarea = proyecto?.get(bloque.codTarea);
+      map.set(bloque.codBloqueLaboral, parseTask(tarea));
+    }
+    setTareaCorrespondienteABloqueMap(map);
+  };
   useEffect(() => {
-    getBloquesDeTareas();
+    getProyectos();
   }, []);
+  useEffect(() => {
+    if (proyectos.length > 0) {
+      getBloquesDeTareas();
+    }
+  }, [proyectos]);
+  useEffect(() => {
+    if (bloqueDeTrabajoResponse) {
+      getTareas();
+    }
+  }, [bloqueDeTrabajoResponse]);
+  useEffect(() => {
+    if (tareasMap.size == proyectos.length && tareasMap.size != 0) {
+      getTareaCorrespondienteABloqueMap();
+      setLoading(false);
+    }
+  }, [tareasMap]);
   const handleLeftClick = () => {
     setDate(diaCorrespondiente(fecha, -6));
   };
@@ -53,7 +125,13 @@ export default function Calendario() {
   };
   return (
     <>
-      <div
+    {loading ? (
+            <div className="d-flex justify-content-center align-items-center flex-column mt-8">
+              <CircularProgress></CircularProgress>
+              <p className="mt-3">Cargando Recursos</p>
+            </div>
+          ) : (
+            <div
         style={estilos.calendario}
         className="flex flex-column align-items-center"
       >
@@ -89,6 +167,7 @@ export default function Calendario() {
               diaCorrespondiente(fecha, 1),
               bloquesDeTrabajo
             )}
+            mapaDeTareas= {tareaCorrespondienteABloqueMap}
           />
           <ColumnaDia
             nombreDia="Martes"
@@ -98,6 +177,7 @@ export default function Calendario() {
               diaCorrespondiente(fecha, 2),
               bloquesDeTrabajo
             )}
+            mapaDeTareas= {tareaCorrespondienteABloqueMap}
           />
           <ColumnaDia
             nombreDia="Miercoles"
@@ -107,6 +187,7 @@ export default function Calendario() {
               diaCorrespondiente(fecha, 3),
               bloquesDeTrabajo
             )}
+            mapaDeTareas= {tareaCorrespondienteABloqueMap}
           />
           <ColumnaDia
             nombreDia="Jueves"
@@ -116,6 +197,7 @@ export default function Calendario() {
               diaCorrespondiente(fecha, 4),
               bloquesDeTrabajo
             )}
+            mapaDeTareas= {tareaCorrespondienteABloqueMap}
           />
           <ColumnaDia
             nombreDia="Viernes"
@@ -125,9 +207,12 @@ export default function Calendario() {
               diaCorrespondiente(fecha, 5),
               bloquesDeTrabajo
             )}
+            mapaDeTareas= {tareaCorrespondienteABloqueMap}
           />
         </div>
       </div>
+          )
+          }
     </>
   );
 }
@@ -166,7 +251,6 @@ function numeroAMes(numero: number) {
       return "Diciembre";
   }
 }
-// supongo que api te dara un array [fechaTarea, titulo, estado, horasDedicadas]
 function getBloquesDelDia(
   legajo: string | number | string[] | undefined,
   fecha: Date,
@@ -185,4 +269,36 @@ function getBloquesDelDia(
     }
   });
   return bloques_filtrados;
+}
+function parse(id: string | undefined): number {
+  if (id == undefined){
+    return 0;
+  } else {
+    return parseInt(id)
+  }
+}
+function parseTask(task: Tarea | undefined): Tarea {
+  if (task == undefined) {
+    return ({
+      id_tarea: "",
+      id_proyecto: "",
+      titulo: "",
+      descripcion: "",
+      tiempo_estimado_finalizacion: 0,
+      horas_acumuladas: 0,
+      estado: 0,
+      legajo_responsable: "",
+    })
+  } else {
+    return task
+  }
+}
+
+function fetchProyectos(proyectos: Proyecto[]) {
+  let responses = [];
+  for(let proyecto of proyectos) {
+    let response = fetch(`${SERVER_NAME_PROYECTOS}projects/${proyecto.codigo}/tasks`);
+    responses.push(response);
+  } 
+  return Promise.all(responses);
 }

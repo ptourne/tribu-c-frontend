@@ -54,11 +54,6 @@ interface Assignment {
   ticket_id: number;
 }
 
-interface DropdownItem {
-  label: string;
-  onClick: () => void;
-}
-
 const INITIALTICKET = {
   title: "",
   description: "",
@@ -83,16 +78,14 @@ function TicketPage() {
   const [taskId, setTaskId] = useState<number>(0);
   const [showForm, setShowForm] = useState(false);
   const [clientes, setClientes] = useState<Array<Cliente>>(ARRAY_CLIENTES);
-
+  const [estadoCerrado, setEstadoCerrado] = useState<boolean>(false);
 
   const [resources, setResources] = useState<Resource[]>([]);
 
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const response = await fetch(
-          "https://psa-recursos.eeoo.ar/recurso"
-        );
+        const response = await fetch("https://psa-recursos.eeoo.ar/recurso");
         const data = await response.json();
 
         setResources(data);
@@ -104,7 +97,6 @@ function TicketPage() {
     fetchProjects();
   }, [ticket]);
 
-
   const obtenerNombreCliente = (idCliente: number): string => {
     const unCliente = clientes.find((unCliente) => unCliente.id == idCliente);
     if (unCliente) {
@@ -114,7 +106,9 @@ function TicketPage() {
   };
 
   const obtenerNombreRecurso = (idRecurso: number): string => {
-    const recurso = resources.find((unRecurso) => unRecurso.legajo == idRecurso);
+    const recurso = resources.find(
+      (unRecurso) => unRecurso.legajo == idRecurso
+    );
     if (recurso) {
       return `${recurso.Nombre}  ${recurso.Apellido}`;
     }
@@ -136,7 +130,10 @@ function TicketPage() {
     if (ticket_id) {
       fetchTicket();
     }
-  }, [ticket_id]);
+    if (ticket.state == "Cerrado") {
+      setEstadoCerrado(true);
+    }
+  }, [ticket_id, ticket.state, ticket.title]);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -210,6 +207,7 @@ function TicketPage() {
   };
 
   const handleUpdateState = async () => {
+    setEstadoCerrado(true);
     if (ticket) {
       const updatedTicket = {
         ...ticket,
@@ -349,45 +347,73 @@ function TicketPage() {
         <div className="p-6">
           {ticket ? (
             <div>
-              <div className="flex flex-row justify-between place-items-center">
-                <h1 className="text-xl text-black font-bold">Ticket</h1>
-              </div>
-              <h1 className="text-xl text-white font-bold mb-4">
-                {ticket.title}
-              </h1>
+              <div className="flex flex-row justify-between place-items-center"></div>
+              <h1 id="tituloH1BlancoTicketIDConP">{ticket.title}</h1>
 
-              <p className="mb-2 text-white text-lg">
-                Producto: {product?.name}
+              <p
+                className="mb-2 text-white text-lg"
+                id="ididPParaTicketCompleto"
+              >
+                <strong>Producto: </strong> {product?.name}
               </p>
-              <p className="mb-2 text-white text-lg">
-                Versión: {product?.version}
+              <p
+                className="mb-2 text-white text-lg"
+                id="ididPParaTicketCompleto"
+              >
+                <strong>Versión: </strong>
+                {product?.version}
               </p>
-              <p className="mb-2 text-white text-lg">
-                Descripción: {ticket.description}
+              <p
+                className="mb-2 text-white text-lg"
+                id="ididPParaTicketCompleto"
+              >
+                <strong>Descripción:</strong> {ticket.description}
               </p>
-              <p className="mb-2 text-white text-lg">
-                Severidad: {ticket.severity}
+              <p
+                className="mb-2 text-white text-lg"
+                id="ididPParaTicketCompleto"
+              >
+                <strong>Severidad:</strong> {ticket.severity}
               </p>
-              <p className="mb-2 text-white text-lg">
-                Prioridad: {ticket.priority}
+              <p
+                className="mb-2 text-white text-lg"
+                id="ididPParaTicketCompleto"
+              >
+                <strong>Prioridad:</strong> {ticket.priority}
               </p>
-              <p className="mb-2 text-white text-lg">Estado: {ticket.state}</p>
-              <p className="mb-2 text-white text-lg">
-                Inicio: {ticket.timeStart}
+              <p
+                className="mb-2 text-white text-lg"
+                id="ididPParaTicketCompleto"
+              >
+                <strong> Estado:</strong>{" "}
+                {!estadoCerrado && <span>{ticket.state} </span>}
+                {estadoCerrado && (
+                  <span id="ticketEstadoCerrado">{ticket.state}</span>
+                )}
               </p>
-              <p className="mb-2 text-white text-lg">Tipo: {ticket.type}</p>
-              <p className="mb-2 text-white text-lg">
-                Tiempo para Resolución: {ticket.supportTime}
+              <p
+                className="mb-2 text-white text-lg"
+                id="ididPParaTicketCompleto"
+              >
+                <strong>Inicio:</strong> {ticket.timeStart}
               </p>
-              <p className="mb-2 text-white text-lg">
-                Client ID: {obtenerNombreCliente(ticket.client_id)}
+              <p
+                className="mb-2 text-white text-lg"
+                id="ididPParaTicketCompleto"
+              >
+                {" "}
+                <strong> Tipo:</strong> {ticket.type}
               </p>
               {resources.map((resource) => {
                 if (resource.legajo === 4) {
                   return (
                     <div key={resource.legajo}>
-                      <p className="mb-2 text-white text-lg">
-                        Responsable: {resource.Nombre} {resource.Apellido}
+                      <p
+                        className="mb-2 text-white text-lg"
+                        id="ididPParaTicketCompleto"
+                      >
+                        <strong>Responsable: </strong>
+                        {resource.Nombre} {resource.Apellido}
                       </p>
                     </div>
                   );
@@ -396,26 +422,17 @@ function TicketPage() {
                 }
               })}
               <div className="flex justify-center">
-                <button
-                  className="px-4 py-2 m-2 text-white bg-blue-500 hover:bg-blue-600 rounded-lg"
-                  onClick={handleModificar}
-                >
+                <button id="botonTicketTareaInterno" onClick={handleModificar}>
                   Modificar
                 </button>
-                <button
-                  className="px-4 py-2 m-2 text-white bg-blue-500 hover:bg-blue-600 rounded-lg"
-                  onClick={handleDelete}
-                >
+                <button id="botonTicketTareaInterno" onClick={handleDelete}>
                   Eliminar
                 </button>
-                <button
-                  className="px-4 py-2 m-2 text-white bg-blue-500 hover:bg-blue-600 rounded-lg"
-                  onClick={openModal}
-                >
+                <button id="botonTicketTareaInterno" onClick={openModal}>
                   Derivar
                 </button>
                 <button
-                  className="px-4 py-2 m-2 text-white bg-blue-500 hover:bg-blue-600 rounded-lg"
+                  id="botonTicketTareaInterno"
                   onClick={handleUpdateState}
                 >
                   Finalizar
@@ -428,13 +445,13 @@ function TicketPage() {
         </div>
       </div>
 
-      <div className="w-1/2 ml-2 bg-white border-solid border-2 border-gray-200 shadow-xl rounded-lg">
+      <div className="w-1/2 ml-2 bg-blue-400 border-solid border-2 border-gray-200 shadow-xl rounded-lg">
         <div className="p-6">
-          <h2 className="text-xl font-bold">Tareas</h2>
+          <h2 id="tituloH1BlancoTicketIDConP">Tareas</h2>
           {assignments.map((assignment) => (
             <button
               key={assignment.id}
-              className="text-white bg-blue-500 hover:bg-blue-600 font-bold rounded-lg p-2 w-full mb-2"
+              id="butonTareasTicket"
               onClick={() =>
                 router.push(`/proyectos/${assignment.project_id}/tareas`)
               }
