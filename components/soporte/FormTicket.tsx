@@ -13,7 +13,7 @@ const INITIAL_STATE = {
   state: "Iniciado",
   timeStart: "",
   type: "",
-  supportTime: "",
+  supportTime: 0,
   id: 0,
   product_id: 0,
   client_id: 0,
@@ -74,15 +74,6 @@ export const FormTicket: React.FC<{
 
   const [notificacion, setNotificacion] = useState<boolean>(false);
 
-  const formatDateTime = (dateTime: Date): string => {
-    const year = String(dateTime.getFullYear());
-    const month = String(dateTime.getMonth() + 1).padStart(2, "0"); // Los meses comienzan desde 0, por eso se suma 1
-    const day = String(dateTime.getDate()).padStart(2, "0");
-    const hours = String(dateTime.getHours()).padStart(2, "0");
-    const minutes = String(dateTime.getMinutes()).padStart(2, "0");
-    const seconds = String(dateTime.getSeconds()).padStart(2, "0");
-    return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
-  };
   const [notificacionOk, setNotificacionOk] = useState(false);
   var [notificacionError, setnotificacionError] = useState(false);
 
@@ -185,7 +176,7 @@ export const FormTicket: React.FC<{
     if (idTicketRecv == -1) {
       setInputTicketValues({
         ...inputTicketValues,
-        timeStart: formatDateTime(new Date()).toString(),
+        timeStart: new Date().toString(),
       });
     }
 
@@ -286,7 +277,6 @@ export const FormTicket: React.FC<{
         inputTicketValues.priority !== "" &&
         inputTicketValues.timeStart !== "" &&
         inputTicketValues.type !== "" &&
-        inputTicketValues.supportTime !== "" &&
         inputTicketValues.client_id !== 0 &&
         inputTicketValues.responsible_id !== 0
       );
@@ -324,35 +314,6 @@ export const FormTicket: React.FC<{
       limpiezaDeCamposDelForm();
     };
     const validationInputPlus = () => {
-      if (
-        parseInt(inputTicketValues.supportTime) <= 0 ||
-        parseInt(inputTicketValues.supportTime) >= 10000
-      ) {
-        console.log(
-          "Cantidad de horas " + inputTicketValues.supportTime + " invalidas."
-        );
-        setnotificacionError(true);
-        return false;
-      }
-
-      if (inputTicketValues.supportTime == " ") {
-        console.log("Ingrese un valor valido para las horas.");
-        setnotificacionError(true);
-        return false;
-      }
-
-      if (inputTicketValues.supportTime == "") {
-        console.log("Complete el campo de horas necesarias.");
-        setnotificacionError(true);
-        return false;
-      }
-
-      if (hasLetter(inputTicketValues.supportTime)) {
-        console.log("Ingrese solo numeros.");
-        setnotificacionError(true);
-        return false;
-      }
-
       if (
         inputTicketValues.description == " " ||
         inputTicketValues.description == ""
@@ -524,17 +485,6 @@ export const FormTicket: React.FC<{
             {clientes.length !== 0 && (
               <span id="GenericoCargados">Recursos cargados !</span>
             )}
-          </div>
-          <div id="divHorasSoporte">
-            <span> Tiempo para solucionar el ticket: </span>
-            <input
-              onChange={handleChange}
-              value={inputTicketValues.supportTime}
-              type="text"
-              name="supportTime"
-              placeholder="horas"
-            />{" "}
-            Horas
           </div>
           <div id="divDescripcion">
             <span> Descripción</span>

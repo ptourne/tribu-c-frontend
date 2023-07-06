@@ -51,7 +51,7 @@ export interface Ticket {
   state: string;
   timeStart: string;
   type: string;
-  supportTime: string;
+  supportTime: number;
   id: number;
   product_id: number;
   client_id: number;

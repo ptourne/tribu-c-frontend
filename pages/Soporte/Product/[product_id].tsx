@@ -100,6 +100,18 @@ export default function Ticket() {
       setShowFormFilter(false);
     }
   };
+  const formatDateTime = (creationTime: string): string => {
+    console.log("dateTime: ");
+    const dateTime = new Date(creationTime);
+    console.log(dateTime);
+    const year = String(dateTime.getFullYear());
+    const month = String(dateTime.getMonth() + 1).padStart(2, "0"); // Los meses comienzan desde 0, por eso se suma 1
+    const day = String(dateTime.getDate()).padStart(2, "0");
+    const hours = String(dateTime.getHours()).padStart(2, "0");
+    const minutes = String(dateTime.getMinutes()).padStart(2, "0");
+    const seconds = String(dateTime.getSeconds()).padStart(2, "0");
+    return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
+  };
 
   return (
     <>
@@ -146,7 +158,8 @@ export default function Ticket() {
                     <strong>Estado:</strong> {unTicket.state}
                   </p>
                   <p>
-                    <strong>Inicio:</strong> {unTicket.timeStart}
+                    <strong>Inicio:</strong>{" "}
+                    {formatDateTime(unTicket.timeStart)}
                   </p>
                   <p>
                     <strong>Tipo:</strong> {unTicket.type}

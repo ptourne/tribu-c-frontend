@@ -30,7 +30,7 @@ const INITIALTICKET = {
   state: "",
   timeStart: "",
   type: "",
-  supportTime: "",
+  supportTime: 0,
   id: 0,
   product_id: 0,
   client_id: 0,
@@ -284,7 +284,7 @@ function TicketPage() {
     const taskData = {
       titulo: ticket.title,
       descripcion: ticket.description,
-      tiempo_estimado_finalizacion: parseInt(ticket.supportTime),
+      tiempo_estimado_finalizacion: ticket.supportTime,
       legajo_responsable: selectedResourceId,
     };
 
@@ -313,6 +313,19 @@ function TicketPage() {
     } catch (error) {
       console.error("Error al asignar la tarea:", error);
     }
+  };
+
+  const formatDateTime = (creationTime: string): string => {
+    console.log("dateTime: ");
+    const dateTime = new Date(creationTime);
+    console.log(dateTime);
+    const year = String(dateTime.getFullYear());
+    const month = String(dateTime.getMonth() + 1).padStart(2, "0"); // Los meses comienzan desde 0, por eso se suma 1
+    const day = String(dateTime.getDate()).padStart(2, "0");
+    const hours = String(dateTime.getHours()).padStart(2, "0");
+    const minutes = String(dateTime.getMinutes()).padStart(2, "0");
+    const seconds = String(dateTime.getSeconds()).padStart(2, "0");
+    return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
   };
 
   return (
@@ -369,7 +382,7 @@ function TicketPage() {
                 className="mb-2 text-white text-lg"
                 id="ididPParaTicketCompleto"
               >
-                <strong>Inicio:</strong> {ticket.timeStart}
+                <strong>Inicio:</strong> {formatDateTime(ticket.timeStart)}
               </p>
               <p
                 className="mb-2 text-white text-lg"
