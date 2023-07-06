@@ -1,9 +1,5 @@
-import { Producto, Ticket } from "@/pages/types";
-import { Select } from "@mui/material";
+import { Producto, Ticket } from "../../components/types";
 import { useRouter } from "next/router";
-import { SetStateAction, useEffect, useState } from "react";
-import { FaEllipsisV } from "react-icons/fa";
-import reportes from 'public/reportes.jpeg';
 
 interface ProductBarProps {
   products: Array<Producto>;
@@ -17,25 +13,6 @@ export const ProductBar: React.FC<ProductBarProps> = ({ products }) => {
   if (!products) {
     products = [];
   }
-
-  console.log("products SON: ");
-  console.log(products);
-
-
-  const [showFormTicket, setShowFormTicket] = useState(false); // Nuevo estado para controlar la visibilidad del formulario
-  const handleOpenFormTicket = () => {
-    if (showFormTicket === false) {
-      setShowFormTicket(true); // Muestra el formulario al hacer clic en el botón
-    } else {
-      setShowFormTicket(false);
-    }
-  };
-
-  <button
-    type="button"
-    onClick={handleOpenFormTicket}
-    id="buttonAgregarTicket"
-  ></button>;
 
   // cuando funcione tendremos que ir y darle a cada boton su correspondiente handler depnde en cual haga click. posiblmente su objeto Ticket correspondiente.
   //Se pasa la ruta absoluta y no la relativa !! no usar "." .ACA hacemos el ruteo .
@@ -65,7 +42,6 @@ export const ProductBar: React.FC<ProductBarProps> = ({ products }) => {
               >
                 Entrar
               </button>
-              
             </li>
           );
         })}

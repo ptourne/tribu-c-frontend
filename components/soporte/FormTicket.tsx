@@ -1,8 +1,7 @@
-import { Ticket, Cliente } from "@/components/types";
+import { Ticket, Cliente, Recurso } from "@/components/types";
 import { headers } from "next/dist/client/components/headers";
 import { useEffect, useState } from "react";
 import { NotificacionesDelTicket } from "./NotificacionTicket";
-import { ARRAY_CLIENTES } from "./Constantes";
 interface formTicketState {
   inputValuesTicket: Ticket;
 }
@@ -46,19 +45,22 @@ export const FormTicket: React.FC<{
   const [tickets, setTickets] = useState<Array<Ticket>>([]);
   const [showCient, setShowCliente] = useState<Boolean>(true);
   const [clientes, setClientes] = useState<Cliente[]>([]);
+  const [recursos, setRecursos] = useState<Array<Recurso>>([]);
 
-  const obtenerNombreCliente = (idCliente: number): string => {
-    const unCliente = clientes.find((unCliente) => unCliente.id == idCliente);
-    if (unCliente) {
-      return unCliente["razon social"];
-    }
-    return "CLIENTE-DESCONOCIDO";
-  };
+  //Hacemos un fetch de los clientes.
   const fetchClientes = (): Promise<Array<Cliente>> => {
-    //2) Llamanda al backend Necesitamos obtener todos los tickets.
-    return fetch("https://psa-soporte.eeoo.ar/clients").then((res) =>
-      res.json()
-    );
+    return fetch("https://psa-soporte.eeoo.ar/clients", {
+      method: "GET",
+      headers: {},
+    }).then((res) => res.json());
+  };
+
+  //Hacemos un fetch de los recursos
+  const fetchRecursos = (): Promise<Array<Recurso>> => {
+    return fetch("https://psa-recursos.eeoo.ar/recurso", {
+      method: "GET",
+      headers: {},
+    }).then((res) => res.json());
   };
 
   const fetchTickets = (): Promise<Array<Ticket>> => {
@@ -138,8 +140,8 @@ export const FormTicket: React.FC<{
     event: React.ChangeEvent<HTMLSelectElement>
   ) => {
     setSelectedClientOption(event.target.value);
-    const clienteCoincideRazon = ARRAY_CLIENTES.find(
-      (unCliente) => unCliente["razon_social"] === event.target.value //En el fin de usa triple === igual !!!!
+    const clienteCoincideRazon = clientes.find(
+      (unCliente) => unCliente["razon social"] === event.target.value //En el fin de usa triple === igual !!!!
     );
     let clientId = 100;
     if (typeof clienteCoincideRazon === "undefined") {
@@ -209,6 +211,10 @@ export const FormTicket: React.FC<{
     console.log(clientes);
     fetchClientes().then((clientesFetch) => {
       setClientes(clientesFetch);
+    });
+
+    fetchRecursos().then((recursosFetch) => {
+      setRecursos(recursosFetch);
     });
 
     if (idTicketRecv === -1) {

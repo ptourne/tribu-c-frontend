@@ -1,27 +1,15 @@
-import { Cliente, Producto, Ticket } from "../../../components/types";
+import { Cliente, Producto, Ticket, Recurso } from "../../../components/types";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { useState } from "react";
-import { ARRAY_CLIENTES } from "../../../components/soporte/Constantes";
 import { FormTicket } from "../../../components/soporte/FormTicket";
 
-interface Recurso {
-  Nombre: string;
-  legajo: number;
-  Apellido: string;
-}
-
 //Pagina donde se muestran todos los ticket_id y esta el boton [+] para crear el nuevo ticket.
-const INITIAL_RECURSO = [
-  { legajo: 1, Nombre: "Mario", Apellido: "Mendoza" },
-  { legajo: 2, Nombre: "Maria", Apellido: "Perez" },
-  { legajo: 3, Nombre: "Patricia", Apellido: "Gaona" },
-];
 
 export default function Ticket() {
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const [productoSelect, setProductoSelect] = useState<Producto>();
-  const [recursos, setRecurso] = useState<Array<Recurso>>(INITIAL_RECURSO);
+  const [recursos, setRecurso] = useState<Array<Recurso>>([]);
   const [clientes, setClientes] = useState<Array<Cliente>>([]);
 
   const obtenerNombreCliente = (idCliente: number): string => {
@@ -29,13 +17,7 @@ export default function Ticket() {
     if (unCliente) {
       return unCliente["razon social"];
     }
-    return "CLIENTE-DESCONOCIDO";
-  };
-  const fetchClientes = (): Promise<Array<Cliente>> => {
-    //2) Llamanda al backend Necesitamos obtener todos los tickets.
-    return fetch("https://psa-soporte.eeoo.ar/clients").then((res) =>
-      res.json()
-    );
+    return "Cargando cliente, por favor espere";
   };
 
   const obtenerNombreRecurso = (idRecurso: number): string => {
@@ -43,14 +25,31 @@ export default function Ticket() {
     if (recurso) {
       return `${recurso.Nombre}  ${recurso.Apellido}`;
     }
-    return "LEGAJO - DESCONOCIDO";
+    return "Cargando recurso, por favor espere";
   };
 
+  //Hacemos un fetch de los clientes.
+  const fetchClientes = (): Promise<Array<Cliente>> => {
+    return fetch("https://psa-soporte.eeoo.ar/clients", {
+      method: "GET",
+      headers: {},
+    }).then((res) => res.json());
+  };
+
+  //Hacemos un fetch de los recursos
+  const fetchRecursos = (): Promise<Array<Recurso>> => {
+    return fetch("https://psa-recursos.eeoo.ar/recurso", {
+      method: "GET",
+      headers: {},
+    }).then((res) => res.json());
+  };
+
+  //Hacemos un fetch de los tickets.
   const fetchTickets = (): Promise<Array<Ticket>> => {
-    //2) Llamanda al backend Necesitamos obtener todos los tickets.
-    return fetch("https://psa-soporte.eeoo.ar/tickets").then((res) =>
-      res.json()
-    );
+    return fetch("https://psa-soporte.eeoo.ar/tickets", {
+      method: "GET",
+      headers: {},
+    }).then((res) => res.json());
   };
 
   // EJ si tenemos http://localhost:3000/soporte/Ticket/2 entonces router.query contendra { product_id: "2" }
@@ -81,6 +80,10 @@ export default function Ticket() {
       setProductoSelect(unProducto);
     });
 
+    fetchRecursos().then((recursosFetch) => {
+      setRecurso(recursosFetch);
+    });
+
     fetchTickets().then((ticketsFetch) => {
       const ticketsFiltradoById = ticketsFetch.filter(
         (ticket) => ticket.product_id == parseInt(productID)
@@ -98,7 +101,6 @@ export default function Ticket() {
     }
   };
 
-  //Cuando creamos el ticket vamos a pasar idTicket = -1.
   return (
     <>
       <div id="divTicketsPreviayCreacion">

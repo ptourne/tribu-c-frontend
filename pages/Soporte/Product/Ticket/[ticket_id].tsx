@@ -1,51 +1,14 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
-import { FaEllipsisV } from "react-icons/fa";
 import { FormTicket } from "../../../../components/soporte/FormTicket";
-import { Cliente } from "@/components/types";
-import { ARRAY_CLIENTES } from "@/components/soporte/Constantes";
-interface Ticket {
-  title: string;
-  description: string;
-  severity: string;
-  priority: string;
-  state: string;
-  timeStart: string;
-  type: string;
-  supportTime: string;
-  id: number;
-  product_id: number;
-  client_id: number;
-  responsible_id: number;
-}
-
-interface Product {
-  name: string;
-  version: string;
-  id: number;
-}
-
-interface Project {
-  codigo: number;
-  costo_estimado: number;
-  customizacion: string;
-  estado: number;
-  fecha_fin_estimada: string;
-  fecha_inicio: string;
-  horas_consumidas: number;
-  id_cliente: number;
-  id_producto: number;
-  nombre: string;
-  ultima_tarea: number;
-  version: string;
-}
-
-interface Resource {
-  legajo: number;
-  Nombre: string;
-  Apellido: string;
-}
+import {
+  Ticket,
+  Cliente,
+  Producto,
+  Proyecto as Project,
+  Recurso as Resource,
+} from "@/components/types";
 
 interface Assignment {
   task_id: number;
@@ -58,29 +21,6 @@ interface DropdownItem {
   label: string;
   onClick: () => void;
 }
-
-const resourcesTest: Resource[] = [
-  {
-    legajo: 1,
-    Nombre: "Mario",
-    Apellido: "Mendoza",
-  },
-  {
-    legajo: 2,
-    Nombre: "Maria",
-    Apellido: "Perez",
-  },
-  {
-    legajo: 3,
-    Nombre: "Patricia",
-    Apellido: "Gaona",
-  },
-  {
-    legajo: 4,
-    Nombre: "Marcos",
-    Apellido: "Rivero",
-  },
-];
 
 const INITIALTICKET = {
   title: "",
@@ -102,10 +42,10 @@ function TicketPage() {
   const { ticket_id } = router.query;
   const [isOpen, setIsOpen] = useState(false);
   const [ticket, setTicket] = useState<Ticket>(INITIALTICKET);
-  const [product, setProduct] = useState<Product | null>(null);
+  const [product, setProduct] = useState<Producto>();
   const [taskId, setTaskId] = useState<number>(0);
   const [showForm, setShowForm] = useState(false);
-  const [recursos, setRecurso] = useState<Array<Resource>>(resourcesTest);
+  const [recursos, setRecursos] = useState<Array<Resource>>([]);
   const [estadoCerrado, setEstadoCerrado] = useState<boolean>(false);
   const [clientes, setClientes] = useState<Cliente[]>([]);
 
@@ -114,13 +54,7 @@ function TicketPage() {
     if (unCliente) {
       return unCliente["razon social"];
     }
-    return "CLIENTE-DESCONOCIDO";
-  };
-  const fetchClientes = (): Promise<Array<Cliente>> => {
-    //2) Llamanda al backend Necesitamos obtener todos los tickets.
-    return fetch("https://psa-soporte.eeoo.ar/clients").then((res) =>
-      res.json()
-    );
+    return "Cargando cliente, por favor espere";
   };
 
   const obtenerNombreRecurso = (idRecurso: number): string => {
@@ -128,9 +62,27 @@ function TicketPage() {
     if (recurso) {
       return `${recurso.Nombre}  ${recurso.Apellido}`;
     }
-    return "LEGAJO - DESCONOCIDO";
+    return "Cargando recurso, por favor espere";
   };
+
+  //Hacemos un fetch de los clientes.
+  const fetchClientes = (): Promise<Array<Cliente>> => {
+    return fetch("https://psa-soporte.eeoo.ar/clients", {
+      method: "GET",
+      headers: {},
+    }).then((res) => res.json());
+  };
+
+  //Hacemos un fetch de los recursos
+  const fetchRecursos = (): Promise<Array<Resource>> => {
+    return fetch("https://psa-recursos.eeoo.ar/recurso", {
+      method: "GET",
+      headers: {},
+    }).then((res) => res.json());
+  };
+
   useEffect(() => {
+    //Hacemos un fetch de los tickets
     const fetchTicket = async () => {
       try {
         const response = await fetch(
@@ -144,6 +96,9 @@ function TicketPage() {
     };
     fetchClientes().then((clientesFetch) => {
       setClientes(clientesFetch);
+    });
+    fetchRecursos().then((recursosFetch) => {
+      setRecursos(recursosFetch);
     });
 
     if (ticket_id) {
@@ -519,7 +474,7 @@ function TicketPage() {
               <option disabled value="">
                 Seleccionar Recurso
               </option>
-              {resourcesTest.map((resource) => (
+              {recursos.map((resource) => (
                 <option key={resource.legajo} value={resource.legajo}>
                   {resource.Nombre}, {resource.Apellido}
                 </option>

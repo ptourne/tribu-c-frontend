@@ -4,15 +4,14 @@ import { Producto, Ticket } from "../../components/types";
 import { ProductBar } from "../../components/soporte/ProductBar";
 
 export default function Soporte() {
-  //Usado similiar al constructor inicia con INITIAL_STATE
   const [products, setProducts] = useState<Array<Producto>>([]);
 
   const fetchProductos = (): Promise<Array<Producto>> => {
     //1) Llamanda al backend hacemos un GET de productos.
-    console.log("products SON:----- ");
-    return fetch("https://psa-soporte.eeoo.ar/products").then((res) =>
-      res.json()
-    );
+    return fetch("https://psa-soporte.eeoo.ar/products", {
+      method: "GET",
+      headers: {},
+    }).then((res) => res.json());
   };
 
   useEffect(() => {

@@ -1,19 +1,12 @@
 import { Cliente, Recurso, Ticket } from "@/components/types";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { ARRAY_CLIENTES } from "../../../../components/soporte/Constantes";
-
-const INITIAL_RECURSO = [
-  { legajo: 1, Nombre: "Mario", Apellido: "Mendoza" },
-  { legajo: 2, Nombre: "Maria", Apellido: "Perez" },
-  { legajo: 3, Nombre: "Patricia", Apellido: "Gaona" },
-];
 
 function TicketUrgente() {
   const router = useRouter();
   //El product_id este argumento generico tiene que concindir con el tsx que creamos dentro de la carpeta TicketsUrgente.
   const [tickets, setTickets] = useState<Array<Ticket>>([]);
-  const [recursos, setRecurso] = useState<Array<Recurso>>(INITIAL_RECURSO);
+  const [recursos, setRecursos] = useState<Array<Recurso>>([]);
   const [ticketProxVencer, setTicketProxVencer] = useState<Array<Ticket>>([]);
   const [ticketsVencidos, setTicketsVencidos] = useState<Array<Ticket>>([]);
   const [clientes, setClientes] = useState<Array<Cliente>>([]);
@@ -23,13 +16,7 @@ function TicketUrgente() {
     if (unCliente) {
       return unCliente["razon social"];
     }
-    return "CLIENTE-DESCONOCIDO";
-  };
-  const fetchClientes = (): Promise<Array<Cliente>> => {
-    //2) Llamanda al backend Necesitamos obtener todos los tickets.
-    return fetch("https://psa-soporte.eeoo.ar/clients").then((res) =>
-      res.json()
-    );
+    return "Cargando cliente, por favor espere";
   };
 
   const obtenerNombreRecurso = (idRecurso: number): string => {
@@ -37,7 +24,23 @@ function TicketUrgente() {
     if (recurso) {
       return `${recurso.Nombre}  ${recurso.Apellido}`;
     }
-    return "LEGAJO - DESCONOCIDO";
+    return "Cargando recurso, por favor espere";
+  };
+
+  //Hacemos un fetch de los clientes.
+  const fetchClientes = (): Promise<Array<Cliente>> => {
+    return fetch("https://psa-soporte.eeoo.ar/clients", {
+      method: "GET",
+      headers: {},
+    }).then((res) => res.json());
+  };
+
+  //Hacemos un fetch de los recursos
+  const fetchRecursos = (): Promise<Array<Recurso>> => {
+    return fetch("https://psa-recursos.eeoo.ar/recurso", {
+      method: "GET",
+      headers: {},
+    }).then((res) => res.json());
   };
 
   const { product_id } = router.query;
@@ -190,6 +193,10 @@ function TicketUrgente() {
       fetchClientes().then((clientesFetch) => {
         setClientes(clientesFetch);
       });
+      fetchRecursos().then((recursosFetch) => {
+        setRecursos(recursosFetch);
+      });
+
       fetchTicketsByID().then((ticketsFetch) => {
         if (ticketsFetch.length > 0) {
           const ticketsProx2Horas = ticketsFetch.filter(

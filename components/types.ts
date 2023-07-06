@@ -1,17 +1,16 @@
 import { IconType } from "react-icons";
 
 export interface Usuario {
-  nombre: string
-  apellido: string
-  legajo: number
+  nombre: string;
+  apellido: string;
+  legajo: number;
 }
 
 export interface Cliente {
-  id: number
-  "razon social": string
-  CUIT: string
+  id: number;
+  "razon social": string;
+  CUIT: string;
 }
-
 
 export interface Proyecto {
   codigo?: number;
@@ -36,13 +35,12 @@ export interface Tarea {
   horas_acumuladas: number;
   estado: number;
   legajo_responsable: string;
-
 }
 
 export interface Producto {
-  name: string
+  name: string;
   version: string;
-  id: number
+  id: number;
 }
 
 export interface Ticket {
@@ -61,24 +59,24 @@ export interface Ticket {
 }
 
 export interface Recurso {
-  Nombre: string
-  Apellido: string
-  legajo: number
+  legajo: number;
+  Nombre: string;
+  Apellido: string;
 }
 
 export interface BloqueDeTrabajo {
-  codBloqueLaboral: number
-  codProyectoDeLaTarea: number
-  codTarea: number
-  legajo: number
-  horasDelBloque: number
-  fecha: Date
+  codBloqueLaboral: number;
+  codProyectoDeLaTarea: number;
+  codTarea: number;
+  legajo: number;
+  horasDelBloque: number;
+  fecha: Date;
 }
 
 export interface RecursoStats {
-  horasInvertidasEnTarea: number,
-  horasInvertidasEnProyecto: number,
-  horasDisponiblesEnSemana: number,
+  horasInvertidasEnTarea: number;
+  horasInvertidasEnProyecto: number;
+  horasDisponiblesEnSemana: number;
 }
 
 export interface ISidebarItem {
@@ -89,7 +87,7 @@ export interface ISidebarItem {
 }
 
 export interface ModalProps {
-  modalOpen: boolean
-  setModalOpen: (x: boolean) => void
-  list: Usuario[]
+  modalOpen: boolean;
+  setModalOpen: (x: boolean) => void;
+  list: Usuario[];
 }
