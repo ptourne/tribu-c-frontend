@@ -22,12 +22,6 @@ const INITIAL_STATE = {
 
 //REMPLAZARLO CON FETCH en un futuro lo de ARRAY_CLIENTES
 
-const ARRAY_RECURSOS = [
-  { legajo: 1, Nombre: "Mario", Apellido: "Mendoza" },
-  { legajo: 2, Nombre: "Maria", Apellido: "Perez" },
-  { legajo: 3, Nombre: "Patricia", Apellido: "Gaona" },
-];
-
 export const FormTicket: React.FC<{
   productIdNumerico: number;
   idTicketRecv: number;
@@ -159,7 +153,7 @@ export const FormTicket: React.FC<{
     event: React.ChangeEvent<HTMLSelectElement>
   ) => {
     setselectRecursoOption(event.target.value);
-    const recursoCoincideNombre = ARRAY_RECURSOS.find(
+    const recursoCoincideNombre = recursos.find(
       (unRecurso) => unRecurso["Nombre"] === event.target.value //En el fin de usa triple === igual !!!!
     );
     let responsibleId = 100;
@@ -286,8 +280,8 @@ export const FormTicket: React.FC<{
     };
     const validInputs = (): boolean => {
       return (
-        inputTicketValues.title !== "Nuevo Titulo" &&
-        inputTicketValues.description !== "Nueva Descripcion" &&
+        inputTicketValues.title !== "" &&
+        inputTicketValues.description !== "" &&
         inputTicketValues.severity !== "" &&
         inputTicketValues.priority !== "" &&
         inputTicketValues.timeStart !== "" &&
@@ -315,7 +309,7 @@ export const FormTicket: React.FC<{
       fetch(URLParaPUT, {
         method: "PUT",
         headers: {
-          "Content-type": "application/json",
+          "Content-type": "application/json-",
         },
         body: cuerpoMensaje,
       })
@@ -499,12 +493,13 @@ export const FormTicket: React.FC<{
                 ))}
               </select>
               {clientes.length === 0 && (
-                <span id="CargandoClientes">
+                <span id="CargandoGenerico">
                   Cargando clientes, por favor espere
                 </span>
               )}
+
               {clientes.length !== 0 && (
-                <span id="ClientesCargados">Clientes cargados !</span>
+                <span id="GenericoCargados">Clientes cargados !</span>
               )}
             </div>
           )}
@@ -516,10 +511,19 @@ export const FormTicket: React.FC<{
               onChange={handleRecursoOptionChange}
             >
               <option value="">Seleccione... </option>
-              {ARRAY_RECURSOS.map((unRecurso) => (
+              {recursos.map((unRecurso) => (
                 <option key={unRecurso.legajo}>{unRecurso["Nombre"]}</option>
               ))}
             </select>
+            {clientes.length === 0 && (
+              <span id="CargandoGenerico">
+                Cargando Recursos, por favor espere
+              </span>
+            )}
+
+            {clientes.length !== 0 && (
+              <span id="GenericoCargados">Recursos cargados !</span>
+            )}
           </div>
           <div id="divHorasSoporte">
             <span> Tiempo para solucionar el ticket: </span>

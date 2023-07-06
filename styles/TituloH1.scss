@@ -1,103 +1,94 @@
-#ContainerUrgentes{
-    display: flex;
-    flex-direction: row;
-}   
+#ContainerUrgentes {
+  display: flex;
+  flex-direction: row;
+}
 
-#tituloH1{
-    border-bottom: 2px solid #292727; //poner la linea  debajo del titulo            
-    margin-right: 87%; //disminuyo la barra borden botton.
+#tituloH1 {
+  border-bottom: 2px solid #292727; //poner la linea  debajo del titulo
+  margin-right: 87%; //disminuyo la barra borden botton.
+  text-align: center;
+}
+#tituloH1Blanco {
+  color: white;
+  text-align: center;
+}
+#tituloH1BlancoTicketIDConP {
+  color: white;
+  text-align: center;
+}
+
+#ididPParaTicketCompleto {
+  font-size: 23px;
+  padding-bottom: 3px;
+}
+
+#tituloTicketUrgente {
+  margin: 20px 0px 10px 20px;
+  font-size: 50px;
+  border-bottom: 2px solid #ffffff; //poner la linea  debajo del titulo
+}
+#tituloH1BlancoUrgene {
+  color: white;
+  text-align: center;
+  border-bottom: 2px solid #ffffff; //poner la linea  debajo del titulo
+}
+
+#containerInicio {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+#tituloInicioContainer {
+  display: flex;
+  margin: 25px 0px 5px 10px;
+  h1 {
+    border-bottom: 2px solid #292727; //poner la linea  debajo del titulo
     text-align: center;
-
+  }
+  button {
+    margin-left: 30px;
+  }
 }
-#tituloH1Blanco{
-    color: white;
-    text-align: center;
-}
-#tituloH1BlancoTicketIDConP{
-    color: white;
-    text-align: center;
-
-}
-
-#ididPParaTicketCompleto{
-    font-size: 23px;
-    padding-bottom: 3px;
-
+#BloqueProductBarEImagen {
+  display: flex;
+  img {
+    margin-left: 100px;
+    width: 1000px;
+    height: 800px;
+  }
 }
 
-#tituloTicketUrgente{
-    margin: 20px 0px 10px 20px;
-    font-size: 50px;
-    border-bottom: 2px solid #ffffff; //poner la linea  debajo del titulo            
-
-}
-#tituloH1BlancoUrgene{
-    color: white;
-    text-align: center;
-    border-bottom: 2px solid #ffffff; //poner la linea  debajo del titulo            
-
+#ticketEstadoCerrado {
+  color: rgb(103, 103, 103);
+  font-size: 25px;
 }
 
-
-#containerInicio{
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-
+#botonTicketTareaInterno {
+  border-radius: 5px; //en radius no tiene sentido pasarle color o tipo borde
+  margin-right: 30px;
+  margin-top: 10px;
+  border: 4px solid #0c6efc; //solo aca le pasamos tipo borden y color
+  background-color: #0c6efc;
+  color: #ffffff;
+  font-size: 25px;
+}
+#butonTareasTicket {
+  margin-top: 10px;
+  border: 4px solid #0c6efc; //solo aca le pasamos tipo borden y color
+  background-color: #0c6efc;
+  color: #ffffff;
+  font-size: 25px;
+  margin-left: 42%;
 }
 
-#tituloInicioContainer{
-    display: flex;
-    margin: 25px 0px 5px 10px;
-    h1{
-        border-bottom: 2px solid #292727; //poner la linea  debajo del titulo            
-        text-align: center;
-    }
-    button{
-        margin-left: 30px;
-    }
-}
-#BloqueProductBarEImagen{
-    display: flex;
-    img{
-        margin-left: 100px;
-        width: 1000px;
-        height: 800px;
-    }
-
+#CargandoGenerico {
+  margin-left: 20px;
+  font-size: 18px;
 }
 
-#ticketEstadoCerrado{
-    color: rgb(103, 103, 103);
-    font-size: 25px;
-}
-
-#botonTicketTareaInterno{
-    border-radius: 5px;          //en radius no tiene sentido pasarle color o tipo borde
-    margin-right: 30px;
-    margin-top: 10px;
-    border: 4px solid #0c6efc; //solo aca le pasamos tipo borden y color 
-    background-color: #0c6efc;
-    color: #ffffff;
-    font-size: 25px;
-}
-#butonTareasTicket{
-    margin-top: 10px;
-    border: 4px solid #0c6efc; //solo aca le pasamos tipo borden y color 
-    background-color: #0c6efc;
-    color: #ffffff;
-    font-size: 25px;
-    margin-left: 42%;
-}
-
-#CargandoClientes{
-    margin-left: 20px;
-    font-size: 18px;
-}
-
-#ClientesCargados{
-    margin-left: 20px;
-    font-size: 18px;
-    color: #0c6efc;
-
+#GenericoCargados {
+  margin-left: 20px;
+  font-size: 18px;
+  color: #0c6efc;
 }
