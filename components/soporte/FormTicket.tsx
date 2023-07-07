@@ -299,7 +299,7 @@ export const FormTicket: React.FC<{
       fetch(URLParaPUT, {
         method: "PUT",
         headers: {
-          "Content-type": "application/json-",
+          "Content-type": "application/json",
         },
         body: cuerpoMensaje,
       })
@@ -311,6 +311,7 @@ export const FormTicket: React.FC<{
         .catch((error) => {
           console.log("Error en la solicitud PUT", error);
         });
+      console.log("Hacemos una limpieza de los campos: ");
       limpiezaDeCamposDelForm();
     };
     const validationInputPlus = () => {
