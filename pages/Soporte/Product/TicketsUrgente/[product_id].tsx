@@ -5,7 +5,6 @@ import { useEffect, useState } from "react";
 function TicketUrgente() {
   const router = useRouter();
   //El product_id este argumento generico tiene que concindir con el tsx que creamos dentro de la carpeta TicketsUrgente.
-  const [tickets, setTickets] = useState<Array<Ticket>>([]);
   const [recursos, setRecursos] = useState<Array<Recurso>>([]);
   const [ticketProxVencer, setTicketProxVencer] = useState<Array<Ticket>>([]);
   const [ticketsVencidos, setTicketsVencidos] = useState<Array<Ticket>>([]);
@@ -149,29 +148,25 @@ function TicketUrgente() {
   // para saber que no es tipo de undefined.
   useEffect(() => {
     const filtrarTickesVencidos = (unTicket: Ticket) => {
-      const tiempoSumado = sumarHoras(unTicket.timeStart, unTicket.supportTime);
-      const horaActual = convertirFecha(new Date().toString());
+      console.log(" unTicket.timeStart: ", unTicket.timeStart);
+      console.log("unTicket.supportTime: en (dias) ", unTicket.supportTime);
+      //parseamos el date a un objeto date tal cual.
+      const dateCreoTicket = new Date(Date.parse(unTicket.timeStart));
+      let dateSumada = dateCreoTicket;
+      const diaCreoTicket = dateCreoTicket.getDate();
+      dateSumada.setDate(diaCreoTicket + unTicket.supportTime);
 
-      //si la horaActual ej 15 + 2 , es mayor a tiempo sumado entonces esta prox a vencer el ticket
-      console.log(`TIEMPoInicio : ${unTicket.timeStart}`);
-      console.log(`horaActual : ${horaActual}`);
-      console.log(`tiempoSumado: ${tiempoSumado}`);
-      const yaSeVencioTicket = compararFechas(horaActual, tiempoSumado);
-      console.log(`RESULTADO: -${yaSeVencioTicket}- `);
-      return yaSeVencioTicket;
+      const diaHoyActual = new Date();
+      const diaMañana = new Date();
+      diaMañana.setDate(diaMañana.getDate() + 1);
+
+      return (
+        dateSumada.getDate() == diaHoyActual.getDate() ||
+        dateSumada.getDate() == diaMañana.getDate()
+      );
     };
     const filtrarTicketsProximosAVencer = (unTicket: Ticket) => {
-      const tiempoSumado = sumarHoras(unTicket.timeStart, unTicket.supportTime);
-      const horaActual = convertirFecha(new Date().toString());
-
-      //si la horaActual ej 15 + 2 , es mayor a tiempo sumado entonces esta prox a vencer el ticket
-      const prox2Horas = compararFechas(
-        sumarHoras(horaActual, 2),
-        tiempoSumado
-      );
-      const yaSeVencioTicket = compararFechas(horaActual, tiempoSumado);
-
-      return prox2Horas && !yaSeVencioTicket;
+      return true;
     };
     const fetchTicketsByID = (): Promise<Array<Ticket>> => {
       const URLGetTickesById = `https://psa-soporte.eeoo.ar/tickets/product/${parseInt(
@@ -288,11 +283,7 @@ function TicketUrgente() {
                 <div style={{ marginBottom: "10px" }}>
                   <h1 id="tituloH1BlancoUrgene">{unTicket.title}</h1>
                   <p id="LetraGrande">
-                    <strong>
-                      Hora que finalizo:
-                      {sumarHoras(unTicket.timeStart, unTicket.supportTime)}
-                      {"     "}horas
-                    </strong>
+                    <strong>Hora que finalizo: 1 horas</strong>
                   </p>
 
                   <p>
