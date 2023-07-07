@@ -148,25 +148,31 @@ function TicketUrgente() {
   // para saber que no es tipo de undefined.
   useEffect(() => {
     const filtrarTickesVencidos = (unTicket: Ticket) => {
+      if (unTicket.state == "Cerrado") return false;
       console.log(" unTicket.timeStart: ", unTicket.timeStart);
       console.log("unTicket.supportTime: en (dias) ", unTicket.supportTime);
-      //parseamos el date a un objeto date tal cual.
-      const dateCreoTicket = new Date(Date.parse(unTicket.timeStart));
-      let dateSumada = dateCreoTicket;
-      const diaCreoTicket = dateCreoTicket.getDate();
-      dateSumada.setDate(diaCreoTicket + unTicket.supportTime);
-
-      const diaHoyActual = new Date();
-      const diaMañana = new Date();
-      diaMañana.setDate(diaMañana.getDate() + 1);
-
-      return (
-        dateSumada.getDate() == diaHoyActual.getDate() ||
-        dateSumada.getDate() == diaMañana.getDate()
+      const currentDate = new Date(); // Obtiene la fecha actual
+      const dateTime = new Date(unTicket.timeStart);
+      const targetDate = new Date(
+        dateTime.getTime() + unTicket.supportTime * 24 * 60 * 60 * 1000
       );
+
+      return targetDate < currentDate;
     };
     const filtrarTicketsProximosAVencer = (unTicket: Ticket) => {
-      return true;
+      if (unTicket.state == "Cerrado") return false;
+      const currentDate = new Date(); // Obtiene la fecha actual
+      const dateTime = new Date(unTicket.timeStart);
+      const targetDate = new Date(
+        dateTime.getTime() + unTicket.supportTime * 24 * 60 * 60 * 1000
+      );
+
+      // Calcula la diferencia en milisegundos entre las dos fechas
+      const timeDifference = targetDate.getTime() - currentDate.getTime();
+      const oneDayInMilliseconds = 24 * 60 * 60 * 1000; // Milisegundos en un día
+
+      // Comprueba si la diferencia es aproximadamente de 1 día
+      return timeDifference <= oneDayInMilliseconds && timeDifference > 0;
     };
     const fetchTicketsByID = (): Promise<Array<Ticket>> => {
       const URLGetTickesById = `https://psa-soporte.eeoo.ar/tickets/product/${parseInt(
@@ -215,11 +221,57 @@ function TicketUrgente() {
     return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
   };
 
+  const lastDate = (creationTime: string, days: number): string => {
+    console.log("dateTime: ");
+    const dateTime = new Date(creationTime);
+    const fechaFinal = new Date(
+      dateTime.getTime() + days * 24 * 60 * 60 * 1000
+    );
+    console.log(fechaFinal);
+    const year = String(fechaFinal.getFullYear());
+    const month = String(fechaFinal.getMonth() + 1).padStart(2, "0"); // Los meses comienzan desde 0, por eso se suma 1
+    const day = String(fechaFinal.getDate()).padStart(2, "0");
+    const hours = String(fechaFinal.getHours()).padStart(2, "0");
+    const minutes = String(fechaFinal.getMinutes()).padStart(2, "0");
+    const seconds = String(fechaFinal.getSeconds()).padStart(2, "0");
+    return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
+  };
+
+  const getHourDifference = (
+    dateString: string,
+    supportTime: number
+  ): number => {
+    const currentDate = new Date(); // Obtiene la fecha actual
+    const dateTime = new Date(dateString); // Convierte la fecha de texto a un objeto Date
+    const targetDate = new Date(
+      dateTime.getTime() + supportTime * 24 * 60 * 60 * 1000
+    );
+    const timeDifference = targetDate.getTime() - currentDate.getTime(); // Diferencia en milisegundos
+    const hourDifference = Math.floor(timeDifference / (1000 * 60 * 60)); // Diferencia en horas
+
+    return hourDifference;
+  };
+
+  const getMinutesDifference = (
+    dateString: string,
+    supportTime: number
+  ): number => {
+    const currentDate = new Date(); // Obtiene la fecha actual
+    const dateTime = new Date(dateString); // Convierte la fecha de texto a un objeto Date
+    const targetDate = new Date(
+      dateTime.getTime() + supportTime * 24 * 60 * 60 * 1000
+    );
+    const timeDifference = targetDate.getTime() - currentDate.getTime(); // Diferencia en milisegundos
+    const minuteDifference = Math.floor(timeDifference / (1000 * 60)); // Diferencia en minutos
+
+    return minuteDifference;
+  };
+
   return (
     <>
       <div id="ContainerUrgentes">
         <div id="divTicketsProxVencer">
-          <h1 id="tituloTicketUrgente">Tickets proximos a vencer: </h1>
+          <h1 id="tituloTicketUrgente">Tickets proximos a vencer </h1>
 
           <ul style={{ marginTop: "30px", width: "800px" }}>
             {ticketProxVencer.map((unTicket) => (
@@ -235,25 +287,33 @@ function TicketUrgente() {
                   <h1 id="tituloH1BlancoUrgene">{unTicket.title}</h1>
                   <p id="LetraGrande">
                     <strong>
-                      Horas Restantes: {unTicket.supportTime} (
-                      {60 * unTicket.supportTime} minutos ){" "}
+                      Horas Restantes:{" "}
+                      {getHourDifference(
+                        unTicket.timeStart,
+                        unTicket.supportTime
+                      )}{" "}
+                      (
+                      {getMinutesDifference(
+                        unTicket.timeStart,
+                        unTicket.supportTime
+                      )}{" "}
+                      minutos ){" "}
                     </strong>
                   </p>
 
                   <p>
-                    <strong>Descripción:</strong> {unTicket.description}
-                  </p>
-                  <p>
-                    <strong>Inicio:</strong>{" "}
-                    {formatDateTime(unTicket.timeStart)}
-                  </p>
-                  <p>
-                    <strong>Cliente:</strong>{" "}
-                    {obtenerNombreCliente(unTicket.client_id)}
-                  </p>
-                  <p>
                     <strong>Responsable:</strong>{" "}
                     {obtenerNombreRecurso(unTicket.responsible_id)}
+                  </p>
+                  <p>
+                    <strong>Severidad:</strong> {unTicket.severity}
+                  </p>
+                  <p>
+                    <strong>Prioridad:</strong> {unTicket.priority}
+                  </p>
+                  <p>
+                    <strong>Finaliza:</strong>{" "}
+                    {lastDate(unTicket.timeStart, unTicket.supportTime)}
                   </p>
                 </div>
                 <div
@@ -283,23 +343,28 @@ function TicketUrgente() {
                 <div style={{ marginBottom: "10px" }}>
                   <h1 id="tituloH1BlancoUrgene">{unTicket.title}</h1>
                   <p id="LetraGrande">
-                    <strong>Hora que finalizo: 1 horas</strong>
+                    <strong>
+                      Finalizó hace:{" "}
+                      {getHourDifference(
+                        unTicket.timeStart,
+                        unTicket.supportTime
+                      )}
+                    </strong>
                   </p>
 
                   <p>
-                    <strong>Descripción:</strong> {unTicket.description}
-                  </p>
-                  <p>
-                    <strong>Inicio:</strong>{" "}
-                    {formatDateTime(unTicket.timeStart)}
-                  </p>
-                  <p>
-                    <strong>Cliente:</strong>{" "}
-                    {obtenerNombreCliente(unTicket.client_id)}
-                  </p>
-                  <p>
                     <strong>Responsable:</strong>{" "}
                     {obtenerNombreRecurso(unTicket.responsible_id)}
+                  </p>
+                  <p>
+                    <strong>Severidad:</strong> {unTicket.severity}
+                  </p>
+                  <p>
+                    <strong>Prioridad:</strong> {unTicket.priority}
+                  </p>
+                  <p>
+                    <strong>Finaliza:</strong>{" "}
+                    {lastDate(unTicket.timeStart, unTicket.supportTime)}
                   </p>
                 </div>
                 <div

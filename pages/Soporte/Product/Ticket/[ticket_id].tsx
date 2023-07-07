@@ -328,6 +328,22 @@ function TicketPage() {
     return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
   };
 
+  const lastDate = (creationTime: string, days: number): string => {
+    console.log("dateTime: ");
+    const dateTime = new Date(creationTime);
+    const fechaFinal = new Date(
+      dateTime.getTime() + days * 24 * 60 * 60 * 1000
+    );
+    console.log(fechaFinal);
+    const year = String(fechaFinal.getFullYear());
+    const month = String(fechaFinal.getMonth() + 1).padStart(2, "0"); // Los meses comienzan desde 0, por eso se suma 1
+    const day = String(fechaFinal.getDate()).padStart(2, "0");
+    const hours = String(fechaFinal.getHours()).padStart(2, "0");
+    const minutes = String(fechaFinal.getMinutes()).padStart(2, "0");
+    const seconds = String(fechaFinal.getSeconds()).padStart(2, "0");
+    return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
+  };
+
   return (
     <div className="flex px-8 py-8">
       <div className="w-1/2 mr-2 bg-blue-400 shadow-xl rounded-lg">
@@ -382,12 +398,6 @@ function TicketPage() {
                 className="mb-2 text-white text-lg"
                 id="ididPParaTicketCompleto"
               >
-                <strong>Inicio:</strong> {formatDateTime(ticket.timeStart)}
-              </p>
-              <p
-                className="mb-2 text-white text-lg"
-                id="ididPParaTicketCompleto"
-              >
                 {" "}
                 <strong> Tipo:</strong> {ticket.type}
               </p>
@@ -395,7 +405,14 @@ function TicketPage() {
                 className="mb-2 text-white text-lg"
                 id="ididPParaTicketCompleto"
               >
-                <strong>Horas restantes:</strong> {ticket.supportTime}
+                <strong>Inicio:</strong> {formatDateTime(ticket.timeStart)}
+              </p>
+              <p
+                className="mb-2 text-white text-lg"
+                id="ididPParaTicketCompleto"
+              >
+                <strong>Final:</strong>{" "}
+                {lastDate(ticket.timeStart, ticket.supportTime)}
               </p>
               <p
                 className="mb-2 text-white text-lg"
