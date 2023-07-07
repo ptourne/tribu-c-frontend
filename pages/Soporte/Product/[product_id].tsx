@@ -11,6 +11,7 @@ export default function Ticket() {
   const [productoSelect, setProductoSelect] = useState<Producto>();
   const [recursos, setRecurso] = useState<Array<Recurso>>([]);
   const [clientes, setClientes] = useState<Array<Cliente>>([]);
+  const [ticketCount, setTicketCount] = useState(0); // Estado para controlar el número de tickets
 
   const obtenerNombreCliente = (idCliente: number): string => {
     const unCliente = clientes.find((unCliente) => unCliente.id == idCliente);
@@ -60,7 +61,7 @@ export default function Ticket() {
     typeof product_id === "string" ? product_id : "VACIO";
 
   useEffect(() => {
-    console.log("Entro al unico userEffect de [product_id].tsx");
+    console.log("Entro al unico userEffect de [product_id].tsx-------------");
     const fetchGetProductosById = (): Promise<Producto> => {
       //1) Llamanda al backend hacemos un GET de productos los id van en number recuerda !
       return fetch(
@@ -90,7 +91,7 @@ export default function Ticket() {
       );
       setTickets(ticketsFiltradoById);
     });
-  }, [tickets]); //el product_id cambia muchas veces asi que hacemos un UE por esa variable.
+  }, [ticketCount]); //el product_id cambia muchas veces asi que hacemos un UE por esa variable.
 
   const [showFormFilter, setShowFormFilter] = useState(false); // Nuevo estado para controlar la visibilidad del formulario
   const handleOpenFormTicket = () => {
@@ -101,9 +102,7 @@ export default function Ticket() {
     }
   };
   const formatDateTime = (creationTime: string): string => {
-    console.log("dateTime: ");
     const dateTime = new Date(creationTime);
-    console.log(dateTime);
     const year = String(dateTime.getFullYear());
     const month = String(dateTime.getMonth() + 1).padStart(2, "0"); // Los meses comienzan desde 0, por eso se suma 1
     const day = String(dateTime.getDate()).padStart(2, "0");
@@ -114,12 +113,10 @@ export default function Ticket() {
   };
 
   const lastDate = (creationTime: string, days: number): string => {
-    console.log("dateTime: ");
     const dateTime = new Date(creationTime);
     const fechaFinal = new Date(
       dateTime.getTime() + days * 24 * 60 * 60 * 1000
     );
-    console.log(fechaFinal);
     const year = String(fechaFinal.getFullYear());
     const month = String(fechaFinal.getMonth() + 1).padStart(2, "0"); // Los meses comienzan desde 0, por eso se suma 1
     const day = String(fechaFinal.getDate()).padStart(2, "0");
@@ -127,6 +124,10 @@ export default function Ticket() {
     const minutes = String(fechaFinal.getMinutes()).padStart(2, "0");
     const seconds = String(fechaFinal.getSeconds()).padStart(2, "0");
     return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
+  };
+
+  const handleNewTicketSubmit = (nuevoTicket: Ticket) => {
+    setTicketCount((contador) => contador + 1);
   };
 
   return (
@@ -211,6 +212,7 @@ export default function Ticket() {
               <FormTicket
                 productIdNumerico={parseInt(productID)}
                 idTicketRecv={-1}
+                handleNuevoTicket={handleNewTicketSubmit}
               />
             </div>
           )}

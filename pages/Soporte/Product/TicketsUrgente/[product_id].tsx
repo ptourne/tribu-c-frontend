@@ -26,25 +26,18 @@ function TicketUrgente() {
   };
 
   const { product_id } = router.query;
-  console.log(product_id);
   const productID: string = typeof product_id === "string" ? product_id : "-1";
-  console.log(`productID : ${productID} `);
 
   // por primera vez entra aca
   // para saber que no es tipo de undefined.
   useEffect(() => {
     const filtrarTickesVencidos = (unTicket: Ticket) => {
       if (unTicket.state == "Cerrado") return false;
-      console.log(" unTicket.timeStart: ", unTicket.timeStart);
-      console.log("unTicket.supportTime: en (dias) ", unTicket.supportTime);
       const currentDate = new Date(); // Obtiene la fecha actual
       const dateTime = new Date(unTicket.timeStart);
       const targetDate = new Date(
         dateTime.getTime() + unTicket.supportTime * 24 * 60 * 60 * 1000
       );
-      console.log("currentDate:", currentDate);
-      console.log("targetDate: ", targetDate);
-
       return targetDate < currentDate;
     };
     const filtrarTicketsProximosAVencer = (unTicket: Ticket) => {
@@ -72,7 +65,6 @@ function TicketUrgente() {
     };
 
     if (typeof product_id !== "undefined") {
-      console.log(`product_id : en if${product_id}`);
       fetchRecursos().then((recursosFetch) => {
         setRecursos(recursosFetch);
       });
@@ -94,12 +86,10 @@ function TicketUrgente() {
   }, [product_id, productID]);
 
   const lastDate = (creationTime: string, days: number): string => {
-    console.log("dateTime: ");
     const dateTime = new Date(creationTime);
     const fechaFinal = new Date(
       dateTime.getTime() + days * 24 * 60 * 60 * 1000
     );
-    console.log(fechaFinal);
     const year = String(fechaFinal.getFullYear());
     const month = String(fechaFinal.getMonth() + 1).padStart(2, "0"); // Los meses comienzan desde 0, por eso se suma 1
     const day = String(fechaFinal.getDate()).padStart(2, "0");
@@ -142,8 +132,7 @@ function TicketUrgente() {
     <>
       <div id="ContainerUrgentes">
         <div id="divTicketsProxVencer">
-          <h1 id="tituloTicketUrgente">Tickets proximos a vencer: </h1>
-
+          <h1 id="tituloTicketUrgente">Tickets próximos a vencer: </h1>
           <ul style={{ marginTop: "30px", width: "800px" }}>
             {ticketProxVencer.map((unTicket) => (
               <li
@@ -236,7 +225,7 @@ function TicketUrgente() {
                     <strong>Prioridad:</strong> {unTicket.priority}
                   </p>
                   <p>
-                    <strong>Finalizo:</strong>{" "}
+                    <strong>Finalizó:</strong>{" "}
                     {lastDate(unTicket.timeStart, unTicket.supportTime)}
                   </p>
                 </div>

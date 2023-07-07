@@ -48,6 +48,7 @@ function TicketPage() {
   const [recursos, setRecursos] = useState<Array<Resource>>([]);
   const [estadoCerrado, setEstadoCerrado] = useState<boolean>(false);
   const [clientes, setClientes] = useState<Cliente[]>([]);
+  const [ticketCount, setTicketCount] = useState(0); // Estado para controlar el número de tickets
 
   const obtenerNombreCliente = (idCliente: number): string => {
     const unCliente = clientes.find((unCliente) => unCliente.id == idCliente);
@@ -107,7 +108,7 @@ function TicketPage() {
     if (ticket.state == "Cerrado") {
       setEstadoCerrado(true);
     }
-  }, [ticket_id, ticket.state, ticket.title]);
+  }, [ticket_id, ticket.state, ticket.title, ticketCount]);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -316,9 +317,7 @@ function TicketPage() {
   };
 
   const formatDateTime = (creationTime: string): string => {
-    console.log("dateTime: ");
     const dateTime = new Date(creationTime);
-    console.log(dateTime);
     const year = String(dateTime.getFullYear());
     const month = String(dateTime.getMonth() + 1).padStart(2, "0"); // Los meses comienzan desde 0, por eso se suma 1
     const day = String(dateTime.getDate()).padStart(2, "0");
@@ -329,12 +328,10 @@ function TicketPage() {
   };
 
   const lastDate = (creationTime: string, days: number): string => {
-    console.log("dateTime: ");
     const dateTime = new Date(creationTime);
     const fechaFinal = new Date(
       dateTime.getTime() + days * 24 * 60 * 60 * 1000
     );
-    console.log(fechaFinal);
     const year = String(fechaFinal.getFullYear());
     const month = String(fechaFinal.getMonth() + 1).padStart(2, "0"); // Los meses comienzan desde 0, por eso se suma 1
     const day = String(fechaFinal.getDate()).padStart(2, "0");
@@ -342,6 +339,12 @@ function TicketPage() {
     const minutes = String(fechaFinal.getMinutes()).padStart(2, "0");
     const seconds = String(fechaFinal.getSeconds()).padStart(2, "0");
     return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
+  };
+
+  const handleNewTicketSubmit = (nuevoTicket: Ticket) => {
+    console.log("handleNewTicketSubmit: Antes", ticketCount);
+    setTicketCount((contador) => contador + 1);
+    console.log("handleNewTicketSubmit:DESPUES ", ticketCount);
   };
 
   return (
@@ -411,7 +414,7 @@ function TicketPage() {
                 className="mb-2 text-white text-lg"
                 id="ididPParaTicketCompleto"
               >
-                <strong>Finaliza:</strong>{" "}
+                <strong>Finalizó:</strong>{" "}
                 {lastDate(ticket.timeStart, ticket.supportTime)}
               </p>
               <p
@@ -478,6 +481,7 @@ function TicketPage() {
             <FormTicket
               productIdNumerico={ticket.product_id}
               idTicketRecv={ticket.id}
+              handleNuevoTicket={handleNewTicketSubmit}
             />
             <button
               onClick={() => {

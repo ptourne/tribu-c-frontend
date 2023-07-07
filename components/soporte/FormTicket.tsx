@@ -25,7 +25,8 @@ const INITIAL_STATE = {
 export const FormTicket: React.FC<{
   productIdNumerico: number;
   idTicketRecv: number;
-}> = ({ productIdNumerico, idTicketRecv }) => {
+  handleNuevoTicket: Function;
+}> = ({ productIdNumerico, idTicketRecv, handleNuevoTicket }) => {
   let tituloForm = "Edición de ticket";
   if (idTicketRecv === -1) {
     tituloForm = "Creación de ticket";
@@ -192,8 +193,7 @@ export const FormTicket: React.FC<{
         (res) => res.json()
       );
     };
-    console.log("Clientes:");
-    console.log(clientes);
+
     fetchClientes().then((clientesFetch) => {
       setClientes(clientesFetch);
     });
@@ -203,8 +203,6 @@ export const FormTicket: React.FC<{
     });
 
     if (idTicketRecv === -1) {
-      console.log("ENtro aca en el crear DEL PRIMER UE");
-
       fetchTickets().then((ticketsFetch) => {
         setTickets(ticketsFetch);
       });
@@ -242,6 +240,7 @@ export const FormTicket: React.FC<{
       console.log(URLParaPOST);
 
       const cuerpoMensaje = JSON.stringify(inputTicketValues);
+      handleNuevoTicket(inputTicketValues);
       console.log("cuerpoMensaje-POST");
       console.log(cuerpoMensaje);
       fetch(URLParaPOST, {
@@ -294,6 +293,8 @@ export const FormTicket: React.FC<{
         supportTime: inputTicketValues.supportTime,
       };
       const cuerpoMensaje = JSON.stringify(objetoAEnviar);
+      handleNuevoTicket(inputTicketValues);
+
       console.log("cuerpoMensaje-PUT");
       console.log(cuerpoMensaje);
       fetch(URLParaPUT, {
