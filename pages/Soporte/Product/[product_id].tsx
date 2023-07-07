@@ -181,7 +181,7 @@ export default function Ticket() {
                     {formatDateTime(unTicket.timeStart)}
                   </p>
                   <p>
-                    <strong>Final:</strong>{" "}
+                    <strong>Finaliza:</strong>{" "}
                     {lastDate(unTicket.timeStart, unTicket.supportTime)}
                   </p>
                   <p>

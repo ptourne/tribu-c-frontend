@@ -411,7 +411,7 @@ function TicketPage() {
                 className="mb-2 text-white text-lg"
                 id="ididPParaTicketCompleto"
               >
-                <strong>Final:</strong>{" "}
+                <strong>Finaliza:</strong>{" "}
                 {lastDate(ticket.timeStart, ticket.supportTime)}
               </p>
               <p
