@@ -224,7 +224,15 @@ export const FormTicket: React.FC<{
           product_id: productIdNumerico,
           id: idTicketRecv,
           client_id: unTicket.client_id,
+          title: unTicket.title,
+          description: unTicket.description,
+          priority: unTicket.priority,
+          severity: unTicket.severity,
+          type: unTicket.type,
         });
+        setSelectedPrioridad(unTicket.priority);
+        setSelectedSeveridad(unTicket.severity);
+        setselectTipoTicket(unTicket.type);
       });
     }
   }, [idTicketRecv, productIdNumerico, tickets]);
