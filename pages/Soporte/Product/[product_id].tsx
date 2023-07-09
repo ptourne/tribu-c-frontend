@@ -12,6 +12,7 @@ export default function Ticket() {
   const [recursos, setRecurso] = useState<Array<Recurso>>([]);
   const [clientes, setClientes] = useState<Array<Cliente>>([]);
   const [ticketCount, setTicketCount] = useState(0); // Estado para controlar el número de tickets
+  const [productIDRouting, setProductIDRouting] = useState("VACIO");
 
   const obtenerNombreCliente = (idCliente: number): string => {
     const unCliente = clientes.find((unCliente) => unCliente.id == idCliente);
@@ -56,16 +57,18 @@ export default function Ticket() {
   // EJ si tenemos http://localhost:3000/soporte/Ticket/2 entonces router.query contendra { product_id: "2" }
   // para acceder al 2 utilizamos product_id en router.query. en este caso pasamos el produc_id y los ticketsQuery
   const router = useRouter();
-  const { product_id } = router.query;
-  const productID: string =
-    typeof product_id === "string" ? product_id : "VACIO";
 
   useEffect(() => {
-    console.log("Entro al unico userEffect de [product_id].tsx-------------");
+    const { product_id } = router.query;
+    const productID: string =
+      typeof product_id === "string" ? product_id : "VACIO";
+    setProductIDRouting(productID);
+    console.log("productIDRouting: ", productIDRouting);
+
     const fetchGetProductosById = (): Promise<Producto> => {
       //1) Llamanda al backend hacemos un GET de productos los id van en number recuerda !
       return fetch(
-        `https://psa-soporte.eeoo.ar/product/${parseInt(productID)}`,
+        `https://psa-soporte.eeoo.ar/product/${parseInt(productIDRouting)}`,
         {
           method: "GET",
           headers: {},
@@ -76,10 +79,11 @@ export default function Ticket() {
     fetchClientes().then((clientesFetch) => {
       setClientes(clientesFetch);
     });
-
-    fetchGetProductosById().then((unProducto) => {
-      setProductoSelect(unProducto);
-    });
+    if (productIDRouting !== "VACIO") {
+      fetchGetProductosById().then((unProducto) => {
+        setProductoSelect(unProducto);
+      });
+    }
 
     fetchRecursos().then((recursosFetch) => {
       setRecurso(recursosFetch);
@@ -87,11 +91,13 @@ export default function Ticket() {
 
     fetchTickets().then((ticketsFetch) => {
       const ticketsFiltradoById = ticketsFetch.filter(
-        (ticket) => ticket.product_id == parseInt(productID)
+        (ticket) => ticket.product_id == parseInt(productIDRouting)
       );
       setTickets(ticketsFiltradoById);
     });
-  }, [ticketCount]); //el product_id cambia muchas veces asi que hacemos un UE por esa variable.
+  }, [ticketCount, productIDRouting, router.query]); //el product_id cambia muchas veces asi que hacemos un UE por esa variable.
+  //Al agregar router.query como dependencia en el arreglo de depdencia decimos que el efecto debe volver a ejecutarse cuando los
+  // parametros de la URL cambian.
 
   const [showFormFilter, setShowFormFilter] = useState(false); // Nuevo estado para controlar la visibilidad del formulario
   const handleOpenFormTicket = () => {
@@ -147,7 +153,9 @@ export default function Ticket() {
             <button
               type="button"
               onClick={() =>
-                router.push(`/Soporte/Product/TicketsUrgente/${productID}`)
+                router.push(
+                  `/Soporte/Product/TicketsUrgente/${productIDRouting}`
+                )
               }
               id="buttonTicketUrgente"
             >
@@ -210,7 +218,7 @@ export default function Ticket() {
           {showFormFilter && (
             <div id="FormEnCreacionTicket">
               <FormTicket
-                productIdNumerico={parseInt(productID)}
+                productIdNumerico={parseInt(productIDRouting)}
                 idTicketRecv={-1}
                 handleNuevoTicket={handleNewTicketSubmit}
               />
