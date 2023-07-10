@@ -421,14 +421,14 @@ function TicketPage() {
                 className="mb-2 text-white text-lg"
                 id="ididPParaTicketCompleto"
               >
-                <strong>Client ID:</strong>{" "}
+                <strong>Cliente:</strong>{" "}
                 {obtenerNombreCliente(ticket.client_id)}
               </p>
               <p
                 className="mb-2 text-white text-lg"
                 id="ididPParaTicketCompleto"
               >
-                <strong>Responsible ID:</strong>{" "}
+                <strong>Responsable:</strong>{" "}
                 {obtenerNombreRecurso(ticket.responsible_id)}
               </p>
               <div className="flex justify-center">
