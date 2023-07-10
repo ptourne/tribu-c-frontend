@@ -299,6 +299,8 @@ export const FormTicket: React.FC<{
         timeStart: inputTicketValues.timeStart,
         type: inputTicketValues.type,
         supportTime: inputTicketValues.supportTime,
+        client_id: inputTicketValues.client_id,
+        responsible_id: inputTicketValues.responsible_id,
       };
       const cuerpoMensaje = JSON.stringify(objetoAEnviar);
       handleNuevoTicket(inputTicketValues);
